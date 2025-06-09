@@ -24,7 +24,11 @@ type Client = {
 
 export default function ClientTable({ clients }: { clients: Client[] }) {
     return (
-        
+          <Card>
+        <CardHeader>
+          <CardTitle>Lista de Produtos</CardTitle>
+        </CardHeader>
+        <CardContent>
             <Table>
                 <TableHeader>
                     <TableRow className='w-full '>
@@ -42,7 +46,7 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" size="icon">
-                                            <MoreHorizontal className="h-4 w-4" />
+                                            <MoreHorizontal className="h-F4 w-4" />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
@@ -57,6 +61,8 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                     ))}
                 </TableBody>
             </Table>
+             </CardContent>
+      </Card>
         
     );
 }
