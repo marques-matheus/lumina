@@ -1,16 +1,9 @@
-// src/app/page.tsx
-
-import { createClient } from '@supabase/supabase-js';
 import AddProductForm from '@/components/AddProductForm';
 import ProductTable from '@/components/ProductTable';
+import { supabase } from '@/lib/supabaseClient';
 
 export default async function ProductsPage() {
   
-
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
 
   const { data: products } = await supabase
     .from('products')
