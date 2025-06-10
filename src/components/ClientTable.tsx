@@ -98,7 +98,7 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="phone" className="text-right">Telefone</Label>
-                                <Input id="phone" name="phone" type="tel" maxLength={11} defaultValue={selectedClient?.phone} className="col-span-3" />
+                                <Input id="phone" name="phone" type="tel" minLength={11} maxLength={11}  pattern='[0-9]{11}' defaultValue={selectedClient?.phone} className="col-span-3" />
 
                             </div>
                         </div>
