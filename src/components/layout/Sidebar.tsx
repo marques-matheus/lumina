@@ -15,6 +15,9 @@ export default function Sidebar() {
         <Link href="/clients" className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">
           Clientes
         </Link>
+        <Link href="/services" className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">
+          Serviços
+        </Link>
         {/* Adicione outros links aqui no futuro */}
       </nav>
     </aside>
