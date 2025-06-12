@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import AddServiceOrderDialog from "@/components/AddServiceOrderForm";
 import ServiceOrdersTable from "@/components/ServiceOrdersTable";
 import { supabase } from "@/lib/supabaseClient";
