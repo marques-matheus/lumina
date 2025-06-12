@@ -13,14 +13,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
-
-
-type Client = {
-    id: number;
-    name: string;
-    phone: string;
-};
-
+import { Client } from '@/types';
 
 export default function ClientTable({ clients }: { clients: Client[] }) {
     const router = useRouter();

@@ -13,23 +13,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Eye, PencilIcon, PrinterIcon, SaveIcon } from 'lucide-react';
+import PrintableOrder from './PrintableOrder';
+import { ServiceOrder } from '@/types';
 
-type Client = { name: string; } | null;
-
-type ServiceOrder = {
-    id: number;
-    created_at: string;
-    clients: Client;
-    type: string;
-    equip_brand: string;
-    equip_model: string;
-    serial_number: string;
-    items?: string;
-    problem_description: string;
-    status: string;
-    total: number;
-    delivered_at: string | null;
-};
 
 type ServiceOrderFormData = {
     type: string;
@@ -151,6 +137,9 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
                     </Table>
                 </CardContent>
             </Card>
+            <div className='hidden print:block'>
+                <PrintableOrder order={selectedServiceOrder} />
+            </div>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="sm:max-w-2xl">
@@ -199,7 +188,7 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
                         ) : (
                             <>
                                 <DialogClose asChild><Button variant="secondary">Fechar</Button></DialogClose>
-                                <Button variant="outline"><PrinterIcon className="mr-2 h-4 w-4" /> Imprimir</Button>
+                                <Button variant="outline" onClick={() => window.print()} ><PrinterIcon className="mr-2 h-4 w-4" /> Imprimir</Button>
                                 <Button onClick={handleEnterEditMode}><PencilIcon className="mr-2 h-4 w-4" /> Editar</Button>
                             </>
                         )}

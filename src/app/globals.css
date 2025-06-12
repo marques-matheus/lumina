@@ -117,4 +117,30 @@
   body {
     @apply bg-background text-foreground;
   }
+   @media print {
+    /* Esconde tudo no corpo da página por padrão */
+    body * {
+      visibility: hidden;
+    }
+
+    /* Mostra APENAS a nossa área imprimível e tudo que está dentro dela */
+    .printable-area, .printable-area * {
+      visibility: visible;
+    }
+
+    /* Posiciona nossa área no topo da página de impressão */
+    .printable-area {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+
+    /* Define o tamanho da página de impressão para A5 */
+    @page {
+      size: A5 landscape;
+      margin: 1.5cm; /* Define uma margem para a impressão */
+    }
+  }
+  
 }
