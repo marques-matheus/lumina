@@ -1,107 +1,149 @@
 'use client';
-import {
-    Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import {
-    Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
-} from '@/components/ui/dialog';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Eye, Pencil, PencilIcon, Printer, PrinterIcon } from 'lucide-react';
-import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+
+import { useState, FormEvent, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { Label } from './ui/label';
-import { Input } from './ui/input';
-import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger, SelectValue } from './ui/select';
+import { supabase } from '@/lib/supabaseClient';
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Eye, PencilIcon, PrinterIcon, SaveIcon } from 'lucide-react';
+
+type Client = { name: string; } | null;
 
 type ServiceOrder = {
     id: number;
     created_at: string;
-    clients: {
-        name: string;
-    } | null;
+    clients: Client;
+    type: string;
     equip_brand: string;
     equip_model: string;
     serial_number: string;
-    type: string;
     items?: string;
-    status: string;
     problem_description: string;
+    status: string;
     total: number;
     delivered_at: string | null;
 };
-const ServiceOrdersTable = ({ serviceOrders }: { serviceOrders: ServiceOrder[] }) => {
-    const router = useRouter();
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [selectedServiceOrder, setSelectedServiceOrder] = useState<ServiceOrder | null>(null);
 
-    const handleEditClick = (serviceOrder: ServiceOrder) => {
+type ServiceOrderFormData = {
+    type: string;
+    equip_brand: string;
+    equip_model: string;
+    serial_number: string;
+    items: string;
+    problem_description: string;
+    total: string;
+};
+
+export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: ServiceOrder[] }) {
+    const router = useRouter();
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [selectedServiceOrder, setSelectedServiceOrder] = useState<ServiceOrder | null>(null);
+    const [editFormData, setEditFormData] = useState<ServiceOrderFormData | null>(null);
+
+    const handleViewDetailsClick = (serviceOrder: ServiceOrder) => {
         setSelectedServiceOrder(serviceOrder);
         setIsDialogOpen(true);
+        setIsEditing(false);
     };
 
-    const StatusChange = (newStatus: string) => {
+    const handleEnterEditMode = () => {
         if (!selectedServiceOrder) return;
-        const updatedServiceOrder = {
-            ...selectedServiceOrder,
-            status: newStatus
-        };
-        supabase
-            .from('service_orders')
-            .update({ status: newStatus })
-            .match({ id: selectedServiceOrder.id })
-            .then(({ error }) => {
-                if (error) {
-                    alert('Erro ao atualizar status da ordem de serviço.');
-                } else {
-                    setSelectedServiceOrder(updatedServiceOrder);
-                    setIsDialogOpen(false);
-                    router.refresh();
-                }
-            });
-    };  
+        setEditFormData({
+            type: selectedServiceOrder.type,
+            equip_brand: selectedServiceOrder.equip_brand,
+            equip_model: selectedServiceOrder.equip_model,
+            serial_number: selectedServiceOrder.serial_number,
+            items: selectedServiceOrder.items || '',
+            problem_description: selectedServiceOrder.problem_description,
+            total: selectedServiceOrder.total.toString(),
+        });
+        setIsEditing(true);
+    };
 
+    const handleFormChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (!editFormData) return;
+        setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
+    };
 
+    const handleStatusChange = async (newStatus: string) => {
+        if (!selectedServiceOrder) return;
+        const { error } = await supabase
+            .from('service_orders').update({ status: newStatus }).match({ id: selectedServiceOrder.id });
+
+        if (error) {
+            alert('Erro ao atualizar o status.');
+        } else {
+            router.refresh();
+            setSelectedServiceOrder(prev => prev ? { ...prev, status: newStatus } : null);
+        }
+    };
+
+   const handleUpdateSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!editFormData || !selectedServiceOrder) return;
+
+    const { data: updatedOrder, error } = await supabase
+        .from('service_orders')
+        .update({
+            ...editFormData,
+            total: parseFloat(editFormData.total) || 0
+        })
+        .match({ id: selectedServiceOrder.id })
+        .select(`
+            *,
+            clients ( name )
+        `)
+        .single();
+
+    if (error) {
+        alert('Erro ao salvar as alterações.');
+        console.error(error)
+    } else {
+        alert('Ordem de Serviço atualizada com sucesso!');
+        setSelectedServiceOrder(updatedOrder);
+        setIsEditing(false);
+        router.refresh();
+    }
+};
 
     return (
         <>
             <Card>
-                <CardHeader>
-                    <CardTitle>Ordens de serviço</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle>Ordens de Serviço</CardTitle></CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[100px]">Data de Entrada</TableHead>
-                                <TableHead className="w-[100px]">Cliente</TableHead>
-                                <TableHead className="w-[100px]">Equipamento</TableHead>
-                                <TableHead className="w-[100px]">Tipo</TableHead>
-                                <TableHead className="w-[100px]">Total</TableHead>
-                                <TableHead className="w-[100px]">Status</TableHead>
-                                <TableHead className="w-[100px] text-center">Detalhes</TableHead>
+                                <TableHead>Cliente / O.S.</TableHead>
+                                <TableHead>Equipamento</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead>Valor</TableHead>
+                                <TableHead className="text-right">Ações</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {serviceOrders.map((serviceOrder) => (
-                                <TableRow key={serviceOrder.id} className={`${serviceOrder.id % 2 === 0 ? 'bg-gray-100' : ''}`}>
+                            {serviceOrders.map((order) => (
+                                <TableRow key={order.id}>
                                     <TableCell>
-                                        {new Date(serviceOrder.created_at).toLocaleDateString('pt-BR', {
-                                            day: '2-digit',
-                                            month: '2-digit',
-                                            year: 'numeric'
-                                        })}
+                                        <div className="font-medium">{order.clients?.name}</div>
+                                        <div className="text-sm text-muted-foreground">O.S. #{order.id}</div>
                                     </TableCell>
-                                    <TableCell>{serviceOrder.clients?.name}</TableCell>
-                                    <TableCell>{serviceOrder.equip_brand} {serviceOrder.equip_model}</TableCell>
-                                    <TableCell>{serviceOrder.type}</TableCell>
-                                    <TableCell>{serviceOrder.total}</TableCell>
-                                    <TableCell>{serviceOrder.status}</TableCell>
-                                    <TableCell className='flex items-center justify-center'>
-                                        <button onClick={() => handleEditClick(serviceOrder)}>
-                                            <Eye className="h-8 w-8 cursor-pointer hover:scale-105 hover:text-gray-500" />
-                                        </button>
+                                    <TableCell>{`${order.equip_brand} ${order.equip_model}`}</TableCell>
+                                    <TableCell>{order.status}</TableCell>
+                                    <TableCell>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.total)}</TableCell>
+                                    <TableCell className="text-right">
+                                        <Button variant="outline" size="sm" onClick={() => handleViewDetailsClick(order)}>
+                                            <Eye className="mr-2 h-4 w-4" /> Ver Detalhes
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -110,76 +152,60 @@ const ServiceOrdersTable = ({ serviceOrders }: { serviceOrders: ServiceOrder[] }
                 </CardContent>
             </Card>
 
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} >
-                <DialogContent>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>Editar Produto</DialogTitle>
+                        <DialogTitle>Detalhes da O.S. #{selectedServiceOrder?.id}</DialogTitle>
                     </DialogHeader>
-                    <div className="grid grid-cols-3 gap-2">
-                        <p className="font-semibold text-right">Cliente:</p>
-                        <p className="col-span-2">{selectedServiceOrder?.clients?.name}</p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                        <p className="font-semibold text-right">Equipamento:</p>
-                        <p className="col-span-2">{selectedServiceOrder?.equip_brand} {selectedServiceOrder?.equip_model}</p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                        <p className="font-semibold text-right">Número de Série:</p>
-                        <p className="col-span-2">{selectedServiceOrder?.serial_number}</p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                        <p className="font-semibold text-right">Tipo:</p>
-                        <p className="col-span-2">{selectedServiceOrder?.type}</p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                        <p className="font-semibold text-right">Itens:</p>
-                        <p className="col-span-2">{selectedServiceOrder?.items}</p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                        <p className="font-semibold text-right">Descrição do Problema:</p>
-                        <p className="col-span-2">{selectedServiceOrder?.problem_description}</p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                        <p className="font-semibold text-right">Total:</p>
-                        <p className="col-span-2">{selectedServiceOrder?.total}</p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                        <p className="font-semibold text-right">Status:</p>
-                        <Select
-                            defaultValue={selectedServiceOrder?.status}
-                            onValueChange={(value) => StatusChange(value)}
-                            
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder={selectedServiceOrder?.status} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Pendente">Pendente</SelectItem>
-                                <SelectItem value="Em Andamento">Em Andamento</SelectItem>
-                                <SelectItem value="Concluído">Concluído</SelectItem>
-                                <SelectItem value="Cancelado">Cancelado</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                        <p className="font-semibold text-right">Data de Entrega:</p>
-                        <p className="col-span-2">
-                            {selectedServiceOrder?.delivered_at
-                                ? new Date(selectedServiceOrder.delivered_at).toLocaleDateString('pt-BR', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric'
-                                })
-                                : 'Não entregue'}
-                        </p>
-                    </div>
+
+                    {isEditing ? (
+                        <form id="edit-form" onSubmit={handleUpdateSubmit} className="grid grid-cols-2 gap-4 py-4">
+                            <div className="space-y-1"><Label htmlFor="type">Tipo</Label><Input id="type" name="type" value={editFormData?.type} onChange={handleFormChange} /></div>
+                            <div className="space-y-1"><Label htmlFor="equip_brand">Marca</Label><Input id="equip_brand" name="equip_brand" value={editFormData?.equip_brand} onChange={handleFormChange} /></div>
+                            <div className="space-y-1"><Label htmlFor="equip_model">Modelo</Label><Input id="equip_model" name="equip_model" value={editFormData?.equip_model} onChange={handleFormChange} /></div>
+                            <div className="space-y-1"><Label htmlFor="serial_number">Nº de Série</Label><Input id="serial_number" name="serial_number" value={editFormData?.serial_number} onChange={handleFormChange} /></div>
+                            <div className="col-span-2 space-y-1"><Label htmlFor="items">Itens Acompanhantes</Label><Input id="items" name="items" value={editFormData?.items} onChange={handleFormChange} /></div>
+                            <div className="col-span-2 space-y-1"><Label htmlFor="problem_description">Problema Relatado</Label><Textarea id="problem_description" name="problem_description" value={editFormData?.problem_description} onChange={handleFormChange} /></div>
+                            <div className="space-y-1"><Label htmlFor="total">Valor Total</Label><Input id="total" name="total" type="number" step="0.01" value={editFormData?.total} onChange={handleFormChange} /></div>
+                        </form>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-y-2 gap-x-8 py-4">
+                            <p className="font-semibold">Cliente:</p><p>{selectedServiceOrder?.clients?.name}</p>
+                            <p className="font-semibold">Equipamento:</p><p>{`${selectedServiceOrder?.equip_brand} ${selectedServiceOrder?.equip_model}`}</p>
+                            <p className="font-semibold">Nº de Série:</p><p>{selectedServiceOrder?.serial_number}</p>
+                            <p className="font-semibold">Itens:</p><p>{selectedServiceOrder?.items || 'N/A'}</p>
+                            <p className="font-semibold col-span-2">Problema Relatado:</p><p className="col-span-2">{selectedServiceOrder?.problem_description}</p>
+                            <p className="font-semibold">Valor Total:</p><p>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(selectedServiceOrder?.total || 0)}</p>
+                            <p className="font-semibold">Status:</p>
+                            <Select value={selectedServiceOrder?.status} onValueChange={handleStatusChange}>
+                                <SelectTrigger><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Aguardando Avaliação">Aguardando Avaliação</SelectItem>
+                                    <SelectItem value="Em Reparo">Em Reparo</SelectItem>
+                                    <SelectItem value="Concluído">Concluído</SelectItem>
+                                    <SelectItem value="Cancelado">Cancelado</SelectItem>
+                                    <SelectItem value="Entregue">Entregue</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
+
                     <DialogFooter>
-                        <Button><PencilIcon size={35} /></Button>
-                        <Button><PrinterIcon size={35} /></Button>
+                        {isEditing ? (
+                            <>
+                                <Button variant="secondary" onClick={() => setIsEditing(false)}>Cancelar</Button>
+                                <Button type="submit" form="edit-form"><SaveIcon className="mr-2 h-4 w-4" /> Salvar Alterações</Button>
+                            </>
+                        ) : (
+                            <>
+                                <DialogClose asChild><Button variant="secondary">Fechar</Button></DialogClose>
+                                <Button variant="outline"><PrinterIcon className="mr-2 h-4 w-4" /> Imprimir</Button>
+                                <Button onClick={handleEnterEditMode}><PencilIcon className="mr-2 h-4 w-4" /> Editar</Button>
+                            </>
+                        )}
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
         </>
     );
 }
-export default ServiceOrdersTable;
