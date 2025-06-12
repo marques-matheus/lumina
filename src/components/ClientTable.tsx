@@ -49,7 +49,7 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
         <>
             <Card>
                 <CardHeader>
-                    <CardTitle>Lista de Produtos</CardTitle>
+                    <CardTitle>Meus Clientes</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Table>
@@ -81,7 +81,7 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Editar Produto</DialogTitle>
+                        <DialogTitle>Editar Cliente</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleUpdate}>
                         <div className="grid gap-4 py-4">

@@ -22,6 +22,7 @@ export type ServiceOrder = {
   created_at: string;
   clients: { 
     name: string;
+    phone: string;
   } | null;
   client_id: number; 
   type: string;

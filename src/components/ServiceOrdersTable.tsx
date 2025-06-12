@@ -34,6 +34,7 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
     const [isEditing, setIsEditing] = useState(false);
     const [selectedServiceOrder, setSelectedServiceOrder] = useState<ServiceOrder | null>(null);
     const [editFormData, setEditFormData] = useState<ServiceOrderFormData | null>(null);
+    const [isCreating, setIsCreating] = useState(false);
 
     const handleViewDetailsClick = (serviceOrder: ServiceOrder) => {
         setSelectedServiceOrder(serviceOrder);
@@ -73,6 +74,7 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
         }
     };
 
+    
    const handleUpdateSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!editFormData || !selectedServiceOrder) return;
