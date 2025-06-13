@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { addProduct } from '../actions';
 import { SubmitButton } from '../../../../components/ui/submitButton';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 export default function AddProductDialog() {
 
   const initialState = { success: false, message: '' };
-  const [state, formAction] = useFormState(addProduct, initialState);
+  const [state, formAction] = useActionState(addProduct, initialState);
 
 
   const [isOpen, setIsOpen] = useState(false);

@@ -1,9 +1,10 @@
 // src/components/ProductTable.tsx
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
+import { useTransition } from 'react';
+import { useActionState } from 'react';
 
 // ShadCN Components
 import {
@@ -20,67 +21,50 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MoreHorizontal } from 'lucide-react';
+import { deleteProduct, updateProduct } from '../actions';
+import { SubmitButton } from '@/components/ui/submitButton';
+import { Product } from '@/types';
 
-// Tipos
-type Product = {
-  id: number;
-  name: string;
-  description: string;
-  brand: string;
-  quantity: number;
-  sale_price: number;
-};
 
 // Componente principal da tabela
 export default function ProductTable({ products }: { products: Product[] }) {
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const initialState = { success: false, message: '' };
+  const [state, formAction] = useActionState(updateProduct, initialState);
 
   // Funções para Editar
   const handleEditClick = (product: Product) => {
     setSelectedProduct(product);
     setIsDialogOpen(true);
   };
-  
-  const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!selectedProduct) return;
 
-    const formData = new FormData(event.currentTarget);
-    const updatedProduct = {
-      name: formData.get('name') as string,
-      quantity: parseInt(formData.get('quantity') as string),
-      brand: formData.get('brand') as string || selectedProduct.brand,
-      description: formData.get('description') as string || selectedProduct.description,
-      sale_price: parseFloat(formData.get('sale_price') as string),
-    };
-    
-    const { error } = await supabase
-      .from('products')
-      .update(updatedProduct)
-      .match({ id: selectedProduct.id });
 
-    if (error) {
-      alert('Erro ao atualizar produto.');
-    } else {
+  useEffect(() => {
+
+    if (state.success) {
+      alert(state.message);
       setIsDialogOpen(false);
-      router.refresh();
+    } else if (state.message) {
+
+      alert(state.message);
     }
-  };
+  }, [state]);
+
+
 
   // Função para Deletar
   const handleDelete = async (productId: number) => {
     if (confirm('Tem certeza que deseja deletar este produto?')) {
-      const { error } = await supabase.from('products').delete().match({ id: productId });
-      if (error) {
-        alert('Erro ao deletar produto.');
-      } else {
-        router.refresh();
-      }
+      startTransition(() => {
+        deleteProduct(productId);
+      })
     }
   };
-  
+
   return (
     <>
       <Card>
@@ -96,21 +80,23 @@ export default function ProductTable({ products }: { products: Product[] }) {
                 <TableHead>Marca</TableHead>
                 <TableHead>Quantidade</TableHead>
                 <TableHead>Preço de Venda</TableHead>
+                <TableHead className="text-right">Disponível</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {products.map((product) => (
-                <TableRow key={product.id}>
+                <TableRow key={product.id} className={`${product.is_active ? '' : 'text-gray-400'} ${product.id % 2 === 0 ? 'bg-zinc-200' : 'bg-white'}`}>
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell>{product.description}</TableCell>
                   <TableCell>{product.brand}</TableCell>
                   <TableCell>{product.quantity}</TableCell>
                   <TableCell>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.sale_price)}</TableCell>
+                  <TableCell className="text-right">{product.is_active || product.quantity > 0 ? 'Sim' : 'Não'}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="h-8 w-8 p-0" disabled={product.is_active === false}>
                           <span className="sr-only">Abrir menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -135,7 +121,8 @@ export default function ProductTable({ products }: { products: Product[] }) {
           <DialogHeader>
             <DialogTitle>Editar Produto</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleUpdate}>
+          <form action={formAction} className="space-y-4">
+            <Input type="hidden" name="id" value={selectedProduct?.id} />
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name" className="text-right">Nome</Label>
@@ -159,7 +146,7 @@ export default function ProductTable({ products }: { products: Product[] }) {
               </div>
             </div>
             <DialogFooter>
-              <Button type="submit">Salvar alterações</Button>
+              <SubmitButton />
             </DialogFooter>
           </form>
         </DialogContent>

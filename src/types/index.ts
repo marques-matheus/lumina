@@ -11,6 +11,7 @@ export type Product = {
   name: string;
   description?: string;
   quantity: number;
+  brand: string;
   cost_price?: number;
   sale_price: number;
   is_active: boolean;
