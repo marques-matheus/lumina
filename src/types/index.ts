@@ -20,10 +20,7 @@ export type Product = {
 export type ServiceOrder = {
   id: number;
   created_at: string;
-  clients: { 
-    name: string;
-    phone: string;
-  } | null;
+  clients: Client;
   client_id: number; 
   type: string;
   equip_brand: string;

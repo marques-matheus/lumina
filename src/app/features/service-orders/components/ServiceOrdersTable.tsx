@@ -13,8 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Eye, PencilIcon, PrinterIcon, SaveIcon } from 'lucide-react';
-import PrintableOrder from './PrintableOrder';
 import { ServiceOrder } from '@/types';
+import PrintableOrder from './PrintableOrder';
 
 
 type ServiceOrderFormData = {

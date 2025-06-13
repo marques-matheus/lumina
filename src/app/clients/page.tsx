@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
-import AddClientDialog from '@/components/AddClientDialog';
-import ClientTable from '@/components/ClientTable';
+import AddClientDialog from '@/app/features/clients/components/AddClientDialog';
+import ClientTable from '@/app/features/clients/components/ClientTable';
 import { supabase } from '@/lib/supabaseClient';
 
 

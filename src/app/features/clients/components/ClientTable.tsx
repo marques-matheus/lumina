@@ -11,8 +11,8 @@ import { Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
-import { Label } from './ui/label';
-import { Input } from './ui/input';
+import { Label } from '../../../../components/ui/label';
+import { Input } from '../../../../components/ui/input';
 import { Client } from '@/types';
 
 export default function ClientTable({ clients }: { clients: Client[] }) {
@@ -77,7 +77,7 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                     </Table>
                 </CardContent>
             </Card>
-            {/* Dialog (Modal) de Edição */}
+            
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                     <DialogHeader>

@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic'
-import AddProductForm from '@/components/AddProductForm';
-import ProductTable from '@/components/ProductTable';
+import AddProductForm from '@/app/features/products/components/AddProductForm';
+import ProductTable from '@/app/features/products/components/ProductTable';
 import { supabase } from '@/lib/supabaseClient';
 
 export default async function ProductsPage() {

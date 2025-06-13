@@ -1,11 +1,11 @@
 // Defina o 'type ServiceOrder' aqui, importando de '@/types'
 import { type ServiceOrder } from '@/types';
 
-export default function PrintableReceiptA5({ order }: { order: ServiceOrder | null }) {
+export default function PrintableOrder({ order }: { order: ServiceOrder | null }) {
     if (!order) return null;
 
     return (
-        // O 'printable-area' é a nossa classe mágica
+        
         <div className="printable-area p-2 ">
             <div className="text-center mb-6">
                 <h1 className="text-xl font-bold">COMPROVANTE DE ORDEM DE SERVIÇO</h1>
