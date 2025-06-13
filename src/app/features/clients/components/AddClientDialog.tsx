@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
+import { useState, useActionState, useEffect } from 'react';
+import { addClient } from '../actions';
+
 
 // ShadCN Components
 import { Button } from '@/components/ui/button';
@@ -17,46 +17,29 @@ import {
     DialogFooter,
     DialogClose,
 } from '@/components/ui/dialog';
+import { SubmitButton } from '@/components/ui/submitButton';
 
 
 export default function AddClientDialog() {
-    const router = useRouter()
 
     const [isOpen, setIsOpen] = useState(false)
-    const [name, setName] = useState('')
-    const [phone, setPhone] = useState('')
-
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    const initialState = { success: false, message: '' };
+    const [state, formAction] = useActionState(addClient, initialState);
 
 
-    const handleSubmit = async (event: FormEvent) => {
-        event.preventDefault()
-        setIsSubmitting(true)
-
-        if (!name || !phone) {
-            alert("Por favor, preencha todos os campos")
-            setIsSubmitting(false)
-            return
+    useEffect(() => {
+        if (state.success) {
+            alert(state.message);
+            setIsOpen(false);
+        } else if (state.message) {
+            alert(state.message);
         }
-        const { error } = await supabase.from('clients').insert([
-            { name, phone }
-        ])
-
-        if (error) {
-            alert(`Erro ao adicionar cliente: ${error.message}`)
-        } else {
-            setName('')
-            setPhone('')
-            setIsOpen(false)
-            router.refresh()
-        }
-        setIsSubmitting(false)
-    }
+    }, [state]);
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                 <Button className='w-64 self-end'>
+                <Button className='w-64 self-end'>
                     Adicionar Cliente
                 </Button>
             </DialogTrigger>
@@ -64,24 +47,31 @@ export default function AddClientDialog() {
                 <DialogHeader>
                     <DialogTitle>Adicionar Cliente</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit}>
+                <form action={formAction}>
                     <div className='grid gap-4 py-4'>
                         <div className='grid grid-cols-2 items-center gap-4'>
                             <Label htmlFor="name">Nome</Label>
                             <Input
                                 id="name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
+                                name='name'
                                 className="col-span-1"
+                                type='text'
+                                placeholder='Nome do Cliente'
+                                pattern="^[a-zA-ZÀ-ÿ\s]+$" 
+                                maxLength={50}
+                                required
                             />
                         </div>
                         <div className='grid grid-cols-2 items-center gap-4'>
                             <Label htmlFor="phone">Telefone</Label>
                             <Input
                                 id="phone"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
+                                name='phone'
                                 className="col-span-1"
+                                type='tel'
+                                placeholder='(99) 99999-9999'
+                                maxLength={15}
+                                required
                             />
                         </div>
                     </div>
@@ -91,9 +81,7 @@ export default function AddClientDialog() {
                                 Cancelar
                             </Button>
                         </DialogClose>
-                        <Button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? 'Adicionando...' : 'Salvar Cliente'}
-                        </Button>
+                        <SubmitButton />
                     </DialogFooter>
                 </form>
             </DialogContent>

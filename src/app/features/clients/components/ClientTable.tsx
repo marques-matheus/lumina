@@ -8,43 +8,34 @@ import {
 } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Pencil } from 'lucide-react';
-import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useActionState } from 'react';
 import { Label } from '../../../../components/ui/label';
 import { Input } from '../../../../components/ui/input';
 import { Client } from '@/types';
+import { updateClient } from '../actions';
+import { SubmitButton } from '@/components/ui/submitButton';
 
 export default function ClientTable({ clients }: { clients: Client[] }) {
-    const router = useRouter();
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+    const initialState = { success: false, message: '' };
+    const [state, formAction] = useActionState(updateClient, initialState);
+
+    useEffect(() => {
+        if (state.success) {
+            alert(state.message);
+            setIsDialogOpen(false);
+        } else if (state.message) {
+            alert(state.message);
+        }
+    }, [state]);
 
     const handleEditClick = (client: Client) => {
         setSelectedClient(client);
         setIsDialogOpen(true);
     };
-    const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (!selectedClient) return;
-        const formData = new FormData(event.currentTarget);
-        const updatedClient = {
-            name: formData.get('name') as string,
-            phone: formData.get('phone') as string,
-        };
 
-        const { error } = await supabase
-            .from('clients')
-            .update(updatedClient)
-            .match({ id: selectedClient.id });
-
-        if (error) {
-            alert('Erro ao atualizar cliente.');
-        } else {
-            setIsDialogOpen(false);
-            router.refresh();
-        }
-    }
     return (
         <>
             <Card>
@@ -55,6 +46,7 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                     <Table>
                         <TableHeader>
                             <TableRow className='w-full '>
+                                <TableHead className="w-[150px]">ID</TableHead>
                                 <TableHead className="w-[150px]">Nome</TableHead>
                                 <TableHead className="w-[150px]">Telefone</TableHead>
                                 <TableHead className="w-[100px] text-end">Editar</TableHead>
@@ -62,7 +54,8 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                         </TableHeader>
                         <TableBody>
                             {clients.map((client) => (
-                                <TableRow key={client.id}>
+                                <TableRow key={client.id} className={`${client.id % 2 === 0 ? 'bg-zinc-200' : 'bg-white'} hover:bg-accent/50 transition-colors`}>
+                                    <TableCell className="font-medium">{client.id}</TableCell>
                                     <TableCell className="font-medium">{client.name}</TableCell>
                                     <TableCell>{client.phone}</TableCell>
                                     <TableCell className='flex items-center justify-end space-x-2'>
@@ -77,26 +70,27 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                     </Table>
                 </CardContent>
             </Card>
-            
+
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Editar Cliente</DialogTitle>
                     </DialogHeader>
-                    <form onSubmit={handleUpdate}>
+                    <form action={formAction}>
                         <div className="grid gap-4 py-4">
+                            <Input type="hidden" name="id" value={selectedClient?.id} />
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="name" className="text-right">Nome</Label>
                                 <Input id="name" name="name" defaultValue={selectedClient?.name} className="col-span-3" />
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="phone" className="text-right">Telefone</Label>
-                                <Input id="phone" name="phone" type="tel" minLength={11} maxLength={11}  pattern='[0-9]{11}' defaultValue={selectedClient?.phone} className="col-span-3" />
+                                <Input id="phone" name="phone" type="tel" minLength={11} maxLength={11} pattern='[0-9]{11}' defaultValue={selectedClient?.phone} className="col-span-3" />
 
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="submit">Salvar alterações</Button>
+                            <SubmitButton />
                         </DialogFooter>
                     </form>
                 </DialogContent>

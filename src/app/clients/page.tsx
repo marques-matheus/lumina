@@ -9,7 +9,7 @@ export default async function ClientsPage() {
   const { data: clients } = await supabase
     .from('clients')
     .select('*')
-    .order('name', { ascending: true });
+    .order('id', { ascending: true });
 
   return (
     <div className="flex flex-col gap-8">
