@@ -4,11 +4,12 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
+import { Toaster } from '@/components/ui/sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Sistema de Estoque',
+  title: 'Lúmina',
   description: 'Gerenciamento de estoque, clientes e ordens de serviço',
 };
 
@@ -29,6 +30,7 @@ export default function RootLayout({
             </main>
           </div>
         </div>
+        <Toaster position="top-right" richColors/>
       </body>
     </html>
   );

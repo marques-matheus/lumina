@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect, useActionState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 
+import { updateServiceOrder } from '../actions';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
@@ -15,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Eye, PencilIcon, PrinterIcon, SaveIcon } from 'lucide-react';
 import { ServiceOrder } from '@/types';
 import PrintableOrder from './PrintableOrder';
+import { toast } from 'sonner';
 
 
 type ServiceOrderFormData = {
@@ -34,13 +36,24 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
     const [isEditing, setIsEditing] = useState(false);
     const [selectedServiceOrder, setSelectedServiceOrder] = useState<ServiceOrder | null>(null);
     const [editFormData, setEditFormData] = useState<ServiceOrderFormData | null>(null);
-    const [isCreating, setIsCreating] = useState(false);
+
+    const initialState = { success: false, message: '' };
+    const [state, formAction] = useActionState(updateServiceOrder, initialState);
 
     const handleViewDetailsClick = (serviceOrder: ServiceOrder) => {
         setSelectedServiceOrder(serviceOrder);
         setIsDialogOpen(true);
         setIsEditing(false);
     };
+
+    useEffect(() => {
+        if (state.success) {
+            toast.success(state.message);
+            setIsDialogOpen(false);
+        } else if (state.message) {
+            toast.error(state.message);
+        }
+    }, [state]);
 
     const handleEnterEditMode = () => {
         if (!selectedServiceOrder) return;
@@ -74,34 +87,6 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
         }
     };
 
-    
-   const handleUpdateSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!editFormData || !selectedServiceOrder) return;
-
-    const { data: updatedOrder, error } = await supabase
-        .from('service_orders')
-        .update({
-            ...editFormData,
-            total: parseFloat(editFormData.total) || 0
-        })
-        .match({ id: selectedServiceOrder.id })
-        .select(`
-            *,
-            clients ( name )
-        `)
-        .single();
-
-    if (error) {
-        alert('Erro ao salvar as alterações.');
-        console.error(error)
-    } else {
-        alert('Ordem de Serviço atualizada com sucesso!');
-        setSelectedServiceOrder(updatedOrder);
-        setIsEditing(false);
-        router.refresh();
-    }
-};
 
     return (
         <>
@@ -150,7 +135,8 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
                     </DialogHeader>
 
                     {isEditing ? (
-                        <form id="edit-form" onSubmit={handleUpdateSubmit} className="grid grid-cols-2 gap-4 py-4">
+                        <form id="edit-form" action={formAction} className="grid grid-cols-2 gap-4 py-4">
+                            <Input type="hidden" name="id" defaultValue={selectedServiceOrder?.id || ''} />
                             <div className="space-y-1"><Label htmlFor="type">Tipo</Label><Input id="type" name="type" value={editFormData?.type} onChange={handleFormChange} /></div>
                             <div className="space-y-1"><Label htmlFor="equip_brand">Marca</Label><Input id="equip_brand" name="equip_brand" value={editFormData?.equip_brand} onChange={handleFormChange} /></div>
                             <div className="space-y-1"><Label htmlFor="equip_model">Modelo</Label><Input id="equip_model" name="equip_model" value={editFormData?.equip_model} onChange={handleFormChange} /></div>
