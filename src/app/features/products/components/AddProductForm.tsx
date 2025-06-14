@@ -33,11 +33,11 @@ export default function AddProductDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className='w-64 self-end'>Adicionar Novo Produto</Button>
+        <Button className='w-40 self-end'>Novo Produto</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Adicionar Novo Produto</DialogTitle>
+          <DialogTitle>Novo Produto</DialogTitle>
         </DialogHeader>
         <form action={formAction}>
           <div className="grid gap-4 py-4">

@@ -40,8 +40,8 @@ export default function AddClientDialog() {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button className='w-64 self-end'>
-                    Adicionar Cliente
+                <Button className='w-40 self-end'>
+                    Novo Cliente
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
