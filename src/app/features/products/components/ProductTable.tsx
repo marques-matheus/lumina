@@ -2,7 +2,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { useActionState } from 'react';
 
@@ -24,11 +23,11 @@ import { MoreHorizontal } from 'lucide-react';
 import { deleteProduct, updateProduct } from '../actions';
 import { SubmitButton } from '@/components/ui/submitButton';
 import { Product } from '@/types';
-
+import { toast } from 'sonner';
 
 // Componente principal da tabela
 export default function ProductTable({ products }: { products: Product[] }) {
-  const router = useRouter();
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -46,11 +45,10 @@ export default function ProductTable({ products }: { products: Product[] }) {
   useEffect(() => {
 
     if (state.success) {
-      alert(state.message);
+      toast.success(state.message);
       setIsDialogOpen(false);
     } else if (state.message) {
-
-      alert(state.message);
+      toast.error(state.message);
     }
   }, [state]);
 

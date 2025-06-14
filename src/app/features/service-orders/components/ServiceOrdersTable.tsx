@@ -80,8 +80,9 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
             .from('service_orders').update({ status: newStatus }).match({ id: selectedServiceOrder.id });
 
         if (error) {
-            alert('Erro ao atualizar o status.');
+            toast.error('Erro ao atualizar o status.');
         } else {
+            toast.success(`Status atualizado para ${newStatus}.`);
             router.refresh();
             setSelectedServiceOrder(prev => prev ? { ...prev, status: newStatus } : null);
         }
@@ -105,7 +106,7 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
                         </TableHeader>
                         <TableBody>
                             {serviceOrders.map((order) => (
-                                <TableRow key={order.id}>
+                                <TableRow key={order.id} className={`${order.id % 2 === 0 ? 'bg-zinc-200' : 'bg-white'}`}>
                                     <TableCell>
                                         <div className="font-medium">{order.clients?.name}</div>
                                         <div className="text-sm text-muted-foreground">O.S. #{order.id}</div>

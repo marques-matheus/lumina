@@ -14,6 +14,7 @@ import { Input } from '../../../../components/ui/input';
 import { Client } from '@/types';
 import { updateClient } from '../actions';
 import { SubmitButton } from '@/components/ui/submitButton';
+import { toast } from 'sonner';
 
 export default function ClientTable({ clients }: { clients: Client[] }) {
 
@@ -24,10 +25,10 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
 
     useEffect(() => {
         if (state.success) {
-            alert(state.message);
+            toast.success(state.message);
             setIsDialogOpen(false);
         } else if (state.message) {
-            alert(state.message);
+            toast.error(state.message);
         }
     }, [state]);
 

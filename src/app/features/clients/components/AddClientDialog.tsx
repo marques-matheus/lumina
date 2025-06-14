@@ -18,6 +18,7 @@ import {
     DialogClose,
 } from '@/components/ui/dialog';
 import { SubmitButton } from '@/components/ui/submitButton';
+import { toast } from 'sonner';
 
 
 export default function AddClientDialog() {
@@ -29,10 +30,10 @@ export default function AddClientDialog() {
 
     useEffect(() => {
         if (state.success) {
-            alert(state.message);
+            toast.success(state.message);
             setIsOpen(false);
         } else if (state.message) {
-            alert(state.message);
+            toast.error(state.message);
         }
     }, [state]);
 
@@ -57,7 +58,7 @@ export default function AddClientDialog() {
                                 className="col-span-1"
                                 type='text'
                                 placeholder='Nome do Cliente'
-                                pattern="^[a-zA-ZÀ-ÿ\s]+$" 
+                                pattern="^[a-zA-ZÀ-ÿ\s]+$"
                                 maxLength={50}
                                 required
                             />
@@ -69,8 +70,8 @@ export default function AddClientDialog() {
                                 name='phone'
                                 className="col-span-1"
                                 type='tel'
-                                placeholder='(99) 99999-9999'
-                                maxLength={15}
+                                placeholder='99999-9999'
+                                maxLength={11}
                                 required
                             />
                         </div>

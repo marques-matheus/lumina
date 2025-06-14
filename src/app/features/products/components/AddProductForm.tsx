@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 
 export default function AddProductDialog() {
 
@@ -22,11 +23,10 @@ export default function AddProductDialog() {
   useEffect(() => {
 
     if (state.success) {
-      alert(state.message);
+      toast.success(state.message);
       setIsOpen(false);
     } else if (state.message) {
-
-      alert(state.message);
+      toast.error(state.message);
     }
   }, [state]);
 
