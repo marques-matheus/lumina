@@ -5,8 +5,6 @@ import { useServiceOrderStore } from '@/stores/serviceOrderStore';
 import { updateServiceOrder } from '@/app/features/service-orders/actions';
 import { type ServiceOrder } from '@/types';
 import { toast } from 'sonner';
-
-// ShadCN Components
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,9 +12,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { PencilIcon, PrinterIcon, SaveIcon } from 'lucide-react';
-import { supabase } from '@/lib/supabaseClient'; // Certifique-se de que o caminho está correto
-import { SubmitButton } from '@/components/ui/submitButton'; // Supondo que você criou este
-// import PrintableOrder from './PrintableOrder'; // Descomente quando o componente existir
+import { supabase } from '@/lib/supabaseClient';
+import { SubmitButton } from '@/components/ui/submitButton';
+
 
 type ServiceOrderFormData = {
     equip_type: string;
@@ -29,7 +27,7 @@ type ServiceOrderFormData = {
 };
 
 export default function ServiceOrderDetailsDialog() {
-    // --- 1. CONECTANDO AO STORE (NOSSA ÚNICA FONTE DA VERDADE PARA O MODAL) ---
+
     const {
         isDialogOpen,
         isEditing,
@@ -37,15 +35,15 @@ export default function ServiceOrderDetailsDialog() {
         closeModal,
         enterEditMode,
         exitEditMode,
-        updateSelectedOrder, // Precisaremos de uma nova ação no store
+        updateSelectedOrder,
     } = useServiceOrderStore();
 
-    // --- ESTADOS QUE SÃO REALMENTE LOCAIS DESTE COMPONENTE ---
+
     const [editFormData, setEditFormData] = useState<ServiceOrderFormData | null>(null);
     const initialState = { success: false, message: '', updatedOrder: undefined };
     const [state, formAction] = useActionState(updateServiceOrder, initialState);
 
-    // Efeito para sincronizar o formulário quando entramos no modo de edição
+
     useEffect(() => {
         if (isEditing && selectedOrder) {
             setEditFormData({
@@ -62,12 +60,11 @@ export default function ServiceOrderDetailsDialog() {
         }
     }, [isEditing, selectedOrder]);
 
-    // Efeito para lidar com a resposta do formulário de EDIÇÃO
     useEffect(() => {
         if (state.success && state.updatedOrder) {
             toast.success(state.message);
-            updateSelectedOrder(state.updatedOrder); // Atualiza o store com os novos dados
-            exitEditMode(); // Volta para o modo de visualização
+            updateSelectedOrder(state.updatedOrder);
+            exitEditMode();
         } else if (state.message && !state.success) {
             toast.error(state.message);
         }
@@ -82,24 +79,22 @@ export default function ServiceOrderDetailsDialog() {
     const handleStatusChange = async (newStatus: string) => {
         if (!selectedOrder) return;
 
-        // Vamos criar uma Server Action para isso também, para consistência!
-        // Por enquanto, a chamada direta fica aqui como referência.
+
         const { data, error } = await supabase
             .from('service_orders')
             .update({ status: newStatus })
             .match({ id: selectedOrder.id })
-            .select(`*, clients(name)`) // Pedimos os dados completos de volta
+            .select(`*, clients(name)`)
             .single();
 
         if (error) {
             toast.error('Erro ao atualizar o status.');
         } else {
             toast.success(`Status atualizado para ${newStatus}.`);
-            updateSelectedOrder(data); // Atualiza o store com a O.S. completa e nova
+            updateSelectedOrder(data);
         }
     };
 
-    // Se o modal não deve estar aberto, ou não há ordem selecionada, não renderize nada.
     if (!isDialogOpen || !selectedOrder) {
         return null;
     }
@@ -163,7 +158,7 @@ export default function ServiceOrderDetailsDialog() {
                         {isEditing ? (
                             <>
                                 <Button variant="secondary" onClick={exitEditMode}>Cancelar</Button>
-                                {/* O SubmitButton virá aqui quando o criarmos para este form */}
+                                <SubmitButton />
                                 <Button type="submit" form="edit-form">Salvar Alterações</Button>
                             </>
                         ) : (

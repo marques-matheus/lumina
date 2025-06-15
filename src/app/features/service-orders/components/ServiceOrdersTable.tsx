@@ -1,19 +1,10 @@
 'use client';
 
-
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Eye, PencilIcon, PrinterIcon, SaveIcon } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { ServiceOrder } from '@/types';
-import PrintableOrder from './PrintableOrder';
-
 import { useServiceOrderStore } from '@/stores/serviceOrderStore';
 
 
