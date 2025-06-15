@@ -1,12 +1,15 @@
 'use server'
 
 import { supabase } from "@/lib/supabaseClient"
+import { ServiceOrder } from "@/types";
 import { revalidatePath } from "next/cache";
+
 
 
 type FormState = {
   success: boolean;
   message: string;
+  updatedOrder?: ServiceOrder;
 };
 
 export async function addServiceOrder(prevState: FormState, formData: FormData): Promise<FormState> {
@@ -54,7 +57,7 @@ export async function updateServiceOrder(prevState: FormState, formData: FormDat
     const type = formData.get('type') as string;
     const total = formData.get('total') as string;
     
-    const { error } = await supabase
+    const { data, error } = await supabase
     .from('service_orders')
     .update({
         equip_brand,
@@ -65,12 +68,18 @@ export async function updateServiceOrder(prevState: FormState, formData: FormDat
         type,    
         total: parseFloat(total) || 0,
     })
-    .match({ id: parseInt(id) });
+    .match({ id: parseInt(id) })
+    .select(`*, clients(name)`) // Pedimos os dados completos de volta;
+    .single();
 
     if (error) {
-        return {success: false, message: `Erro ao atualizar O.S.: ${error.message}` };
+        return {success: false, message: `Erro ao atualizar O.S.: ${error.message}`, updatedOrder: undefined};
     }
 
     revalidatePath('/services');
-    return { success: true, message: 'Ordem de Serviço atualizada com sucesso!' };
+    return { success: true, message: 'Ordem de Serviço atualizada com sucesso!', updatedOrder: data};
 }
+
+
+
+
