@@ -11,9 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { PencilIcon, PrinterIcon, SaveIcon } from 'lucide-react';
+import { PencilIcon, PrinterIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { SubmitButton } from '@/components/ui/submitButton';
+import PrintableOrder from './PrintableOrder';
 
 
 type ServiceOrderFormData = {
@@ -101,9 +102,9 @@ export default function ServiceOrderDetailsDialog() {
 
     return (
         <>
-            {/* <div className='hidden print:block'>
+            <div className='hidden print:block'>
                 <PrintableOrder order={selectedOrder} />
-            </div> */}
+            </div>
 
             <Dialog open={isDialogOpen} onOpenChange={closeModal}>
                 <DialogContent className="sm:max-w-2xl">
