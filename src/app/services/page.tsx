@@ -1,14 +1,32 @@
 export const dynamic = 'force-dynamic'
 
+import { Metadata, ResolvingMetadata } from "next";
 import AddServiceOrderDialog from "@/app/features/service-orders/components/AddServiceOrderForm";
 import ServiceOrdersTable from "@/app/features/service-orders/components/ServiceOrdersTable";
 import { supabase } from "@/lib/supabaseClient";
 import ServiceOrderDetailsDialog from "../features/service-orders/components/ServiceOrderDetailsDialog";
+import { PageProps } from "@/types";
+
+export async function generateMetadata(
+    { params, searchParams }: PageProps,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    const resolvedSearchParams = await searchParams;
+    const searchTerm = (resolvedSearchParams?.search as string) || '';
+    return {
+        title: 'Gerenciamento de Produtos',
+        description: searchTerm
+            ? `Resultados para "${searchTerm}"`
+            : 'Gerencie seus produtos com facilidade',
+    };
 
 
-export default async function ServicesPage({ searchParams }: { searchParams: { search?: string } }) {
+}
 
-    const searchTerm = searchParams?.search || '';
+export default async function ServicesPage({ searchParams }: PageProps) {
+
+    const resolvedSearchParams = await searchParams;
+    const searchTerm = (resolvedSearchParams?.search as string) || '';
     let query = supabase
         .from('service_orders')
         .select('*, clients!inner(name, phone)');
@@ -31,3 +49,4 @@ export default async function ServicesPage({ searchParams }: { searchParams: { s
         </div>
     );
 }
+
