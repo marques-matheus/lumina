@@ -28,7 +28,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     let query = supabase
       .from('products')
       .select('id, name, description, brand, quantity, sale_price, is_active')
-      .eq('is_active', true);
+      .order('is_active', { ascending: false })
     if (searchTerm) {
       query = query.ilike('name', `%${searchTerm}%`);
     }

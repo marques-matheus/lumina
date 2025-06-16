@@ -35,7 +35,7 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                     </TableHeader>
                     <TableBody>
                         {clients.map((client) => (
-                            <TableRow key={client.id} className="odd:bg-white even:bg-zinc-100 hover:bg-accent/50 transition-colors">
+                            <TableRow key={client.id} className="odd:bg-white even:bg-zinc-200 hover:bg-accent/50 transition-colors">
                                 <TableCell className="font-medium">{client.id}</TableCell>
                                 < TableCell className="font-medium" > {client.name} </TableCell>
                                 <TableCell>{client.phone}</TableCell>

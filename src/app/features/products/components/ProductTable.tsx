@@ -88,7 +88,7 @@ export default function ProductTable({ products }: { products: Product[] }) {
             </TableHeader>
             <TableBody>
               {products.map((product) => (
-                <TableRow key={product.id} className={`${product.is_active ? '' : 'text-gray-400'} odd:bg-white even:bg-zinc-100`}>
+                <TableRow key={product.id} className={`${product.is_active ? '' : 'text-gray-400'} odd:bg-white even:bg-zinc-200`}>
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell>{product.description}</TableCell>
                   <TableCell>{product.brand}</TableCell>
