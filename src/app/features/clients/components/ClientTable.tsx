@@ -32,9 +32,9 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                     </TableHeader>
                     <TableBody>
                         {clients.map((client) => (
-                            <TableRow key={client.id} className={`${client.id % 2 === 0 ? 'bg-zinc-200' : 'bg-white'} hover:bg-accent/50 transition-colors`}>
+                            <TableRow key={client.id} className="odd:bg-white even:bg-zinc-100 hover:bg-accent/50 transition-colors">
                                 <TableCell className="font-medium">{client.id}</TableCell>
-                                <TableCell className="font-medium">{client.name}</TableCell>
+                                < TableCell className="font-medium" > {client.name} </TableCell>
                                 <TableCell>{client.phone}</TableCell>
                                 <TableCell className='flex items-center justify-end space-x-2'>
                                     <Button onClick={() => handleEditClick(client)} variant={"ghost"}>
@@ -45,7 +45,7 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                         ))}
                     </TableBody>
                 </Table>
-            </CardContent>
-        </Card>
+            </CardContent >
+        </Card >
     );
 }

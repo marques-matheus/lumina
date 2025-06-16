@@ -36,7 +36,7 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
                         </TableHeader>
                         <TableBody>
                             {serviceOrders.map((order) => (
-                                <TableRow key={order.id} className={`${order.id % 2 === 0 ? 'bg-zinc-200' : 'bg-white'}`}>
+                                <TableRow key={order.id} className="odd:bg-white even:bg-zinc-100">
                                     <TableCell>
                                         <div className="font-medium">{order.clients?.name}</div>
                                         <div className="text-sm text-muted-foreground">O.S. #{order.id}</div>
