@@ -14,13 +14,11 @@ export async function generateMetadata(
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';
     return {
-        title: 'Gerenciamento de Produtos',
+        title: 'Lúmina - Ordens de Serviço',
         description: searchTerm
             ? `Resultados para "${searchTerm}"`
-            : 'Gerencie seus produtos com facilidade',
+            : 'Gerencie suas ordens de serviço com facilidade',
     };
-
-
 }
 
 export default async function ServicesPage({ searchParams }: PageProps) {

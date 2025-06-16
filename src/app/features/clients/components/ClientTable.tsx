@@ -8,6 +8,9 @@ import { Pencil } from 'lucide-react';
 import { Client } from '@/types';
 import { useClientsStore } from '@/stores/ClientsStore';
 
+
+
+
 export default function ClientTable({ clients }: { clients: Client[] }) {
     const { openModal } = useClientsStore();
 

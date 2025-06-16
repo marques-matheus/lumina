@@ -13,13 +13,11 @@ export async function generateMetadata(
   const resolvedSearchParams = await searchParams;
   const searchTerm = (resolvedSearchParams?.search as string) || '';
   return {
-    title: 'Gerenciamento de Produtos',
+    title: 'Lúmina - Produtos',
     description: searchTerm
       ? `Resultados para "${searchTerm}"`
       : 'Gerencie seus produtos com facilidade',
   };
-
-
 }
 
 export default async function ProductsPage({ searchParams }: PageProps) {
