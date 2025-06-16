@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useActionState } from 'react';
 import { addProduct } from '../actions';
-import { SubmitButton } from '../../../../components/ui/submitButton';
+import { SubmitButton } from '../../../../components/shared/submitButton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

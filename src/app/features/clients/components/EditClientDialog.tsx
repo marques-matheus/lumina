@@ -7,7 +7,7 @@ import { useEffect, useActionState } from 'react';
 import { Label } from '../../../../components/ui/label';
 import { Input } from '../../../../components/ui/input';
 import { updateClient } from '../actions';
-import { SubmitButton } from '@/components/ui/submitButton';
+import { SubmitButton } from '@/components/shared/submitButton';
 import { toast } from 'sonner';
 
 export default function EditClientDialog() {

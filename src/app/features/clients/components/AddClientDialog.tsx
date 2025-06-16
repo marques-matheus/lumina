@@ -17,7 +17,7 @@ import {
     DialogFooter,
     DialogClose,
 } from '@/components/ui/dialog';
-import { SubmitButton } from '@/components/ui/submitButton';
+import { SubmitButton } from '@/components/shared/submitButton';
 import { toast } from 'sonner';
 
 

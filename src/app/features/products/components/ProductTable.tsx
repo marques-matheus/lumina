@@ -21,9 +21,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MoreHorizontal } from 'lucide-react';
 import { deleteProduct, updateProduct } from '../actions';
-import { SubmitButton } from '@/components/ui/submitButton';
+import { SubmitButton } from '@/components/shared/submitButton';
 import { Product } from '@/types';
 import { toast } from 'sonner';
+import SearchInput from '@/components/shared/SearchInput';
 
 // Componente principal da tabela
 export default function ProductTable({ products }: { products: Product[] }) {
@@ -67,7 +68,10 @@ export default function ProductTable({ products }: { products: Product[] }) {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Lista de Produtos</CardTitle>
+          <div className='flex items-center justify-between'>
+            <CardTitle>Lista de Produtos</CardTitle>
+            <SearchInput placeholder="Buscar produto por nome..." />
+          </div>
         </CardHeader>
         <CardContent>
           <Table>

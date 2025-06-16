@@ -1,7 +1,7 @@
 'use client';
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import { Input } from "./input";
-import { Button } from "./button";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import { Search } from "lucide-react";
 
 export default function SearchInput({ placeholder }: { placeholder: string }) {

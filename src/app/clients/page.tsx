@@ -3,7 +3,6 @@ export const dynamic = 'force-dynamic'
 import AddClientDialog from '@/app/features/clients/components/AddClientDialog';
 import ClientTable from '@/app/features/clients/components/ClientTable';
 import { supabase } from '@/lib/supabaseClient';
-import EditClientDialog from '../features/clients/components/EditClientDialog';
 
 
 export default async function ClientsPage() {
@@ -17,7 +16,6 @@ export default async function ClientsPage() {
       <h1 className="text-2xl font-semibold">Meu Clientes</h1>
       <AddClientDialog />
       <ClientTable clients={clients || []} />
-      <EditClientDialog />
     </div>
   );
 }

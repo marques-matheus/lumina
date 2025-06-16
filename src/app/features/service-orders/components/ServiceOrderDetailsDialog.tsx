@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { PencilIcon, PrinterIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
-import { SubmitButton } from '@/components/ui/submitButton';
+import { SubmitButton } from '@/components/shared/submitButton';
 import PrintableOrder from './PrintableOrder';
 
 

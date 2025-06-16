@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Eye } from 'lucide-react';
 import { ServiceOrder } from '@/types';
 import { useServiceOrderStore } from '@/stores/serviceOrderStore';
+import SearchInput from '@/components/shared/SearchInput';
 
 
 export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: ServiceOrder[] }) {
@@ -19,7 +20,9 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
     return (
         <>
             <Card>
-                <CardHeader><CardTitle>Ordens de Serviço</CardTitle></CardHeader>
+                <CardHeader><div className='flex items-center justify-between'>
+                    <CardTitle>Ordens de Serviço</CardTitle>
+                    <SearchInput placeholder="Buscar ordem de serviço por cliente..." /></div></CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>

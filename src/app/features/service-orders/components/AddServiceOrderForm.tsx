@@ -15,7 +15,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { ChevronsUpDown, Check } from 'lucide-react';
-import { SubmitButton } from '@/components/ui/submitButton';
+import { SubmitButton } from '@/components/shared/submitButton';
 
 export default function AddServiceOrderDialog({ clients }: { clients: Client[] }) {
 
@@ -29,10 +29,10 @@ export default function AddServiceOrderDialog({ clients }: { clients: Client[] }
 
     useEffect(() => {
         if (state.success) {
-            toast.success(state.message); 
+            toast.success(state.message);
             setIsOpen(false);
         } else if (state.message) {
-            toast.error(state.message); 
+            toast.error(state.message);
         }
     }, [state]);
 
