@@ -25,9 +25,10 @@ import { SubmitButton } from '@/components/shared/submitButton';
 import { Product } from '@/types';
 import { toast } from 'sonner';
 import SearchInput from '@/components/shared/SearchInput';
+import ProductFilter from './ProductFilter';
 
 // Componente principal da tabela
-export default function ProductTable({ products }: { products: Product[] }) {
+export default function ProductTable({ products, brands }: { products: Product[], brands: string[] }) {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -70,7 +71,10 @@ export default function ProductTable({ products }: { products: Product[] }) {
         <CardHeader>
           <div className='flex items-center justify-between'>
             <CardTitle>Lista de Produtos</CardTitle>
-            <SearchInput placeholder="Buscar produto por nome..." />
+            <div className='flex gap-2'>
+              <ProductFilter brands={brands} />
+              <SearchInput placeholder="Buscar produto por nome..." />
+            </div>
           </div>
         </CardHeader>
         <CardContent>

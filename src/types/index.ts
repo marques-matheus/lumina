@@ -33,6 +33,7 @@ export type ServiceOrder = {
   total: number;
   delivered_at: string | null;
 };
+
 export type PageProps = {
   params: Promise<{ [key: string]: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
