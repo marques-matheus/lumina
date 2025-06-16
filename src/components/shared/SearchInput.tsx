@@ -30,7 +30,7 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
     return (
         <form onSubmit={handleSearch} className="flex items-center" >
             <Input
-                className="rounded-r-none"
+                className="rounded-r-none min-w-96"
                 name="search"
                 placeholder={placeholder}
                 defaultValue={searchParams.get('search')?.toString() || ''}
