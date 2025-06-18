@@ -21,34 +21,40 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Meus Clientes</CardTitle>
+
             </CardHeader>
             <CardContent>
                 <Table>
                     <TableHeader>
-                        <TableRow className='w-full '>
-                            <TableHead className="w-[150px]">ID</TableHead>
-                            <TableHead className="w-[150px]">Nome</TableHead>
-                            <TableHead className="w-[150px]">Telefone</TableHead>
-                            <TableHead className="w-[100px] text-end">Editar</TableHead>
+                        <TableRow className="responsive-table-header">
+                            <TableHead>ID</TableHead>
+                            <TableHead>Nome</TableHead>
+                            <TableHead>Telefone</TableHead>
+                            <TableHead className="text-end">Editar</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {clients.map((client) => (
-                            <TableRow key={client.id} className="odd:bg-white even:bg-zinc-200 hover:bg-accent/50 transition-colors">
-                                <TableCell className="font-medium">{client.id}</TableCell>
-                                < TableCell className="font-medium" > {client.name} </TableCell>
-                                <TableCell>{client.phone}</TableCell>
-                                <TableCell className='flex items-center justify-end space-x-2'>
+                            <TableRow key={client.id} className="responsive-table-row  odd:bg-secondary even:bg-white">
+                                <TableCell data-label="ID:" className="responsive-table-cell">
+                                    {client.id}
+                                </TableCell>
+                                <TableCell data-label="Nome:" className="responsive-table-cell">
+                                    {client.name}
+                                </TableCell>
+                                <TableCell data-label="Telefone:" className="responsive-table-cell">
+                                    {client.phone}
+                                </TableCell>
+                                <TableCell className="responsive-actions-cell">
                                     <Button onClick={() => handleEditClick(client)} variant={"ghost"}>
-                                        <Pencil className="h-4 w-4" />
+                                        <Pencil className="h-4 w-4 mr-2" /> Editar
                                     </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
-            </CardContent >
-        </Card >
+            </CardContent>
+        </Card>
     );
 }

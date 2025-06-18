@@ -142,5 +142,42 @@
       margin: 1.5cm; /* Define uma margem para a impressão */
     }
   }
+
+  @media (max-width: 767px) { /* Este CSS só se aplica em telas menores que 768px (o breakpoint 'md' do Tailwind) */
+    
+    /* Esconde o cabeçalho da tabela em telas pequenas */
+    .responsive-table-header {
+      display: none;
+    }
+
+    /* Transforma a linha da tabela em um card */
+    .responsive-table-row {
+      display: block;
+      border-width: 1px;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Transforma a célula da tabela para ocupar a linha toda e ter espaçamento */
+    .responsive-table-cell {
+      display: block;
+      padding: 0.5rem 0;
+    }
+
+    /* A MÁGICA: Adiciona o rótulo antes do conteúdo da célula */
+    .responsive-table-cell::before {
+      content: attr(data-label); /* Pega o valor do atributo 'data-label' */
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+
+    /* Centraliza a célula de ações */
+    .responsive-actions-cell {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 0.5rem;
+    }
+  }
   
 }

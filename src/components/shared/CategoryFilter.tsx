@@ -37,12 +37,12 @@ export function CategoryFilter({ title, paramName, options }: Props) {
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button variant="outline" className="w-[200px] justify-between">
+                <Button variant="outline" className="w-auto justify-between">
                     {selectedValue ? selectedValue : title}
                     <ChevronsUpDown className="ml-2 h-4 w-4" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="w-auto p-0">
                 <Command>
                     <CommandInput placeholder={`Procurar ${title.toLowerCase()}...`} />
                     <CommandEmpty>Nenhum resultado.</CommandEmpty>
