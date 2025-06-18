@@ -1,12 +1,15 @@
 // src/components/layout/Header.tsx
+import MobileSidebar from "./MobileSidebar";
+
 export default function Header() {
   return (
-    <header className="h-16 flex items-center justify-between px-6 bg-white border-b border-gray-200">
-      <div>
-        {/* Pode ter um breadcrumb ou título da página aqui */}
+    <header className="h-16 flex items-center p-6 bg-white border-b">
+      {/* BOTÃO DO MENU MOBILE - Visível apenas em telas pequenas (escondido a partir de 'lg') */}
+      <div className="lg:hidden">
+        <MobileSidebar />
       </div>
-      <div>
-        {/* Pode ter informações do usuário ou um botão de logout aqui */}
+      <div className="flex-1 text-center md:text-left">
+        {/* Futuramente, o título da página pode aparecer aqui */}
       </div>
     </header>
   );
