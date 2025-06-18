@@ -25,6 +25,8 @@ export default async function ServicesPage({ searchParams }: PageProps) {
 
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';
+    const statusFilter = (resolvedSearchParams?.status as string) || '';
+
     let query = supabase
         .from('service_orders')
         .select('*, clients!inner(name, phone)');
@@ -33,6 +35,11 @@ export default async function ServicesPage({ searchParams }: PageProps) {
         query = query
             .ilike('clients.name', `%${searchTerm}%`)
     }
+
+    if (statusFilter) {
+        query = query.eq('status', statusFilter);
+    }
+
 
     const { data: services } = await query.order('created_at', { ascending: false });
     const { data: clients } = await supabase

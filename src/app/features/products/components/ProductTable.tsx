@@ -25,7 +25,7 @@ import { SubmitButton } from '@/components/shared/submitButton';
 import { Product } from '@/types';
 import { toast } from 'sonner';
 import SearchInput from '@/components/shared/SearchInput';
-import ProductFilter from './ProductFilter';
+import { CategoryFilter } from '@/components/shared/CategoryFilter';
 
 // Componente principal da tabela
 export default function ProductTable({ products, brands }: { products: Product[], brands: string[] }) {
@@ -72,7 +72,7 @@ export default function ProductTable({ products, brands }: { products: Product[]
           <div className='flex items-center justify-between'>
             <CardTitle>Lista de Produtos</CardTitle>
             <div className='flex gap-2'>
-              <ProductFilter brands={brands} />
+              <CategoryFilter title="Marca" paramName="brand" options={brands} />
               <SearchInput placeholder="Buscar produto por nome..." />
             </div>
           </div>

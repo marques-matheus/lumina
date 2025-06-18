@@ -7,6 +7,7 @@ import { Eye } from 'lucide-react';
 import { ServiceOrder } from '@/types';
 import { useServiceOrderStore } from '@/stores/serviceOrderStore';
 import SearchInput from '@/components/shared/SearchInput';
+import { CategoryFilter } from '@/components/shared/CategoryFilter';
 
 
 export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: ServiceOrder[] }) {
@@ -17,12 +18,21 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
         openModal(order);
     };
 
+    const statuses = ["Aguardando Avaliação", "Em Reparo", "Concluído", "Entregue", "Cancelado"];
+
+
     return (
         <>
             <Card>
-                <CardHeader><div className='flex items-center justify-between'>
-                    <CardTitle>Ordens de Serviço</CardTitle>
-                    <SearchInput placeholder="Buscar ordem de serviço por cliente..." /></div></CardHeader>
+                <CardHeader>
+                    <div className='flex items-center justify-between'>
+                        <CardTitle>Lista de Produtos</CardTitle>
+                        <div className='flex gap-2'>
+                            <CategoryFilter title="Filtrar por Status" paramName="status" options={statuses} />
+                            <SearchInput placeholder="Buscar ordem por cliente" />
+                        </div>
+                    </div>
+                </CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
