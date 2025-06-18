@@ -51,8 +51,10 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     const { data: products } = await query.order('id', { ascending: true });
     return (
       <div className="flex flex-col gap-8">
-        <h1 className="text-2xl font-semibold">Gerenciamento de Produtos</h1>
-        <AddProductForm />
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg font-semibold">Produtos</h1>
+          <AddProductForm />
+        </div>
         <ProductTable products={products || []} brands={uniqueBrands} />
       </div>
     );
