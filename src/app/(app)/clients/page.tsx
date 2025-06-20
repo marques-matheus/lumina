@@ -7,7 +7,7 @@ import { PageProps } from '@/types';
 import { createServerClient } from '@supabase/ssr';
 import { Metadata, ResolvingMetadata } from 'next';
 import { cookies } from 'next/headers';
-import EditClientDialog from '../features/clients/components/EditClientDialog';
+import EditClientDialog from '../../features/clients/components/EditClientDialog';
 
 export async function generateMetadata(
   { params, searchParams }: PageProps,

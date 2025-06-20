@@ -4,7 +4,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import AddServiceOrderDialog from "@/app/features/service-orders/components/AddServiceOrderForm";
 import ServiceOrdersTable from "@/app/features/service-orders/components/ServiceOrdersTable";
 import { supabase } from "@/lib/supabaseClient";
-import ServiceOrderDetailsDialog from "../features/service-orders/components/ServiceOrderDetailsDialog";
+import ServiceOrderDetailsDialog from "../../features/service-orders/components/ServiceOrderDetailsDialog";
 import { PageProps } from "@/types";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
