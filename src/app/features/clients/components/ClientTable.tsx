@@ -16,6 +16,7 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
 
     const handleEditClick = (client: Client) => {
         openModal(client);
+        console.log('Edit client:', client);
     };
 
     return (

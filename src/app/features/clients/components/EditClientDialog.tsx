@@ -33,7 +33,7 @@ export default function EditClientDialog() {
                 </DialogHeader>
                 <form action={formAction}>
                     <div className="grid gap-4 py-4">
-                        <Input type="hidden" name="id" value={selectedClient?.id} />
+                        <Input type="hidden" name="id" defaultValue={selectedClient?.id} />
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="name" className="text-right">Nome</Label>
                             <Input id="name" name="name" defaultValue={selectedClient?.name} className="col-span-3" />
