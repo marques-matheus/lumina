@@ -4,7 +4,10 @@ import AddClientDialog from '@/app/features/clients/components/AddClientDialog';
 import ClientTable from '@/app/features/clients/components/ClientTable';
 import { supabase } from '@/lib/supabaseClient';
 import { PageProps } from '@/types';
+import { createServerClient } from '@supabase/ssr';
 import { Metadata, ResolvingMetadata } from 'next';
+import { cookies } from 'next/headers';
+import EditClientDialog from '../features/clients/components/EditClientDialog';
 
 export async function generateMetadata(
   { params, searchParams }: PageProps,
@@ -21,6 +24,19 @@ export async function generateMetadata(
 }
 
 export default async function ClientsPage() {
+
+  const cookieStore = cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!, // Chave de admin para buscar dados
+    {
+      cookies: {
+        async get(name: string) {
+          return (await cookieStore).get(name)?.value;
+        },
+      },
+    }
+  );
   const { data: clients } = await supabase
     .from('clients')
     .select('*')
@@ -33,6 +49,7 @@ export default async function ClientsPage() {
         <AddClientDialog />
       </div>
       <ClientTable clients={clients || []} />
+      <EditClientDialog />
     </div>
   );
 }

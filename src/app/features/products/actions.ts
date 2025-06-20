@@ -1,11 +1,9 @@
 'use server'
 import { supabase } from '@/lib/supabaseClient';
 import { revalidatePath } from 'next/cache';
-
-type FormState = {
-    success: boolean;
-    message: string;
-  };
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { FormState } from '@/types';
 
 export async function addProduct(prevState: FormState, formData: FormData): Promise<FormState> {
  const name = formData.get('name') as string;
@@ -13,6 +11,19 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
  const description = formData.get('description') as string;
  const salePrice = formData.get('sale_price') as string;
  const brand = formData.get('brand') as string;
+
+ const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) { return cookieStore.get(name)?.value; },
+        set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
+        remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
+      },
+    }
+  );
 
  if(!name || !quantity || !salePrice || !description || !brand) {
   return { success: false, message: 'Dados inválidos.' };

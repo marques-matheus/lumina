@@ -2,15 +2,10 @@
 
 import { supabase } from "@/lib/supabaseClient"
 import { ServiceOrder } from "@/types";
+import { createServerClient } from "@supabase/ssr";
 import { revalidatePath } from "next/cache";
-
-
-
-type FormState = {
-  success: boolean;
-  message: string;
-  updatedOrder?: ServiceOrder;
-};
+import { cookies } from "next/headers";
+import { FormState } from "@/types";
 
 export async function addServiceOrder(prevState: FormState, formData: FormData): Promise<FormState> {
     const clientId = formData.get('clientId') as string;
@@ -21,6 +16,19 @@ export async function addServiceOrder(prevState: FormState, formData: FormData):
     const items = formData.get('items') as string;
     const type = formData.get('type') as string;
     const total = formData.get('total') as string;
+
+    const cookieStore = await cookies();
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            get(name: string) { return cookieStore.get(name)?.value; },
+            set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
+            remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
+          },
+        }
+      );
     
     if (!clientId || !equip_brand || !equip_model || !serial_number || !problem_description || !type || !total ) {
         return { success: false, message: 'Preencha todos os campos obrigatórios.' };
