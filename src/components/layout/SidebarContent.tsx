@@ -14,10 +14,10 @@ export default function SidebarContent() {
                 <Link href="/" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-4 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/')}`}>
                     Produtos
                 </Link>
-                <Link href="/clients" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-4 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/clients')}`}>
+                <Link href="/clientes" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-4 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/clients')}`}>
                     Clientes
                 </Link>
-                <Link href="/services" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-4 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/services')}`}>
+                <Link href="/servicos" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-4 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/services')}`}>
                     Ordens de Serviço
                 </Link>
                 {/* Adicione outros links aqui no futuro */}
