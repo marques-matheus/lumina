@@ -11,7 +11,7 @@ export function SubmitButton({ text = 'Salvar' }: props) {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" disabled={pending}>
+    <Button type="submit" disabled={pending} className='dark:bg-teal-700 dark:text-white'>
       {pending ? <span className="animate-pulse text-muted-foreground animation-duration-initial">...</span> : `${text}`}
     </Button>
   );
