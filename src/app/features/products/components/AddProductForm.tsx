@@ -33,7 +33,7 @@ export default function AddProductDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className='w-40 self-end'>Novo Produto</Button>
+        <Button className='p-4 self-end'>Novo Produto</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>

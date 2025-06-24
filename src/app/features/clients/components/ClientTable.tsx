@@ -36,7 +36,7 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                     </TableHeader>
                     <TableBody>
                         {clients.map((client) => (
-                            <TableRow key={client.id} className="responsive-table-row  odd:bg-secondary even:bg-white">
+                            <TableRow key={client.id} className="responsive-table-row  odd:bg-secondary even:bg-white in-dark:even:bg-zinc-700">
                                 <TableCell data-label="ID:" className="responsive-table-cell">
                                     {client.id}
                                 </TableCell>
@@ -46,9 +46,9 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
                                 <TableCell data-label="Telefone:" className="responsive-table-cell">
                                     {client.phone}
                                 </TableCell>
-                                <TableCell className="responsive-actions-cell">
+                                <TableCell className="responsive-actions-cell text-right">
                                     <Button onClick={() => handleEditClick(client)} variant={"ghost"}>
-                                        <Pencil className="h-4 w-4 mr-2" /> Editar
+                                        <Pencil className="h-4 w-4 mr-2" /> 
                                     </Button>
                                 </TableCell>
                             </TableRow>

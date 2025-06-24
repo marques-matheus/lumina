@@ -1,7 +1,1 @@
-export default function SignUpPage() {
-    return (
-        <div>
-            <h1>Sign Up</h1>
-        </div>
-    );
-}
+import { Input } from "@/components/ui/input";

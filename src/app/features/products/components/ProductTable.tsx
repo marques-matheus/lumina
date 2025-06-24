@@ -73,7 +73,7 @@ export default function ProductTable({ products, brands }: { products: Product[]
             </TableHeader>
             <TableBody>
               {products.map((product) => (
-                <TableRow key={product.id} className={`responsive-table-row  odd:bg-secondary even:bg-white ${!product.is_active ? 'text-muted-foreground' : ''}`}>
+                <TableRow key={product.id} className={`responsive-table-row  odd:bg-secondary even:bg-white in-dark:even:bg-zinc-700 ${!product.is_active ? 'text-muted-foreground' : ''}`}>
                   <TableCell data-label="Nome:" className="responsive-table-cell font-medium">{product.name}</TableCell>
                   <TableCell data-label="Marca:" className="responsive-table-cell">{product.brand}</TableCell>
                   <TableCell data-label="Quantidade:" className="responsive-table-cell">{product.quantity}</TableCell>

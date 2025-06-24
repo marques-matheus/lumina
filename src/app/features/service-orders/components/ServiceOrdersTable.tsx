@@ -43,7 +43,7 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
                     </TableHeader>
                     <TableBody>
                         {serviceOrders.map((order) => (
-                            <TableRow key={order.id} className="responsive-table-row odd:bg-secondary even:bg-white">
+                            <TableRow key={order.id} className="responsive-table-row odd:bg-secondary even:bg-white in-dark:even:bg-zinc-700">
                                 <TableCell data-label="Cliente / O.S.:" className="responsive-table-cell">
                                     <div className="font-medium">{order.clients?.name}</div>
                                     <div className="text-sm text-muted-foreground">O.S. #{order.id}</div>
