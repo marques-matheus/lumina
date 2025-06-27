@@ -12,7 +12,7 @@ export default function AppLayout({ children }: Readonly<{ children: React.React
   return (
 
     <div className="flex h-screen bg-gray-50 dark:bg-zinc-900 text-gray-800 dark:text-white">
-      <aside className="hidden lg:flex flex-col w-64 bg-gray-100 border-r p-4 dark:bg-zinc-700 dark:border-zinc-700">
+      <aside className="hidden lg:flex flex-col w-64 bg-gray-100 border-r  dark:bg-zinc-700 dark:border-zinc-700">
         <SidebarContent />
       </aside>
       <div className="flex-1 flex flex-col overflow-hidden">
