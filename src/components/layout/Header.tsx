@@ -1,6 +1,7 @@
 // src/components/layout/Header.tsx
 import { ToggleDarkMode } from "../ui/toggleDarkMode";
 import MobileSidebar from "./MobileSidebar";
+import { logout } from "@/app/features/auth/actions";
 
 export default function Header() {
   return (
@@ -11,6 +12,9 @@ export default function Header() {
       </div>
       <div className="flex-1 text-center md:text-right">
         <ToggleDarkMode />
+        <button onClick={logout} className="ml-4 text-sm text-gray-700 dark:text-gray-300 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100">
+          Sair
+        </button>
       </div>
     </header>
   );

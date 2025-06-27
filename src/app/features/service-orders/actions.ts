@@ -33,9 +33,14 @@ export async function addServiceOrder(prevState: FormState, formData: FormData):
     if (!clientId || !equip_brand || !equip_model || !serial_number || !problem_description || !type || !total ) {
         return { success: false, message: 'Preencha todos os campos obrigatórios.' };
     }
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { return { success: false, message: 'Não autorizado' }; }
+
     const { error } = await supabase
     .from('service_orders').insert([{
         client_id: parseInt(clientId, 10),
+        profile_id: user.id,
         type,
         equip_brand,
         equip_model,

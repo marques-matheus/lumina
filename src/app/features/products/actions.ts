@@ -1,11 +1,12 @@
 'use server'
 import { supabase } from '@/lib/supabaseClient';
 import { revalidatePath } from 'next/cache';
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { FormState } from '@/types';
 
 export async function addProduct(prevState: FormState, formData: FormData): Promise<FormState> {
+  
  const name = formData.get('name') as string;
  const quantity = formData.get('quantity') as string;
  const description = formData.get('description') as string;
@@ -29,10 +30,13 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
   return { success: false, message: 'Dados inválidos.' };
 }
 
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) { return { success: false, message: 'Não autorizado' }; }
 
  const { error } = await supabase.from('products').insert([{
     name,
     quantity: parseInt(quantity),
+    profile_id: user.id,
     description,
     brand,
     sale_price: parseFloat(salePrice),

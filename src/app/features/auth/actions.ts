@@ -78,6 +78,7 @@ if (error) {
     if (error.message.includes('User already registered')) {
         return { success: false, message: 'Este email já está em uso.' };
     }
+    console.error('Erro ao cadastrar usuário:', error.stack);
     return { success: false, message: `Erro no cadastro: ${error.message}` };
 }
 
@@ -160,4 +161,23 @@ export async function completeOnboarding(prevState: FormState, formData: FormDat
     revalidatePath('/', 'layout');
     redirect('/');
 
+}
+
+
+export async function logout() {
+const cookieStore = await cookies();
+const supabase = createServerClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    cookies: {
+      get(name: string) { return cookieStore.get(name)?.value; },
+      set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
+      remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
+    },
+  }
+);
+
+await supabase.auth.signOut();
+redirect('/login'); // Redireciona para a página de login após o logout
 }

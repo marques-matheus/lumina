@@ -26,11 +26,13 @@ export async function addClient(prevState: FormState, formData: FormData): Promi
     if (!name || !phone) {
         return { success: false, message: 'Dados inválidos.' };
     }
-
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { return { success: false, message: 'Não autorizado' }; }
     const { error } = await supabase
     .from('clients').insert([{
         name,
-        phone
+        phone,
+        profile_id: user.id
     }]);
 
     if (error){

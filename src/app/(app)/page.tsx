@@ -3,7 +3,9 @@ import AddProductForm from '@/app/features/products/components/AddProductForm';
 import ProductTable from '@/app/features/products/components/ProductTable';
 import { supabase } from '@/lib/supabaseClient';
 import { PageProps } from '@/types';
+import { createServerClient } from '@supabase/ssr';
 import { Metadata, ResolvingMetadata } from 'next';
+import { cookies } from 'next/headers';
 
 
 export async function generateMetadata(
@@ -23,6 +25,20 @@ export async function generateMetadata(
 export default async function ProductsPage({ searchParams }: PageProps) {
   {
 
+    const cookieStore = await cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) { return cookieStore.get(name)?.value; },
+          set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
+          remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
+        },
+      }
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+    console.log('Usuário autenticado:', user);
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';
     const brandFilter = (resolvedSearchParams?.brand as string) || '';
@@ -53,6 +69,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
       <div className="flex flex-col gap-8">
         <div className="flex items-center justify-between">
           <h1 className="text-lg font-semibold">Produtos</h1>
+
           <AddProductForm />
         </div>
         <ProductTable products={products || []} brands={uniqueBrands} />
