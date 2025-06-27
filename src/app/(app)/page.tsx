@@ -4,8 +4,6 @@ import ProductTable from '@/app/features/products/components/ProductTable';
 import { supabase } from '@/lib/supabaseClient';
 import { PageProps } from '@/types';
 import { Metadata, ResolvingMetadata } from 'next';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 
 
 export async function generateMetadata(
@@ -25,18 +23,6 @@ export async function generateMetadata(
 export default async function ProductsPage({ searchParams }: PageProps) {
   {
 
-    const cookieStore = cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!, // Chave de admin para buscar dados
-      {
-        cookies: {
-          async get(name: string) {
-            return (await cookieStore).get(name)?.value;
-          },
-        },
-      }
-    );
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';
     const brandFilter = (resolvedSearchParams?.brand as string) || '';
