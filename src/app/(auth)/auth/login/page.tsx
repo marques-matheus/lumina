@@ -38,7 +38,7 @@ export default function LoginPage() {
                     </div>
                     <div className="flex items-center justify-between mb-4">
                         <SubmitButton text="Entrar" />
-                        <Link href="/cadastro" className="text-blue-500 hover:underline ml-4">
+                        <Link href="/auth/cadastro" className="text-blue-500 hover:underline ml-4">
                             Não tem uma conta? Cadastre-se
                         </Link>
                     </div>

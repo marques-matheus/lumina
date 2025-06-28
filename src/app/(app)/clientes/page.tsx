@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabaseClient';
 import { PageProps } from '@/types';
 import { Metadata, ResolvingMetadata } from 'next';
 import EditClientDialog from '../../features/clients/components/EditClientDialog';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 export async function generateMetadata(
   { params, searchParams }: PageProps,
@@ -22,10 +24,22 @@ export async function generateMetadata(
 }
 
 export default async function ClientsPage() {
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: cookieStore.getAll,
+      },
+    }
+  );
+  const { data: { user } } = await supabase.auth.getUser();
 
   const { data: clients } = await supabase
     .from('clients')
     .select('*')
+    .eq('profile_id', user?.id)
     .order('id', { ascending: true });
 
   return (

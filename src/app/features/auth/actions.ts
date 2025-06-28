@@ -1,6 +1,4 @@
 'use server'
-
-import { supabase } from "@/lib/supabaseClient";
 import { type FormState } from "@/types"; 
 import { createServerClient } from "@supabase/ssr";
 import { revalidatePath } from "next/cache";
@@ -179,5 +177,5 @@ const supabase = createServerClient(
 );
 
 await supabase.auth.signOut();
-redirect('/login'); // Redireciona para a página de login após o logout
+redirect('/auth/login'); // Redireciona para a página de login após o logout
 }

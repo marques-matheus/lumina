@@ -6,6 +6,8 @@ import ServiceOrdersTable from "@/app/features/service-orders/components/Service
 import { supabase } from "@/lib/supabaseClient";
 import ServiceOrderDetailsDialog from "../../features/service-orders/components/ServiceOrderDetailsDialog";
 import { PageProps } from "@/types";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
 
 export async function generateMetadata(
@@ -23,6 +25,17 @@ export async function generateMetadata(
 }
 
 export default async function ServicesPage({ searchParams }: PageProps) {
+    const cookieStore = await cookies();
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll: cookieStore.getAll,
+            },
+        }
+    );
+    const { data: { user } } = await supabase.auth.getUser();
 
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';
@@ -30,7 +43,8 @@ export default async function ServicesPage({ searchParams }: PageProps) {
 
     let query = supabase
         .from('service_orders')
-        .select('*, clients!inner(name, phone)');
+        .select('*, clients!inner(name, phone)')
+        .eq('profile_id', user?.id);
 
     if (searchTerm) {
         query = query

@@ -31,20 +31,19 @@ export default async function ProductsPage({ searchParams }: PageProps) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) { return cookieStore.get(name)?.value; },
-          set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
-          remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
+          getAll: cookieStore.getAll,
         },
       }
     );
     const { data: { user } } = await supabase.auth.getUser();
-    console.log('Usuário autenticado:', user);
+
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';
     const brandFilter = (resolvedSearchParams?.brand as string) || '';
     let query = supabase
       .from('products')
       .select('id, name, description, brand, quantity, sale_price, is_active')
+      .eq('profile_id', user?.id)
       .order('is_active', { ascending: false })
     if (searchTerm) {
       query = query.ilike('name', `%${searchTerm}%`);
