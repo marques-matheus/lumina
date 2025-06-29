@@ -44,3 +44,27 @@ export type FormState = {
   message: string;
   updatedOrder?: ServiceOrder;
 };
+
+type userMetadata = {
+  company_name?: string;
+  cnpj?: string;
+  does_provide_services?: boolean;
+  has_completed_onboarding?: boolean;
+  service_types?: string[];
+}
+
+export type User = {
+  id: string;
+  email?: string;
+  user_metadata?: userMetadata;
+  };
+  
+  export type Profile = {
+  company_name?: string;
+  cnpj?: string;
+  does_provide_services?: boolean;
+  has_completed_onboarding?: boolean;
+  service_types?: string[];
+  };
+
+export type SessionUser = User & Profile

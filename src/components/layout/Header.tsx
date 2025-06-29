@@ -1,14 +1,20 @@
-// src/components/layout/Header.tsx
+'use client';
 import { ToggleDarkMode } from "../ui/toggleDarkMode";
 import MobileSidebar from "./MobileSidebar";
 import { logout } from "@/app/features/auth/actions";
+import { useSession } from "@/providers/SessionProvider";
 
 export default function Header() {
+  const user = useSession();
   return (
     <header className="h-16 flex items-center p-6 bg-white dark:bg-zinc-800 border-b">
-      {/* BOTÃO DO MENU MOBILE - Visível apenas em telas pequenas (escondido a partir de 'lg') */}
       <div className="lg:hidden">
         <MobileSidebar />
+      </div>
+      <div>
+        <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
+          {user?.user_metadata?.company_name || "Lúmina" /* Nome da empresa ou padrão */}
+        </h1>
       </div>
       <div className="flex-1 text-center md:text-right">
         <ToggleDarkMode />
