@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic'
 import AddProductForm from '@/app/features/products/components/AddProductForm';
 import ProductTable from '@/app/features/products/components/ProductTable';
-import { supabase } from '@/lib/supabaseClient';
 import { PageProps } from '@/types';
 import { createServerClient } from '@supabase/ssr';
 import { Metadata, ResolvingMetadata } from 'next';
