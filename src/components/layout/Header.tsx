@@ -13,7 +13,7 @@ export default function Header() {
       </div>
       <div>
         <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
-          {user?.user_metadata?.company_name || "Lúmina" /* Nome da empresa ou padrão */}
+          {user?.company_name || "Lúmina" /* Nome da empresa ou padrão */}
         </h1>
       </div>
       <div className="flex-1 text-center md:text-right">

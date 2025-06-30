@@ -8,6 +8,7 @@ import ServiceOrderDetailsDialog from "../../features/service-orders/components/
 import { PageProps } from "@/types";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 
 export async function generateMetadata(
@@ -36,7 +37,9 @@ export default async function ServicesPage({ searchParams }: PageProps) {
         }
     );
     const { data: { user } } = await supabase.auth.getUser();
-
+    if (!user) {
+        redirect('/auth/login');
+    }
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';
     const statusFilter = (resolvedSearchParams?.status as string) || '';

@@ -6,6 +6,7 @@ import { PageProps } from '@/types';
 import { createServerClient } from '@supabase/ssr';
 import { Metadata, ResolvingMetadata } from 'next';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 
 export async function generateMetadata(
@@ -36,6 +37,10 @@ export default async function ProductsPage({ searchParams }: PageProps) {
       }
     );
     const { data: { user } } = await supabase.auth.getUser();
+
+    if(!user){
+      redirect('/auth/login');
+    }
 
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';

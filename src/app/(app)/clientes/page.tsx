@@ -8,6 +8,7 @@ import { Metadata, ResolvingMetadata } from 'next';
 import EditClientDialog from '../../features/clients/components/EditClientDialog';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export async function generateMetadata(
   { params, searchParams }: PageProps,
@@ -35,6 +36,9 @@ export default async function ClientsPage() {
     }
   );
   const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    redirect('/auth/login');
+  }
 
   const { data: clients } = await supabase
     .from('clients')
