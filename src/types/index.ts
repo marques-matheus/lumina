@@ -67,4 +67,15 @@ export type User = {
   service_types?: string[];
   };
 
-export type SessionUser = User & Profile
+export type Address = {
+  id: string;
+  street: string;
+  number: string;
+  complement: string;
+  city: string;
+  neighborhood: string;
+  state: string;
+  zip_code: string;
+};
+
+export type SessionUser = User & Profile & Address

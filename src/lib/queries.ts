@@ -38,6 +38,16 @@ const { data: profile, error } = await supabase
 .eq('id', user.id)
 .maybeSingle();
 
+const {data: addresses, error: addressError} = await supabase
+.from('addresses')
+.select('*')
+.eq('profile_id', user.id)
+.maybeSingle();
+
+if (addressError) {
+console.error('[getUserProfile] Erro ao buscar endereço:', addressError.message);
+}
+
 if (error) {
 console.error('[getUserProfile] Erro ao buscar perfil:', error.message);
 return user;
@@ -46,6 +56,7 @@ return user;
 const sessionUser = {
 ...user,
 ...profile,
+...addresses
 };
 
 return sessionUser;
