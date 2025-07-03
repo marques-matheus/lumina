@@ -8,6 +8,7 @@ import { type ServiceOrder } from '@/types';
 import { useServiceOrderStore } from '@/stores/serviceOrderStore';
 import { CategoryFilter } from '@/components/shared/CategoryFilter';
 import SearchInput from '@/components/shared/SearchInput';
+import { useSession } from '@/providers/SessionProvider';
 
 
 export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: ServiceOrder[] }) {
@@ -17,8 +18,18 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
     const handleViewDetailsClick = (order: ServiceOrder) => {
         openModal(order);
     };
-
+    const session = useSession();
     const statuses = ["Aguardando Avaliação", "Em Reparo", "Aguardando Peças", "Concluído", "Entregue", "Cancelado"];
+
+    if (!session?.does_provide_service) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Para acessar esta página, você precisa ser prestador de serviços</CardTitle>
+                </CardHeader>
+            </Card>
+        );
+    }
 
     return (
         <Card>
