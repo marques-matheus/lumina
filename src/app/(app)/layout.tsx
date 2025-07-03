@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header';
 import SidebarContent from '@/components/layout/SidebarContent';
 import { SessionProvider } from '@/providers/SessionProvider';
 import { getUserProfile } from '@/lib/queries';
+import CompleteProfile from '@/components/layout/completeProfile';
 
 
 const inter = Inter({ subsets: ['latin'] });
@@ -20,6 +21,7 @@ export default async function AppLayout({ children }: Readonly<{ children: React
         </aside>
         <div className="flex-1 flex flex-col overflow-hidden">
           <Header />
+          <CompleteProfile />
           <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-zinc-800 p-6">
             {children}
           </main>

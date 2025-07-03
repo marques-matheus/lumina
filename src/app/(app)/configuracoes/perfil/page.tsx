@@ -1,18 +1,25 @@
-'use client'
 import ProfileForm from "@/app/features/settings/components/ProfileForm"
-import { useSession } from "@/providers/SessionProvider"
+import { getUserProfile } from '@/lib/queries'; 
+import { redirect } from 'next/navigation';
+import type { SessionUser } from '@/types';
 
-export default function ProfilePage() {
-    const user = useSession()
+
+export default async function ProfileSettingsPage() {
+   
+    const userProfile = await getUserProfile();
+
+    if (!userProfile) {
+        redirect('/auth/login');
+    }
+
+    const shouldStartInEditMode = !userProfile.has_completed_onboarding;
 
     return (
-        <div className="flex flex-col h-screen">
-
-            {user ? (
-                <ProfileForm user={user} />
-            ) : (
-                <p className="text-red-500">You are not logged in.</p>
-            )}
+        <div>
+            <ProfileForm
+                user={userProfile as SessionUser}
+                startInEditMode={shouldStartInEditMode}
+            />
         </div>
-    )
+    );
 }

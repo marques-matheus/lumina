@@ -108,7 +108,7 @@ export async function completeOnboarding(prevState: FormState, formData: FormDat
     const companyName = formData.get('company_name') as string;
     const cnpj = formData.get('cnpj') as string;
     const services = formData.get('services') as string;
-    const doesProvideServices = formData.get('does_provide_services') === 'on';
+    const doesProvideService = formData.get('does_provide_services') === 'on';
     const street = formData.get('street') as string;
     const number = formData.get('number') as string;
     const complement = formData.get('complement') as string;
@@ -131,7 +131,7 @@ export async function completeOnboarding(prevState: FormState, formData: FormDat
     .update({
       company_name: companyName,
       cnpj: cnpj,
-      does_provide_service: doesProvideServices,
+      does_provide_service: doesProvideService,
       service_types: servicesArray,
       has_completed_onboarding: true, 
     })
@@ -205,7 +205,7 @@ export async function updateProfile(prevState: FormState, formData: FormData): P
   const companyName = formData.get('company_name') as string;
   const cnpj = formData.get('cnpj') as string;
   const services = formData.get('services') as string;
-  const doesProvideServices = formData.get('does_provide_services') === 'on';
+  const doesProvideService = formData.get('does_provide_service') === 'on';
   const street = formData.get('street') as string;
   const number = formData.get('number') as string;
   const complement = formData.get('complement') as string;
@@ -228,8 +228,9 @@ export async function updateProfile(prevState: FormState, formData: FormData): P
     .update({
       company_name: companyName,
       cnpj: cnpj,
-      does_provide_service: doesProvideServices,
+      does_provide_service: doesProvideService,
       service_types: servicesArray,
+      has_completed_onboarding: true,
     })
     .eq('id', user?.id);
 
@@ -254,5 +255,8 @@ export async function updateProfile(prevState: FormState, formData: FormData): P
     return { success: false, message: `Erro ao atualizar endereço: ${addressError.message}` };
   }
   revalidatePath('/', 'layout');
-  redirect('/'); // Redireciona para a página inicial após a atualização do perfil
+
+  return { success: true, message: 'Perfil atualizado com sucesso!' };
+
+  
 }

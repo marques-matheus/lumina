@@ -62,7 +62,7 @@ export type User = {
   export type Profile = {
   company_name?: string;
   cnpj?: string;
-  does_provide_services?: boolean;
+  does_provide_service?: boolean;
   has_completed_onboarding?: boolean;
   service_types?: string[];
   };
