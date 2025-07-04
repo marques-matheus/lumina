@@ -16,6 +16,9 @@ export default function SidebarContent() {
                 <Image src={"/logo.png"} alt="Logo" width={120} height={120} className="flex lg:mx-14 lg:mb-8" />
                 <nav className="flex flex-col space-y-4 dark:bg-zinc-700">
                     <Link href="/" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/')}`}>
+                        Início
+                    </Link>
+                    <Link href="/produtos" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/produtos')}`}>
                         Produtos
                     </Link>
                     <Link href="/clientes" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/clientes')}`}>
