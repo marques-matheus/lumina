@@ -17,18 +17,7 @@ export async function addServiceOrder(prevState: FormState, formData: FormData):
     const type = formData.get('type') as string;
     const total = formData.get('total') as string;
 
-    const cookieStore = await cookies();
-      const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            get(name: string) { return cookieStore.get(name)?.value; },
-            set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
-            remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
-          },
-        }
-      );
+   
     
     if (!clientId || !equip_brand || !equip_model || !serial_number || !problem_description || !type || !total ) {
         return { success: false, message: 'Preencha todos os campos obrigatórios.' };
@@ -61,6 +50,18 @@ export async function addServiceOrder(prevState: FormState, formData: FormData):
 
 
 export async function updateServiceOrder(prevState: FormState, formData: FormData): Promise<FormState> {
+   const cookieStore = await cookies();
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            get(name: string) { return cookieStore.get(name)?.value; },
+            set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
+            remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
+          },
+        }
+      );
     const id = formData.get('id') as string;
     const equip_brand = formData.get('equip_brand') as string;
     const equip_model = formData.get('equip_model') as string;
@@ -83,7 +84,7 @@ export async function updateServiceOrder(prevState: FormState, formData: FormDat
     })
     .match({ id: parseInt(id) })
     .select(`*, clients(name)`) // Pedimos os dados completos de volta;
-    .single();
+    .maybeSingle();
 
     if (error) {
         return {success: false, message: `Erro ao atualizar O.S.: ${error.message}`, updatedOrder: undefined};

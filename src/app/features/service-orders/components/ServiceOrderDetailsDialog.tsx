@@ -18,7 +18,7 @@ import PrintableOrder from './PrintableOrder';
 
 
 type ServiceOrderFormData = {
-    equip_type: string;
+    type: string;
     equip_brand: string;
     equip_model: string;
     serial_number: string;
@@ -50,7 +50,7 @@ export default function ServiceOrderDetailsDialog() {
     useEffect(() => {
         if (isEditing && selectedOrder) {
             setEditFormData({
-                equip_type: selectedOrder.type,
+                type: selectedOrder.type,
                 equip_brand: selectedOrder.equip_brand,
                 equip_model: selectedOrder.equip_model,
                 serial_number: selectedOrder.serial_number,
@@ -117,7 +117,7 @@ export default function ServiceOrderDetailsDialog() {
                     {isEditing ? (
                         <form id="edit-form" action={formAction} className="grid grid-cols-2 gap-4 py-4">
                             <Input type="hidden" name="id" value={selectedOrder.id} />
-                            <div className="space-y-1"><Label htmlFor="equip_type">Tipo</Label><Input id="equip_type" name="equip_type" value={editFormData?.equip_type || ''} onChange={handleFormChange} /></div>
+                            <div className="space-y-1"><Label htmlFor="type">Tipo</Label><Input id="type" name="type" value={editFormData?.type || ''} onChange={handleFormChange} /></div>
                             <div className="space-y-1"><Label htmlFor="equip_brand">Marca</Label><Input id="equip_brand" name="equip_brand" value={editFormData?.equip_brand || ''} onChange={handleFormChange} /></div>
                             <div className="space-y-1"><Label htmlFor="equip_model">Modelo</Label><Input id="equip_model" name="equip_model" value={editFormData?.equip_model || ''} onChange={handleFormChange} /></div>
                             <div className="space-y-1"><Label htmlFor="serial_number">Nº de Série</Label><Input id="serial_number" name="serial_number" value={editFormData?.serial_number || ''} onChange={handleFormChange} /></div>
@@ -161,7 +161,7 @@ export default function ServiceOrderDetailsDialog() {
                         {isEditing ? (
                             <>
                                 <Button variant="secondary" onClick={exitEditMode}>Cancelar</Button>
-                                <SubmitButton />
+                                {/* <SubmitButton /> */}
                                 <Button type="submit" form="edit-form">Salvar Alterações</Button>
                             </>
                         ) : (
