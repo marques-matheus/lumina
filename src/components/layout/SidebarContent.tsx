@@ -31,7 +31,9 @@ export default function SidebarContent() {
                     <Link href="/configuracoes/perfil" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/configuracoes/perfil')}`}>
                         Configurações
                     </Link>
-                    {/* Adicione outros links aqui no futuro */}
+                    <Link href="/vendas" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/vendas')}`}>
+                        Vendas
+                    </Link>
                 </nav>
             </div>
             <button onClick={logout} className=" text-sm font-bold bottom-5 left-5 absolute text-gray-700 dark:text-gray-300 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100">
