@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
-import AddSellDialog from "@/app/features/sells/components/AddSellDialog";
+import AddSaleDialog from "@/app/features/sales/components/AddSaleDialog";
+import SalesTable from "@/app/features/sales/components/SalesTable";
 import { PageProps } from '@/types';
 import { createServerClient } from '@supabase/ssr';
 import { Metadata, ResolvingMetadata } from 'next';
@@ -17,7 +18,7 @@ export async function generateMetadata(
 }
 
 
-export default async function SellsPage() {
+export default async function SalesPage() {
     const cookieStore = await cookies();
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -46,16 +47,20 @@ export default async function SellsPage() {
         .eq('profile_id', user.id)
         .order('id', { ascending: true });
 
-
-
+    const { data: salesHistory } = await supabase
+        .from('sales')
+        .select('*, clients(*), sale_items(*, products(*))')
+        .eq('profile_id', user.id)
+        .order('created_at', { ascending: false });
 
     return (
 
         <div className="flex flex-col gap-8">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold">Vendas</h1>
-                <AddSellDialog products={products || []} clients={clients || []} />
+                <AddSaleDialog products={products || []} clients={clients || []} />
             </div>
+            <SalesTable sales={salesHistory || []} />
         </div>
     );
 }

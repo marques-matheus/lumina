@@ -28,11 +28,11 @@ export default function SidebarContent() {
                             </Link>
                         )
                     }
-                    <Link href="/configuracoes/perfil" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/configuracoes/perfil')}`}>
-                        Configurações
-                    </Link>
                     <Link href="/vendas" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/vendas')}`}>
                         Vendas
+                    </Link>
+                    <Link href="/configuracoes/perfil" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/configuracoes/perfil')}`}>
+                        Configurações
                     </Link>
                 </nav>
             </div>

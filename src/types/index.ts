@@ -39,6 +39,11 @@ export type PageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+export type cartItem = {
+  product: Product;
+  quantity: number;
+}
+
 export type FormState = {
   success: boolean;
   message: string;
@@ -79,3 +84,19 @@ export type Address = {
 };
 
 export type SessionUser = User & Profile & Address
+
+
+export type SalesHistoryEntry = {
+  id: number;
+  created_at: string;
+  total_amount: number;
+  clients: {
+    name: string;
+  } | null;
+  sale_items: {
+    quantity: number;
+    products: {
+      name: string;
+    } | null;
+  }[];
+};
