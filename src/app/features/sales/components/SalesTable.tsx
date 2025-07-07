@@ -19,7 +19,7 @@ export default function SalesTable({ sales }: { sales: SalesHistoryEntry[] }) {
             <CardContent>
                 <Table>
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="responsive-table-header">
                             <TableHead>ID Venda</TableHead>
                             <TableHead>Data</TableHead>
                             <TableHead>Cliente</TableHead>
@@ -30,7 +30,7 @@ export default function SalesTable({ sales }: { sales: SalesHistoryEntry[] }) {
                     </TableHeader>
                     <TableBody>
                         {sales.map(sale => (
-                            <TableRow key={sale.id}>
+                            <TableRow key={sale.id} className={`responsive-table-row odd:bg-secondary even:bg-white dark:even:bg-zinc-700`}>
                                 <TableCell className="font-medium">#{sale.id}</TableCell>
                                 <TableCell>{new Date(sale.created_at).toLocaleDateString('pt-BR')}</TableCell>
                                 <TableCell>{sale.clients?.name || 'Venda Avulsa'}</TableCell>
