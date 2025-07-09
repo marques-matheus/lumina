@@ -24,6 +24,12 @@ export default function SidebarContent() {
                     <Link href="/clientes" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/clientes')}`}>
                         Clientes
                     </Link>
+                    <Link href="/compras" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/compras')}`}>
+                        Compras
+                    </Link>
+                    <Link href="/vendas" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/vendas')}`}>
+                        Vendas
+                    </Link>
                     {
                         user?.does_provide_service && (
                             <Link href="/servicos" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/servicos')}`}>
@@ -31,9 +37,6 @@ export default function SidebarContent() {
                             </Link>
                         )
                     }
-                    <Link href="/vendas" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/vendas')}`}>
-                        Vendas
-                    </Link>
                     <Link href="/configuracoes/perfil" className={`px-4 py-2 hover:border-teal-700 text-lg border-l-8 font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 in-dark:hover:bg-zinc-500 ${isActive('/configuracoes/perfil')}`}>
                         Configurações
                     </Link>

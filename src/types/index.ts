@@ -100,3 +100,15 @@ export type SalesHistoryEntry = {
     } | null;
   }[];
 };
+
+export type Purchase = {
+  id: number;
+  supplier: string;
+  purchase_date: string;
+  cost_per_unit: number;
+  quantity: number;
+  products?: {
+    name: string;
+    brand: string;
+  } | null;
+};
