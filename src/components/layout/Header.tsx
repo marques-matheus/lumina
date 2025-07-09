@@ -6,7 +6,7 @@ import { useSession } from "@/providers/SessionProvider";
 export default function Header() {
   const user = useSession();
   return (
-    <header className="h-16 flex items-center p-6 bg-white dark:bg-zinc-800 border-b">
+    <header className="h-16 flex justify-between items-center p-6 bg-white dark:bg-zinc-800 border-b">
       <div className="lg:hidden">
         <MobileSidebar />
       </div>
@@ -15,7 +15,7 @@ export default function Header() {
           {user?.company_name || "Lúmina" /* Nome da empresa ou padrão */}
         </h1>
       </div>
-      <div className="flex-1 text-center md:text-right">
+      <div className="flex items-end justify-end text-right">
         <ToggleDarkMode />
       </div>
     </header>

@@ -15,8 +15,8 @@ export default async function AppLayout({ children }: Readonly<{ children: React
   const userProfile = await getUserProfile();
   return (
     <SessionProvider user={userProfile}>
-      <div className="flex h-screen bg-gray-50 dark:bg-zinc-900 text-gray-800 dark:text-white">
-        <aside className="hidden lg:flex flex-col w-64 bg-gray-100 border-r  dark:bg-zinc-700 dark:border-zinc-700">
+      <div className="flex h-screen bg-gray-50 dark:bg-zinc-00 text-gray-800 dark:text-white">
+        <aside className="hidden lg:flex flex-col w-64 bg-gray-100 border-r  dark:bg-zinc-800 dark:border-zinc-700">
           <SidebarContent />
         </aside>
         <div className="flex-1 flex flex-col overflow-hidden">

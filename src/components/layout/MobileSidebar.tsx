@@ -15,11 +15,11 @@ export default function MobileSidebar() {
                         <span className="sr-only">Abrir menu</span>
                     </button>
                 </SheetTrigger>
-                <SheetHeader>
+                <SheetHeader className="hidden">
                     <SheetTitle hidden>Lúmina</SheetTitle>
                 </SheetHeader>
             </div>
-            <SheetContent side="left" className="p-4">
+            <SheetContent side="left" className="p-4 dark:bg-zinc-700 bg-gray-100">
                 <SidebarContent />
             </SheetContent>
         </Sheet>
