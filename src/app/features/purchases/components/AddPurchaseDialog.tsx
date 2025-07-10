@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useActionState, ChangeEvent } from "react";
 import { createPurchase } from '../actions';
-import { type Product, type Client } from "@/types";
+import { type Product } from "@/types";
 import { toast } from "sonner";
 
 // Imports...
@@ -16,12 +16,21 @@ import { ChevronsUpDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SubmitButton } from "@/components/shared/submitButton";
 
+
+const getTodayDateString = () => {
+    const today = new Date();
+    const offset = today.getTimezoneOffset();
+    const localDate = new Date(today.getTime() - (offset * 60 * 1000));
+    return localDate.toISOString().split('T')[0];
+};
+
+
 const INITIAL_FORM_DATA = {
     productId: '',
     quantity: '1',
     costPerUnit: '',
     supplier: '',
-    purchaseDate: new Date().toISOString().split('T')[0], 
+    purchaseDate: getTodayDateString(),
 };
 
 export default function AddPurchaseDialog({ products }: { products: Product[] }) {
@@ -38,18 +47,16 @@ export default function AddPurchaseDialog({ products }: { products: Product[] })
         setFormData(prevState => ({ ...prevState, [name]: value }));
     };
 
-
     useEffect(() => {
         if (state.success) {
             toast.success(state.message);
             setIsOpen(false);
-            setFormData(INITIAL_FORM_DATA); 
+            setFormData(INITIAL_FORM_DATA);
             setSelectedProduct(null);
         } else if (state.message) {
             toast.error(state.message);
         }
     }, [state]);
-
 
     const handleProductSelect = (product: Product) => {
         setSelectedProduct(product);
@@ -92,14 +99,25 @@ export default function AddPurchaseDialog({ products }: { products: Product[] })
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
+                                <Label htmlFor="product_id">ID do Produto</Label>
+                                <Input id="product_id" name="product_id" type="hidden" value={formData.productId} />
+                            </div>
+                            <div>
                                 <Label htmlFor="quantity">Quantidade</Label>
                                 <Input id="quantity" name="quantity" type="number" required
                                     value={formData.quantity} onChange={handleInputChange} />
                             </div>
                             <div>
                                 <Label htmlFor="cost_per_unit">Custo Unit. (R$)</Label>
-                                <Input id="cost_per_unit" name="cost_per_unit" type="number" step="0.01" required
-                                    value={formData.costPerUnit} onChange={handleInputChange} />
+                                <Input
+                                    id="cost_per_unit"
+                                    name="cost_per_unit"
+                                    type="number"
+                                    step="0.01"
+                                    required
+                                    value={formData.costPerUnit}
+                                    onChange={handleInputChange}
+                                />
                             </div>
                         </div>
                         <div>
