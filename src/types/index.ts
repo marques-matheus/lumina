@@ -101,6 +101,12 @@ export type SalesHistoryEntry = {
   }[];
 };
 
+export type MonthlyFinancials = {
+total_revenue: number;
+total_costs: number;
+gross_profit: number;
+};
+
 export type Purchase = {
   id: number;
   supplier: string;
