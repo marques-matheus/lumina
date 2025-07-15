@@ -1,7 +1,6 @@
 'use server'
 import { type FormState } from "@/types"; 
-import { createServerClient } from "@supabase/ssr";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/supabaseClient";
 import { revalidatePath } from "next/cache";
 import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
@@ -11,19 +10,7 @@ import { redirect } from 'next/navigation';
 export async function login(prevState: FormState, formData: FormData): Promise<FormState> {
 
   
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                get(name: string) { return cookieStore.get(name)?.value; },
-                set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
-                remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
-               
-            },
-        }
-    );
+  const supabase = await createClient();
 
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
@@ -48,18 +35,7 @@ export async function login(prevState: FormState, formData: FormData): Promise<F
 }
 
 export async function signup(prevState: FormState, formData: FormData): Promise<FormState> {
-const cookieStore = await cookies();
-const supabase = createServerClient(
-process.env.NEXT_PUBLIC_SUPABASE_URL!,
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-{
-cookies: {
-get(name: string) { return cookieStore.get(name)?.value; },
-set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
-remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
-},
-}
-);
+  const supabase = await createClient();
 
 const email = formData.get('email') as string;
 const password = formData.get('password') as string;
@@ -88,18 +64,7 @@ return { success: true, message: 'Cadastro realizado! Verifique seu e-mail para 
 
 
 export async function completeOnboarding(prevState: FormState, formData: FormData): Promise<FormState> {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                get(name: string) { return cookieStore.get(name)?.value; },
-                set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
-                remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
-            },
-        }
-    );
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     return { success: false, message: 'Usuário não autenticado.' };
@@ -166,35 +131,15 @@ export async function completeOnboarding(prevState: FormState, formData: FormDat
 
 
 export async function logout() {
-const cookieStore = await cookies();
-const supabase = createServerClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  {
-    cookies: {
-      get(name: string) { return cookieStore.get(name)?.value; },
-      set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
-      remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
-    },
-  }
-);
+
+const supabase = await createClient();
 
 await supabase.auth.signOut();
 redirect('/auth/login'); // Redireciona para a página de login após o logout
 }
 
 export async function updateProfile(prevState: FormState, formData: FormData): Promise<FormState> {
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        async get(name: string) { return (await cookies()).get(name)?.value; },
-        async set(name: string, value: string, options) { (await cookies()).set({ name, value, ...options }); },
-        async remove(name: string, options) { (await cookies()).set({ name, value: '', ...options }); },
-      },
-    }
-  )
+  const supabase = await createClient();
 
   const {data: { user }, error: userError } = await supabase.auth.getUser();
 

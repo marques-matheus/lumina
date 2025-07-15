@@ -1,8 +1,6 @@
 'use server'
-import { supabase } from "@/lib/supabaseClient"
-import { createServerClient } from "@supabase/ssr";
+import { createClient } from "@/lib/supabase/supabaseClient";
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
 import { FormState } from "@/types";
 
 
@@ -10,18 +8,7 @@ export async function addClient(prevState: FormState, formData: FormData): Promi
     const name = formData.get('name') as string;
     const phone = formData.get('phone') as string;
 
-    const cookieStore = await cookies();
-      const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            get(name: string) { return cookieStore.get(name)?.value; },
-            set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
-            remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
-          },
-        }
-      );
+    const supabase = await createClient();
 
     if (!name || !phone) {
         return { success: false, message: 'Dados inválidos.' };
@@ -44,6 +31,8 @@ export async function addClient(prevState: FormState, formData: FormData): Promi
 }
 
 export async function updateClient(prevState: FormState, formData: FormData): Promise<FormState> {
+    const supabase = await createClient();
+
     const id = formData.get('id') as string;
     const name = formData.get('name') as string;
     const phone = formData.get('phone') as string;

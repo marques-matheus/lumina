@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { Metadata, ResolvingMetadata } from "next";
 import AddServiceOrderDialog from "@/app/features/service-orders/components/AddServiceOrderForm";
 import ServiceOrdersTable from "@/app/features/service-orders/components/ServiceOrdersTable";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabase/supabaseClient";
 import ServiceOrderDetailsDialog from "../../features/service-orders/components/ServiceOrderDetailsDialog";
 import { PageProps } from "@/types";
 import { createServerClient } from "@supabase/ssr";

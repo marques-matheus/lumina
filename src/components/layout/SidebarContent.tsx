@@ -22,7 +22,7 @@ export default function SidebarContent() {
                             <NavLink text="servicos" />
                         )
                     }
-                    <NavLink text="configuracoes" />
+                    <NavLink href="/configuracoes/perfil" text="configuracoes" />
                 </nav>
             </div>
             <button onClick={logout} className=" text-sm font-bold bottom-5 left-5 absolute text-gray-700 dark:text-gray-300 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100">

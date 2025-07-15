@@ -1,8 +1,6 @@
 'use server'
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/lib/supabase/supabaseClient';
 import { revalidatePath } from 'next/cache';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { FormState } from '@/types';
 
 export async function addProduct(prevState: FormState, formData: FormData): Promise<FormState> {
@@ -13,18 +11,7 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
  const salePrice = formData.get('sale_price') as string;
  const brand = formData.get('brand') as string;
 
- const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) { return cookieStore.get(name)?.value; },
-        set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
-        remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
-      },
-    }
-  );
+ const supabase = await createClient();
 
  if(!name || !quantity || !salePrice || !description || !brand) {
   return { success: false, message: 'Dados inválidos.' };
@@ -50,6 +37,7 @@ if (!user) { return { success: false, message: 'Não autorizado' }; }
 }
 
 export async function deleteProduct(productId: number){
+  const supabase = await createClient();
   const {error } = await supabase
     .from('products')
     .update({ is_active: false, quantity: 0 })
@@ -62,6 +50,9 @@ export async function deleteProduct(productId: number){
 }
 
 export async function updateProduct(prevState: FormState, formData: FormData): Promise<FormState> {
+
+  const supabase = await createClient();
+
   const id = formData.get('id') as string;
   const name = formData.get('name') as string;
   const quantity = formData.get('quantity') as string;
@@ -89,7 +80,6 @@ export async function updateProduct(prevState: FormState, formData: FormData): P
       return { success: false, message: 'Não foi possível atualizar o produto.' };
     }
   
-    // 5. Revalidamos o caminho CORRETO e retornamos o sucesso
-    revalidatePath('/');
+    revalidatePath('/products');
     return { success: true, message: 'Produto atualizado com sucesso!' };
   }

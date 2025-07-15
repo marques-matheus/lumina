@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import AddClientDialog from '@/app/features/clients/components/AddClientDialog';
 import ClientTable from '@/app/features/clients/components/ClientTable';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabase/supabaseClient';
 import { PageProps } from '@/types';
 import { Metadata, ResolvingMetadata } from 'next';
 import EditClientDialog from '../../features/clients/components/EditClientDialog';

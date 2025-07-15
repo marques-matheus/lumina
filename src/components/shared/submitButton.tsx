@@ -5,13 +5,14 @@ import { Button } from '@/components/ui/button';
 
 type props = {
   text?: string;
+  form?: string;
 };
 
-export function SubmitButton({ text = 'Salvar' }: props) {
+export function SubmitButton({ text = 'Salvar', form }: props) {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" disabled={pending} className='dark:bg-teal-700 dark:text-white'>
+    <Button form={form} type="submit" disabled={pending} className='dark:bg-teal-700 dark:text-white'>
       {pending ? <span className="animate-pulse text-muted-foreground animation-duration-initial">...</span> : `${text}`}
     </Button>
   );
