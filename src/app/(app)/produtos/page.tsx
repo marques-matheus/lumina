@@ -1,10 +1,9 @@
 export const dynamic = 'force-dynamic'
 import AddProductForm from '@/app/features/products/components/AddProductForm';
 import ProductTable from '@/app/features/products/components/ProductTable';
+import { createClientBrowser } from '@/lib/supabase/supabaseClient';
 import { PageProps } from '@/types';
-import { createServerClient } from '@supabase/ssr';
 import { Metadata, ResolvingMetadata } from 'next';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 
@@ -25,16 +24,7 @@ export async function generateMetadata(
 export default async function ProductsPage({ searchParams }: PageProps) {
   {
 
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll: cookieStore.getAll,
-        },
-      }
-    );
+    const supabase = createClientBrowser();
     const { data: { user } } = await supabase.auth.getUser();
 
     if(!user){
