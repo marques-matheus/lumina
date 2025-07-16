@@ -19,7 +19,7 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
         openModal(order);
     };
     const session = useSession();
-    const statuses = ["Aguardando Avaliação", "Em Reparo", "Aguardando Peças", "Concluído", "Entregue", "Cancelado"];
+    const statuses = ["Aguardando Avaliação", "Em Reparo",  "Concluído", "Entregue", "Cancelado"];
 
     if (!session?.does_provide_service) {
         return (
