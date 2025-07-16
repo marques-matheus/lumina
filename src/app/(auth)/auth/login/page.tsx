@@ -31,9 +31,7 @@ export default function LoginPage() {
                 <div className="mx-auto grid w-[350px] gap-6">
                     <div className="grid gap-2 text-center">
                         <h1 className="text-3xl font-bold">Login</h1>
-                        <p className="text-balance text-muted-foreground">
-                            Digite seu email abaixo para entrar na sua conta
-                        </p>
+                        
                     </div>
                     <form action={formAction} className="grid gap-4">
                         <div className="grid gap-2">
