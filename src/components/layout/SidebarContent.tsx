@@ -10,22 +10,25 @@ export default function SidebarContent() {
     return (
         <>
             <div>
-                <Image src={"/logo.png"} alt="Logo" width={120} height={120} className="flex lg:mx-14 lg:mb-8" />
-                <nav className="flex flex-col space-y-4 dark:bg-zinc-800">
-                    <NavLink href="/" text="dashboard" />
+                <div className='flex flex-col justify-center items-center m-4'>
+                    <Image src="/logo.png" alt="Logo" width={90} height={90} />
+                    <h1 className='text-2xl my-2 font-bold'>Lúmina</h1>
+                </div>
+                <nav className="flex flex-col mt-10 space-y-4 dark:bg-zinc-800">
+                    <NavLink href="/" text="Painel" />
                     <NavLink text="produtos" />
                     <NavLink text="clientes" />
                     <NavLink text="compras" />
                     <NavLink text="vendas" />
                     {
                         user?.does_provide_service && (
-                            <NavLink text="servicos" />
+                            <NavLink href="/servicos" text="serviços" />
                         )
                     }
-                    <NavLink href="/configuracoes/perfil" text="configuracoes" />
+                    <NavLink href="/configuracoes/perfil" text="configurações" />
                 </nav>
             </div>
-            <button onClick={logout} className=" text-sm font-bold bottom-5 left-5 absolute text-gray-700 dark:text-gray-300 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100">
+            <button onClick={logout} className=" text-sm font-bold bottom-5 left-5 absolute text-gray-700 dark:text-gray-300 cursor-pointer hover:text-gray-900 dark:hover:text-gray-90">
                 Sair
                 <LogOut className="inline ml-1 h-4 w-4" />
             </button>
