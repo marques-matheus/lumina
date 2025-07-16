@@ -4,7 +4,7 @@ export default function Banner() {
     return (
         <div className="hidden lg:flex lg:flex-col items-center justify-center w-5/12 space-y-2.5 p-8 text-center bg-white dark:bg-zinc-900"
             style={{
-                backgroundImage: "url('/image1.jpg')",
+                backgroundImage: "url('/image1.webp')",
                 backgroundColor: "rgb(65, 65, 65)",
                 backgroundRepeat: "no-repeat",
                 backgroundBlendMode: "multiply",
