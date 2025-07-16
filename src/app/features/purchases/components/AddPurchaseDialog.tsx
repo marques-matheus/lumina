@@ -27,7 +27,7 @@ const getTodayDateString = () => {
 
 const INITIAL_FORM_DATA = {
     productId: '',
-    quantity: '1',
+    quantity: '',
     costPerUnit: '',
     supplier: '',
     purchaseDate: getTodayDateString(),

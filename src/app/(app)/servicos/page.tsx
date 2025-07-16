@@ -3,12 +3,10 @@ export const dynamic = 'force-dynamic'
 import { Metadata, ResolvingMetadata } from "next";
 import AddServiceOrderDialog from "@/app/features/service-orders/components/AddServiceOrderForm";
 import ServiceOrdersTable from "@/app/features/service-orders/components/ServiceOrdersTable";
-import { supabase } from "@/lib/supabaseClient";
 import ServiceOrderDetailsDialog from "../../features/service-orders/components/ServiceOrderDetailsDialog";
 import { PageProps } from "@/types";
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 
 
 export async function generateMetadata(
@@ -26,16 +24,7 @@ export async function generateMetadata(
 }
 
 export default async function ServicesPage({ searchParams }: PageProps) {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                getAll: cookieStore.getAll,
-            },
-        }
-    );
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
         redirect('/auth/login');

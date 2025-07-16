@@ -1,10 +1,9 @@
 import AddPurchaseDialog from "@/app/features/purchases/components/AddPurchaseDialog";
 import PurchasesTable from "@/app/features/purchases/components/PurchasesTable";
 import { PageProps } from "@/types";
-import { createServerClient } from "@supabase/ssr";
 import { ResolvingMetadata, Metadata } from "next";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 
 export async function generateMetadata(
     { params, searchParams }: PageProps,
@@ -21,18 +20,8 @@ export async function generateMetadata(
 }
 
 export default async function PurchasesPage() {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                getAll: cookieStore.getAll,
-            },
-        }
-    );
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-
     if (!user) {
         redirect('/auth/login');
     }

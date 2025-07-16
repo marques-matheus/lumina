@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic'
 import { Metadata } from 'next';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { DashboardCard } from '../features/dashboard/components/Card';
 import { type Product } from '@/types';
@@ -18,17 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function MainPage() {
 
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: cookieStore.getAll,
-      },
-    }
-  );
-  const { data: { user } } = await supabase.auth.getUser();
+  const supabase = await createClient();  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     redirect('/auth/login');

@@ -1,22 +1,11 @@
 'use server'
 import { type FormState } from "@/types";
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath } from 'next/cache'
+import { createClient } from '@/utils/supabase/server'
 
 export async function createPurchase(prevState: FormState, formData: FormData): Promise<FormState> {
-const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) { return cookieStore.get(name)?.value; },
-        set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
-        remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
-      },
-    }
-  );
+
+const supabase = await createClient();
 
 
 const { data: { user } } = await supabase.auth.getUser();

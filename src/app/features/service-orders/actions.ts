@@ -1,13 +1,13 @@
 'use server'
 
-import { supabase } from "@/lib/supabaseClient"
+
 import { ServiceOrder } from "@/types";
-import { createServerClient } from "@supabase/ssr";
-import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
+import { revalidatePath } from 'next/cache'
+import { createClient } from '@/utils/supabase/server'
 import { FormState } from "@/types";
 
 export async function addServiceOrder(prevState: FormState, formData: FormData): Promise<FormState> {
+    const supabase = await createClient();
     const clientId = formData.get('clientId') as string;
     const equip_brand = formData.get('equip_brand') as string;
     const equip_model = formData.get('equip_model') as string;
@@ -50,18 +50,7 @@ export async function addServiceOrder(prevState: FormState, formData: FormData):
 
 
 export async function updateServiceOrder(prevState: FormState, formData: FormData): Promise<FormState> {
-   const cookieStore = await cookies();
-      const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            get(name: string) { return cookieStore.get(name)?.value; },
-            set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
-            remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
-          },
-        }
-      );
+    const supabase = await createClient();
     const id = formData.get('id') as string;
     const equip_brand = formData.get('equip_brand') as string;
     const equip_model = formData.get('equip_model') as string;
@@ -95,18 +84,7 @@ export async function updateServiceOrder(prevState: FormState, formData: FormDat
 }
 // Nova ação, dedicada apenas a mudar o status
 export async function updateOrderStatus(orderId: number, newStatus: string): Promise<ServiceOrder> {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                get(name: string) { return cookieStore.get(name)?.value; },
-                set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }); },
-                remove(name: string, options) { cookieStore.set({ name, value: '', ...options }); },
-            },
-        }
-    );
+    const supabase = await createClient();
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {

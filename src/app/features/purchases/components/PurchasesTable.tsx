@@ -1,6 +1,6 @@
 'use client'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { type Purchase } from "@/types/index"
 
 export default function PurchasesTable({ purchases }: { purchases: Purchase[] }) {

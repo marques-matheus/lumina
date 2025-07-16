@@ -1,21 +1,10 @@
 'use server'
 import { type FormState } from "@/types";
-import { createServerClient } from '@supabase/ssr'; // Usando o nosso padrão
-import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath } from 'next/cache'
+import { createClient } from '@/utils/supabase/server'
 
 export async function createSale(prevState: FormState, formData: FormData): Promise<FormState> {
-const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-      }
-    }
-  );
-  
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     return { success: false, message: 'Não autorizado. Faça login para continuar.' };
