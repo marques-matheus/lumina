@@ -57,7 +57,8 @@ if (error) {
     return { success: false, message: `Erro no cadastro: ${error.message}` };
 }
 
-return { success: true, message: 'Cadastro realizado! Verifique seu e-mail para confirmar sua conta.' };
+redirect('/auth/agradecimento'); // Redireciona para a página de agradecimento após o cadastro
+
 }
 
 
