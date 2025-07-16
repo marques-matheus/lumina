@@ -130,7 +130,6 @@ const supabase = await createClient();
 
 export async function logout() {
   const supabase = await createClient();
-
 await supabase.auth.signOut();
 redirect('/auth/login'); // Redireciona para a página de login após o logout
 }

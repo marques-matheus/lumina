@@ -4,6 +4,9 @@ import { SubmitButton } from "@/components/shared/submitButton";
 import { useActionState, useEffect } from "react";
 import { signup } from "@/app/features/auth/actions";
 import { toast } from "sonner";
+import Banner from "@/app/features/auth/components/banner";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 export default function SignupPage() {
     const initialState = {
@@ -21,20 +24,42 @@ export default function SignupPage() {
     }, [state]);
 
     return (
-        <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
-            <div className="bg-white p-8 rounded shadow-md max-w-xl w-full dark:bg-gray-800">
-                <h2 className="text-2xl font-bold mb-6 text-center">Cadastro</h2>
-                <form action={formAction} className="space-y-4">
-                    <div className="mb-4">
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                        <Input id="email" type="email" name="email" placeholder="Digite seu email" required />
+        <div className="flex min-h-screen  bg-white dark:bg-zinc-900">
+            <Banner />
+            <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-full lg:w-7/12">
+                <div className="mx-auto grid w-[350px] gap-6">
+                    <div className="grid gap-2 text-center">
+                        <h1 className="text-3xl font-bold">Cadastro</h1>
+                        <p className="text-balance text-muted-foreground">
+                            Digite seu email abaixo para criar uma nova conta
+                        </p>
                     </div>
-                    <div className="mb-6">
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Senha</label>
-                        <Input id="password" name="password" type="password" placeholder="Digite sua senha" required />
+                    <form action={formAction} className="grid gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="email">Email</Label>
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                placeholder="nome@exemplo.com"
+                                required
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <div className="flex items-center">
+                                <Label htmlFor="password">Senha</Label>
+                            </div>
+                            <Input id="password" name="password" type="password" required />
+                        </div>
+                        <SubmitButton text="Cadastrar" />
+                    </form>
+                    <div className="mt-1  text-center text-sm">
+                        Já tem uma conta?
+                        <Link href="/auth/login" className="underline mx-2">
+                            Entre
+                        </Link>
                     </div>
-                    <SubmitButton text="Cadastrar" />
-                </form>
+                </div>
             </div>
         </div>
     );
