@@ -11,8 +11,8 @@ import { type Product } from '@/types';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'Lúmina - Página Principal',
-    description: 'Bem-vindo à página principal do Lúmina',
+    title: 'Lúmina - Painel',
+    description: 'Bem-vindo ao painel do Lúmina',
   };
 }
 

@@ -77,7 +77,6 @@ export default function AddPurchaseDialog({ products }: { products: Product[] })
                     <div className="space-y-4 py-4">
                         <div>
                             <Label>Produto</Label>
-                            <Input type="hidden" name="product_id" value={formData.productId} />
                             <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
                                 <PopoverTrigger asChild>
                                     <Button variant="outline" role="combobox" className="w-full justify-between">
@@ -98,7 +97,7 @@ export default function AddPurchaseDialog({ products }: { products: Product[] })
                             </Popover>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                            <div>
+                            <div className="hidden">
                                 <Label htmlFor="product_id">ID do Produto</Label>
                                 <Input id="product_id" name="product_id" type="hidden" value={formData.productId} />
                             </div>
@@ -110,13 +109,9 @@ export default function AddPurchaseDialog({ products }: { products: Product[] })
                             <div>
                                 <Label htmlFor="cost_per_unit">Custo Unit. (R$)</Label>
                                 <Input
-                                    id="cost_per_unit"
-                                    name="cost_per_unit"
-                                    type="number"
-                                    step="0.01"
-                                    required
-                                    value={formData.costPerUnit}
-                                    onChange={handleInputChange}
+                                    id="cost_per_unit" name="cost_per_unit" type="number" step="0.01" required
+                                    defaultValue={formData.costPerUnit} onChange={handleInputChange}
+                                    
                                 />
                             </div>
                         </div>

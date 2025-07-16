@@ -7,7 +7,6 @@ export default function PurchasesTable({ purchases }: { purchases: Purchase[] })
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Minhas Compras</CardTitle>
             </CardHeader>
             <CardContent>
                 <Table>
@@ -23,7 +22,7 @@ export default function PurchasesTable({ purchases }: { purchases: Purchase[] })
                     </TableHeader>
                     <TableBody>
                         {purchases.map((purchase) => (
-                            <TableRow key={purchase.id}>
+                            <TableRow key={purchase.id} className={`responsive-table-row odd:bg-secondary even:bg-white dark:even:bg-zinc-700`}>
                                 <TableCell>
                                     {new Date(purchase.purchase_date).toLocaleDateString('pt-BR', {
                                         year: 'numeric',
