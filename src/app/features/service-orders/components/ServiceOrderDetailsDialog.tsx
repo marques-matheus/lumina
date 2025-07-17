@@ -133,12 +133,14 @@ export default function ServiceOrderDetailsDialog() {
                     {!isEditing && (
                         <div className="grid grid-cols-2 items-center gap-4 pt-4 border-t">
                             <Label className="font-semibold">Alterar Status</Label>
-                            <Select value={selectedOrder.status} onValueChange={handleStatusChange} disabled={isStatusUpdating}>
+                            <Select value={selectedOrder.status} onValueChange={handleStatusChange} disabled={isStatusUpdating || selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'}>
                                 <SelectTrigger><SelectValue /></SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="Aguardando Avaliação">Aguardando Avaliação</SelectItem>
-                                    <SelectItem value="Em Reparo">Em Reparo</SelectItem>
-                                    <SelectItem value="Concluído">Concluído</SelectItem>
+                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado' || selectedOrder.status === 'Concluído'} value="Aguardando Avaliação">Aguardando Avaliação</SelectItem>
+                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado' || selectedOrder.status === 'Concluído'} value="Em Reparo">Em Reparo</SelectItem>
+                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Concluído">Concluído</SelectItem>
+                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Entregue">Entregue</SelectItem>
+                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Cancelado">Cancelado</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -154,7 +156,7 @@ export default function ServiceOrderDetailsDialog() {
                             <>
                                 <DialogClose asChild><Button variant="secondary">Fechar</Button></DialogClose>
                                 <Button variant="outline" onClick={() => window.print()}><PrinterIcon className="mr-2 h-4 w-4" /> Imprimir</Button>
-                                <Button onClick={enterEditMode}><PencilIcon className="mr-2 h-4 w-4" /> Editar</Button>
+                                <Button disabled={isStatusUpdating || selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} onClick={enterEditMode}><PencilIcon className="mr-2 h-4 w-4" /> Editar</Button>
                             </>
                         )}
                     </DialogFooter>

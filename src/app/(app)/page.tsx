@@ -57,9 +57,9 @@ export default async function MainPage() {
     .from('service_orders')
     .select('*', { count: 'exact', head: true })
     .eq('profile_id', user.id)
-    .eq('status', 'Concluído')
-    .gte('updated_at', firstDayOfMonth)
-    .lt('updated_at', firstDayOfNextMonth);
+    .in('status', ['Entregue', 'Concluído'])
+  
+
 
   const LOW_STOCK_THRESHOLD = 5;
   const { data: lowStockProducts, error: productsError } = await supabase
@@ -106,7 +106,7 @@ export default async function MainPage() {
           description="Ordens aguardando sua atenção"
         />
         <DashboardCard
-          title="Serviços Concluídos (Mês)"
+          title="Serviços Concluídos "
           value={completedServicesCount || 0}
           type="number"
           description="Ordens de serviço finalizadas"

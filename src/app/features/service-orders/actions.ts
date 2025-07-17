@@ -91,6 +91,24 @@ export async function updateOrderStatus(orderId: number, newStatus: string): Pro
         throw new Error('Não autorizado');
     }
 
+    const { data: currentOrder, error: fetchError } = await supabase
+    .from('service_orders')
+    .select('status')
+    .eq('id', orderId)
+    .eq('profile_id', user.id) 
+    .single();
+    if (fetchError) {
+        throw new Error("Ordem de serviço não encontrada ou você não tem permissão para a ver.");
+    }
+    const isFinalStatus = currentOrder.status === 'Entregue' || currentOrder.status === 'Cancelado';
+        if (isFinalStatus) {
+            throw new Error("Não é possível alterar o status de uma ordem finalizada.");
+        }
+    const isRevertingFromCompleted = currentOrder.status === 'Concluído' && newStatus !== 'Entregue';
+        if (isRevertingFromCompleted) {
+            throw new Error("Uma ordem concluída só pode ser marcada como 'Entregue'.");
+        }
+
     const { data, error } = await supabase
         .from('service_orders')
         .update({ status: newStatus })

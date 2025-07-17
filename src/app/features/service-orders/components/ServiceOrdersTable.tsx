@@ -9,6 +9,7 @@ import { useServiceOrderStore } from '@/stores/serviceOrderStore';
 import { CategoryFilter } from '@/components/shared/CategoryFilter';
 import SearchInput from '@/components/shared/SearchInput';
 import { useSession } from '@/providers/SessionProvider';
+import { Badge } from '@/components/ui/badge';
 
 
 export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: ServiceOrder[] }) {
@@ -30,6 +31,23 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
             </Card>
         );
     }
+
+    const getBadgeColor = (status: string) => {
+        switch (status) {
+            case "Aguardando Avaliação":
+                return "waiting";
+            case "Em Reparo":
+                return "inProgress";
+            case "Concluído":
+                return "completed";
+            case "Entregue":
+                return "delivered";
+            case "Cancelado":
+                return "canceled";
+            default:
+                return "default";
+        }
+    };
 
     return (
         <Card>
@@ -60,7 +78,11 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
                                     <div className="text-sm text-muted-foreground">O.S. #{order.id}</div>
                                 </TableCell>
                                 <TableCell data-label="Equipamento:" className="responsive-table-cell">{`${order.equip_brand} ${order.equip_model}`}</TableCell>
-                                <TableCell data-label="Status:" className="responsive-table-cell">{order.status}</TableCell>
+                                <TableCell data-label="Status:" className="responsive-table-cell">
+                                    <Badge variant={getBadgeColor(order.status)} className="w-fit">
+                                        {order.status}
+                                    </Badge>
+                                </TableCell>
                                 <TableCell data-label="Valor:" className="responsive-table-cell">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.total)}</TableCell>
                                 <TableCell className="responsive-actions-cell text-right">
                                     <Button variant="outline" size="sm" onClick={() => handleViewDetailsClick(order)}>
