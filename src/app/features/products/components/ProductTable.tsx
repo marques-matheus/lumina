@@ -122,7 +122,7 @@ export default function ProductTable({ products, brands }: { products: Product[]
             </div>
             <div>
               <Label htmlFor="quantity">Quantidade</Label>
-              <Input id="quantity" name="quantity" type="number" defaultValue={selectedProduct?.quantity} />
+              <Input disabled id="quantity" name="quantity" type="number" defaultValue={selectedProduct?.quantity} />
             </div>
             <div>
               <Label htmlFor="sale_price">Preço</Label>
