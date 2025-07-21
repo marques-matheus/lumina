@@ -25,36 +25,34 @@ export default function SignupPage() {
     }, [state]);
 
     return (
-         <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-auto lg:w-full  ">
-                <div className="mx-auto grid w-[300px] lg:w-[350px] gap-6">
-                    <form action={formAction} className="grid gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="nome@exemplo.com"
-                                required
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <div className="flex items-center">
-                                <Label htmlFor="password">Senha</Label>
-                            </div>
-                            <Input id="password" name="password" type="password" required />
-                        </div>
-                        <SubmitButton text="Cadastrar" />
-                    </form>
-                    <div className="mt-1  text-center text-sm">
-                        Já tem uma conta?
-                        <Link href="/auth/login" className="underline mx-2">
-                            Entre
-                        </Link>
-                    </div>
+        <>
+
+            <form action={formAction} className="grid gap-4">
+                <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="nome@exemplo.com"
+                        required
+                    />
                 </div>
+                <div className="grid gap-2">
+                    <div className="flex items-center">
+                        <Label htmlFor="password">Senha</Label>
+                    </div>
+                    <Input id="password" name="password" type="password" required />
+                </div>
+                <SubmitButton text="Cadastrar" />
+            </form>
+            <div className="mt-1  text-center text-sm">
+                Já tem uma conta?
+                <Link href="/auth/login" className="underline mx-2">
+                    Entre
+                </Link>
             </div>
-       
+        </>
     );
 }
 
