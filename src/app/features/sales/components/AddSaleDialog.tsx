@@ -42,6 +42,11 @@ export default function AddSaleDialog({ products, clients }: { products: Product
       return;
     }
 
+    if(selectedProduct.quantity < quantity) {
+      toast.error('Quantidade insuficiente em estoque.');
+      return;
+    }
+
     const existingItem = cartItems.find(item => item.product.id === selectedProduct.id);
     if (existingItem) {
       setCartItems(cartItems.map(item =>
@@ -69,6 +74,7 @@ export default function AddSaleDialog({ products, clients }: { products: Product
       toast.error('Adicione pelo menos um produto ao carrinho.');
       return;
     }
+    
     const formData = new FormData();
     formData.append('cartItems', JSON.stringify(cartItems));
     formData.append('totalAmount', totalAmount.toString());

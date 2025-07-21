@@ -40,7 +40,7 @@ export async function createSale(prevState: FormState, formData: FormData): Prom
 
   if (error) {
       console.error('Erro na transação de venda:', error);
-      return { success: false, message: 'Ocorreu um erro ao processar a venda. O estoque não foi alterado.' };
+      return { success: false, message: `Erro ao criar venda: ${error.message}` };
   }
 
   revalidatePath('/sales'); // Atualiza a futura página de histórico de vendas
