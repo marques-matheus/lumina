@@ -25,14 +25,8 @@ export default function SignupPage() {
     }, [state]);
 
     return (
-        <div className="flex flex-col lg:flex-row min-h-screen  bg-white dark:bg-zinc-900">
-            <Banner />
-            <MobileBanner />
-            <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-full lg:w-7/12">
-                <div className="mx-auto grid w-[350px] gap-6">
-                    <div className="grid gap-2 text-center">
-                        {/* <h1 className="text-3xl font-bold">Cadastro</h1> */}
-                    </div>
+         <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-auto lg:w-full  ">
+                <div className="mx-auto grid w-[300px] lg:w-[350px] gap-6">
                     <form action={formAction} className="grid gap-4">
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
@@ -60,7 +54,7 @@ export default function SignupPage() {
                     </div>
                 </div>
             </div>
-        </div>
+       
     );
 }
 

@@ -1,4 +1,3 @@
-import Banner, { MobileBanner } from "@/app/features/auth/components/banner";
 import Link from "next/link";
 import { Metadata } from "next";
 
@@ -10,11 +9,10 @@ export const metadata: Metadata = {
 
 export default function ThankYouPage() {
     return (
-        <div className="flex flex-col lg:flex-row min-h-screen  bg-white dark:bg-zinc-900">
-            <Banner />
-            <MobileBanner />
-            <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-full lg:w-7/12">
-                <div className="mx-auto grid w-auto ">
+        <div className="flex flex-col lg:flex-row bg-white dark:bg-zinc-900 w-auto">
+
+            <div className="flex items-center justify-center py-12 px-4 sm:px-6  w-auto">
+                <div className="mx-auto grid w-[300px] lg:w-[450px] ">
                     <div className="grid gap-2 text-center">
                         <svg
                             className="mx-auto mb-4 text-green-500"
