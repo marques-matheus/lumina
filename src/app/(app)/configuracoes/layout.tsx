@@ -16,14 +16,14 @@ export default function configuracoesLayout({
         <div>
             {/* As abas controlam a navegação */}
             <Tabs value={pathname} className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-1">
                     {/* Cada "aba" é na verdade um Link do Next.js */}
                     <TabsTrigger value="/configuracoes/perfil" asChild>
                         <Link href="/configuracoes/perfil">Perfil da Empresa</Link>
                     </TabsTrigger>
-                    <TabsTrigger value="/configuracoes/conta" asChild>
+                    {/* <TabsTrigger value="/configuracoes/conta" asChild>
                         <Link href="/configuracoes/conta">Conta</Link>
-                    </TabsTrigger>
+                    </TabsTrigger> */}
                 </TabsList>
             </Tabs>
             <section className="mt-4">

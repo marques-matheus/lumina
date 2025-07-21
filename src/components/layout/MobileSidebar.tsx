@@ -19,7 +19,7 @@ export default function MobileSidebar() {
                     <SheetTitle hidden>Lúmina</SheetTitle>
                 </SheetHeader>
             </div>
-            <SheetContent side="left" className="p-4 dark:bg-zinc-700 bg-gray-100">
+            <SheetContent side="left" className="p-4 dark:bg-zinc-800 bg-gray-100">
                 <SidebarContent />
             </SheetContent>
         </Sheet>

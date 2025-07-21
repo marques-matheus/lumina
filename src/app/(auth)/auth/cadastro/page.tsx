@@ -4,9 +4,10 @@ import { SubmitButton } from "@/components/shared/submitButton";
 import { useActionState, useEffect } from "react";
 import { signup } from "@/app/features/auth/actions";
 import { toast } from "sonner";
-import Banner from "@/app/features/auth/components/banner";
+import Banner, { MobileBanner } from "@/app/features/auth/components/banner";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+
 
 export default function SignupPage() {
     const initialState = {
@@ -24,12 +25,13 @@ export default function SignupPage() {
     }, [state]);
 
     return (
-        <div className="flex min-h-screen  bg-white dark:bg-zinc-900">
+        <div className="flex flex-col lg:flex-row min-h-screen  bg-white dark:bg-zinc-900">
             <Banner />
+            <MobileBanner />
             <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-full lg:w-7/12">
                 <div className="mx-auto grid w-[350px] gap-6">
                     <div className="grid gap-2 text-center">
-                        <h1 className="text-3xl font-bold">Cadastro</h1>
+                        {/* <h1 className="text-3xl font-bold">Cadastro</h1> */}
                     </div>
                     <form action={formAction} className="grid gap-4">
                         <div className="grid gap-2">

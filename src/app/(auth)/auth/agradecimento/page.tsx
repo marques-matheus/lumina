@@ -1,10 +1,18 @@
-import Banner from "@/app/features/auth/components/banner";
+import Banner, { MobileBanner } from "@/app/features/auth/components/banner";
 import Link from "next/link";
+import { Metadata } from "next";
+
+
+export const metadata: Metadata = {
+    title: 'Obrigado por se registrar',
+    description: 'Página de agradecimento após o registro',
+};
 
 export default function ThankYouPage() {
     return (
-        <div className="flex min-h-screen bg-white dark:bg-zinc-900">
+        <div className="flex flex-col lg:flex-row min-h-screen  bg-white dark:bg-zinc-900">
             <Banner />
+            <MobileBanner />
             <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-full lg:w-7/12">
                 <div className="mx-auto grid w-auto ">
                     <div className="grid gap-2 text-center">

@@ -6,7 +6,8 @@ import { toast } from "sonner";
 import { SubmitButton } from "@/components/shared/submitButton";
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
-import Banner from "@/app/features/auth/components/banner";
+import Banner, { MobileBanner } from "@/app/features/auth/components/banner";
+
 
 export default function LoginPage() {
     const initialState = {
@@ -25,12 +26,13 @@ export default function LoginPage() {
         , [state]);
 
     return (
-        <div className="flex min-h-screen  bg-white dark:bg-zinc-900">
+        <div className="flex flex-col lg:flex-row min-h-screen  bg-white dark:bg-zinc-900">
             <Banner />
+            <MobileBanner />
             <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 w-full lg:w-7/12">
                 <div className="mx-auto grid w-[350px] gap-6">
                     <div className="grid gap-2 text-center">
-                        <h1 className="text-3xl font-bold">Login</h1>
+                        {/* <h1 className="text-3xl font-bold">Login</h1> */}
                     </div>
                     <form action={formAction} className="grid gap-4">
                         <div className="grid gap-2">
