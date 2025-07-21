@@ -72,7 +72,7 @@ export async function updateServiceOrder(prevState: FormState, formData: FormDat
         total: parseFloat(total) || 0,
     })
     .match({ id: parseInt(id) })
-    .select(`*, clients(name)`) // Pedimos os dados completos de volta;
+    .select(`*, clients(name)`) 
     .maybeSingle();
 
     if (error) {
@@ -82,36 +82,48 @@ export async function updateServiceOrder(prevState: FormState, formData: FormDat
     revalidatePath('/services');
     return { success: true, message: 'Ordem de Serviço atualizada com sucesso!', updatedOrder: data};
 }
-// Nova ação, dedicada apenas a mudar o status
 export async function updateOrderStatus(orderId: number, newStatus: string): Promise<ServiceOrder> {
     const supabase = await createClient();
-
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
         throw new Error('Não autorizado');
     }
 
     const { data: currentOrder, error: fetchError } = await supabase
-    .from('service_orders')
-    .select('status')
-    .eq('id', orderId)
-    .eq('profile_id', user.id) 
-    .single();
+        .from('service_orders')
+        .select('status')
+        .eq('id', orderId)
+        .eq('profile_id', user.id) 
+        .single();
+
     if (fetchError) {
         throw new Error("Ordem de serviço não encontrada ou você não tem permissão para a ver.");
     }
+    
     const isFinalStatus = currentOrder.status === 'Entregue' || currentOrder.status === 'Cancelado';
-        if (isFinalStatus) {
-            throw new Error("Não é possível alterar o status de uma ordem finalizada.");
-        }
+    if (isFinalStatus) {
+        throw new Error("Não é possível alterar o status de uma ordem finalizada.");
+    }
     const isRevertingFromCompleted = currentOrder.status === 'Concluído' && newStatus !== 'Entregue';
-        if (isRevertingFromCompleted) {
-            throw new Error("Uma ordem concluída só pode ser marcada como 'Entregue'.");
-        }
+    if (isRevertingFromCompleted) {
+        throw new Error("Uma ordem concluída só pode ser marcada como 'Entregue'.");
+    }
+   
+
+    const updateData: { status: string; completed_at?: string; delivered_at?: string } = {
+        status: newStatus,
+    };
+
+    if (newStatus === 'Concluído') {
+        updateData.completed_at = new Date().toISOString();
+    }
+    if (newStatus === 'Entregue') {
+        updateData.delivered_at = new Date().toISOString();
+    }
 
     const { data, error } = await supabase
         .from('service_orders')
-        .update({ status: newStatus })
+        .update(updateData)
         .eq('id', orderId)
         .select('*, clients(name)')
         .single();
@@ -120,6 +132,7 @@ export async function updateOrderStatus(orderId: number, newStatus: string): Pro
         throw new Error(`Erro ao atualizar status: ${error.message}`);
     }
 
-    revalidatePath('/services');
+    revalidatePath('/servicos');
+    revalidatePath('/'); 
     return data;
 }

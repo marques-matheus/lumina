@@ -1,6 +1,5 @@
 // src/features/dashboard/components/DashboardCard.tsx
-
-import { Card, CardContent,  CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type Product } from "@/types";
 
 type CardProps = {
@@ -8,15 +7,17 @@ type CardProps = {
     value: number;
     description: string;
     type: 'currency' | 'number' | 'list';
-    icon?: React.ReactNode; // Ícone agora é uma prop opcional
-    data?: Partial<Product>[]; // Lista de dados para o tipo 'list'
+    icon?: React.ReactNode;
+    data?: Partial<Product>[];
 };
 
 export function DashboardCard({ title, value, description, type, icon, data }: CardProps) {
-
     const formatValue = () => {
         if (type === 'currency') {
             return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        }
+        if (type === 'list') {
+            return value;
         }
         return value.toString();
     };
@@ -32,10 +33,9 @@ export function DashboardCard({ title, value, description, type, icon, data }: C
             <CardContent>
                 <div className="text-2xl font-bold">{formatValue()}</div>
                 <p className="text-xs text-muted-foreground">{description}</p>
-
                 {type === 'list' && data && data.length > 0 && (
                     <div className="mt-4 space-y-2">
-                        {data.slice(0, 3).map(item => ( 
+                        {data.slice(0, 3).map(item => (
                             <div key={item.id || item.name} className="flex justify-between items-center text-sm">
                                 <span className="truncate pr-2">{item.name}</span>
                                 <span className="font-semibold text-red-500">{item.quantity} un.</span>

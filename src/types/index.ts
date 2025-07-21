@@ -32,6 +32,7 @@ export type ServiceOrder = {
   status: string;
   total: number;
   delivered_at: string | null;
+  completed_at: string | null;
 };
 
 export type PageProps = {
