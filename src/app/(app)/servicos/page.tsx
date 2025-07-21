@@ -7,6 +7,7 @@ import ServiceOrderDetailsDialog from "../../features/service-orders/components/
 import { PageProps } from "@/types";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import Heading from "@/components/shared/Heading";
 
 
 export async function generateMetadata(
@@ -55,7 +56,7 @@ export default async function ServicesPage({ searchParams }: PageProps) {
     return (
         <div className="flex flex-col gap-8">
             <div className="flex items-center justify-between">
-                <h1 className="text-lg font-semibold">Ordens de Serviços</h1>
+                <Heading title="Ordens de Serviço" subtitle="Gerencie suas ordens de serviço com facilidade" />
                 <AddServiceOrderDialog clients={clients || []} />
             </div>
             <ServiceOrdersTable serviceOrders={services || []} />

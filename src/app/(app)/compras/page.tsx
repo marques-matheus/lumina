@@ -4,6 +4,7 @@ import { PageProps } from "@/types";
 import { ResolvingMetadata, Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import Heading from "@/components/shared/Heading";
 
 export async function generateMetadata(
     { params, searchParams }: PageProps,
@@ -45,7 +46,7 @@ export default async function PurchasesPage() {
     return (
         <div className="flex flex-col gap-8">
             <div className="flex items-center justify-between">
-                <h1 className="text-lg font-semibold">Minhas Compras</h1>
+                <Heading title="Compras" subtitle="Gerencie suas compras com facilidade" />
                 <AddPurchaseDialog products={products || []} />
             </div>
             <PurchasesTable purchases={purchases || []} />

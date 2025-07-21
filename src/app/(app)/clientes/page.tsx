@@ -7,6 +7,7 @@ import { Metadata, ResolvingMetadata } from 'next';
 import EditClientDialog from '../../features/clients/components/EditClientDialog';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
+import Heading from '@/components/shared/Heading';
 
 export async function generateMetadata(
   { params, searchParams }: PageProps,
@@ -38,7 +39,7 @@ export default async function ClientsPage() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Meu Clientes</h1>
+        <Heading title="Clientes" subtitle="Gerencie seus clientes e adicione novos registros " />
         <AddClientDialog />
       </div>
       <ClientTable clients={clients || []} />

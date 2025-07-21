@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { DashboardCard } from '../features/dashboard/components/Card';
 import { type Product } from '@/types';
 import { DollarSign, Package, Users, Wrench, ShoppingCart } from 'lucide-react';
+import Heading from '@/components/shared/Heading';
 
 export async function generateMetadata(): Promise<Metadata> {
     return {
@@ -55,7 +56,7 @@ export default async function MainPage() {
         .select('*', { count: 'exact', head: true })
         .eq('profile_id', user.id)
         .in('status', ['Aguardando Avaliação', 'Em Reparo']);
-        
+
     const completedServicesPromise = supabase
         .from('service_orders')
         .select('*', { count: 'exact', head: true })
@@ -111,12 +112,7 @@ export default async function MainPage() {
 
     return (
         <div className="flex flex-col gap-6">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Painel</h1>
-                <p className="text-muted-foreground">
-                    Uma visão geral da saúde do seu negócio este mês.
-                </p>
-            </div>
+            <Heading title="Dashboard" subtitle="Painel de controle" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <DashboardCard
                     title="Lucro Bruto (Mês)"

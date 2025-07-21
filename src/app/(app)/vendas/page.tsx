@@ -5,6 +5,7 @@ import { PageProps } from '@/types';
 import { Metadata, ResolvingMetadata } from 'next';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import Heading from "@/components/shared/Heading";
 
 export async function generateMetadata(): Promise<Metadata> {
     return {
@@ -43,8 +44,9 @@ export default async function SalesPage() {
     return (
 
         <div className="flex flex-col gap-8">
+
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Vendas</h1>
+                <Heading title="Vendas" subtitle="Gerencie suas vendas, adicione novos registros e visualize o histórico de transações." />
                 <AddSaleDialog products={products || []} clients={clients || []} />
             </div>
             <SalesTable sales={salesHistory || []} />

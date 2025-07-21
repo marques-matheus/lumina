@@ -5,6 +5,7 @@ import { PageProps } from '@/types';
 import { Metadata, ResolvingMetadata } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
+import Heading from '@/components/shared/Heading';
 
 
 export async function generateMetadata(
@@ -27,7 +28,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if(!user){
+    if (!user) {
       redirect('/auth/login');
     }
 
@@ -61,8 +62,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     return (
       <div className="flex flex-col gap-8">
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-semibold">Produtos</h1>
-
+          <Heading title="Produtos" subtitle="Gerencie seus produtos com facilidade" />
           <AddProductForm />
         </div>
         <ProductTable products={products || []} brands={uniqueBrands} />
