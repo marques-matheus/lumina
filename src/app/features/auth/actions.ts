@@ -62,73 +62,6 @@ redirect('/auth/agradecimento'); // Redireciona para a página de agradecimento 
 }
 
 
-export async function completeOnboarding(prevState: FormState, formData: FormData): Promise<FormState> {
-const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return { success: false, message: 'Usuário não autenticado.' };
-  }
-
-    const companyName = formData.get('company_name') as string;
-    const cnpj = formData.get('cnpj') as string;
-    const services = formData.get('services') as string;
-    const doesProvideService = formData.get('does_provide_services') === 'on';
-    const street = formData.get('street') as string;
-    const number = formData.get('number') as string;
-    const complement = formData.get('complement') as string;
-    const city = formData.get('city') as string;
-    const neighborhood = formData.get('neighborhood') as string;
-    const state = formData.get('state') as string;
-    const zipCode = formData.get('zip_code') as string;
-
-    if (!companyName || !cnpj || !services || !street || !number || !city || !neighborhood || !state || !zipCode) {
-        return { success: false, message: 'Todos os campos são obrigatórios.' };
-    }
-
-    const servicesArray = services.split(',').map(service => service.trim());
-    if (servicesArray.length === 0) {
-        return { success: false, message: 'Você deve informar pelo menos um serviço.' };
-    }
-
-   const { error: profileError } = await supabase
-    .from('profiles')
-    .update({
-      company_name: companyName,
-      cnpj: cnpj,
-      does_provide_service: doesProvideService,
-      service_types: servicesArray,
-      has_completed_onboarding: true, 
-    })
-    .eq('id', user.id);
-
-  if (profileError) {
-    return { success: false, message: `Erro ao atualizar perfil: ${profileError.message}` };
-  }
-
-
-  const { error: addressError } = await supabase
-    .from('addresses')
-    .insert({
-      profile_id: user.id,
-      street: street,
-      "number": number,
-      complement: complement,
-      city: city,
-      neighborhood: neighborhood,
-      state: state,
-      zip_code: zipCode,
-    })
-    .eq('profile_id', user.id);
-
-  if (addressError) {
-    return { success: false, message: `Erro ao atualizar endereço: ${addressError.message}` };
-  }
-    revalidatePath('/', 'layout');
-    redirect('/');
-
-}
-
-
 export async function logout() {
   const supabase = await createClient();
 await supabase.auth.signOut();
@@ -156,7 +89,7 @@ export async function updateProfile(prevState: FormState, formData: FormData): P
   const state = formData.get('state') as string;
   const zipCode = formData.get('zip_code') as string;
 
-  if (!companyName || !cnpj || !services || !street || !number || !city || !neighborhood || !state || !zipCode) {
+  if (!companyName || !cnpj || !street || !number || !city || !neighborhood || !state || !zipCode) {
       return { success: false, message: 'Todos os campos são obrigatórios.' };
   }
 
