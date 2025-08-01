@@ -16,7 +16,6 @@ export async function login(prevState: FormState, formData: FormData): Promise<F
     if (!email || !password) {
         return { success: false, message: 'Email e senha são obrigatórios.' };
     }
-
     const { error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -93,10 +92,12 @@ export async function updateProfile(prevState: FormState, formData: FormData): P
       return { success: false, message: 'Todos os campos são obrigatórios.' };
   }
 
-  const servicesArray = services.split(',').map(service => service.trim());
-  if (servicesArray.length === 0) {
-      return { success: false, message: ' Você deve informar pelo menos um serviço.' };
+  let servicesArray: string[] = [];
+
+  if(doesProvideService) {
+    servicesArray = services.split(',').map(service => service.trim());
   }
+ 
 
   const { error: profileError } = await supabase
     .from('profiles')
