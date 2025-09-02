@@ -96,9 +96,7 @@ export type SalesHistoryEntry = {
   } | null;
   sale_items: {
     quantity: number;
-    products: {
-      name: string;
-    } | null;
+    products: Product;
   }[];
 };
 

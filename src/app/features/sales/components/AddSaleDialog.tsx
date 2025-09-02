@@ -14,7 +14,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
 import { ChevronsUpDown, Check, Trash2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { createSale } from '../actions'; // Importa a ação do servidor
+import { createSale } from '../actions';
 
 
 type CartItem = {
@@ -42,7 +42,7 @@ export default function AddSaleDialog({ products, clients }: { products: Product
       return;
     }
 
-    if(selectedProduct.quantity < quantity) {
+    if (selectedProduct.quantity < quantity) {
       toast.error('Quantidade insuficiente em estoque.');
       return;
     }
@@ -74,7 +74,7 @@ export default function AddSaleDialog({ products, clients }: { products: Product
       toast.error('Adicione pelo menos um produto ao carrinho.');
       return;
     }
-    
+
     const formData = new FormData();
     formData.append('cartItems', JSON.stringify(cartItems));
     formData.append('totalAmount', totalAmount.toString());

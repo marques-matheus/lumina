@@ -1,20 +1,14 @@
-'use client';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Eye } from 'lucide-react';
-import { type SalesHistoryEntry } from '@/types'; // Precisaremos criar este tipo
+"use client";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { type SalesHistoryEntry } from "@/types";
+import SaleDetailsDialog from "./SaleDetailsDialog";
 
 export default function SalesTable({ sales }: { sales: SalesHistoryEntry[] }) {
-
-    const handleViewDetails = (saleId: number) => {
-        // No futuro, aqui abriríamos um modal para ver todos os detalhes da venda
-        console.log("Ver detalhes da venda #", saleId);
-    };
     return (
         <Card>
             <CardHeader>
-                
+
             </CardHeader>
             <CardContent>
                 <Table>
@@ -25,7 +19,7 @@ export default function SalesTable({ sales }: { sales: SalesHistoryEntry[] }) {
                             <TableHead>Cliente</TableHead>
                             <TableHead>Itens</TableHead>
                             <TableHead>Valor Total</TableHead>
-                            {/* <TableHead className="text-right">Ações</TableHead> */}
+                            <TableHead className="text-right">Ações</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -40,11 +34,9 @@ export default function SalesTable({ sales }: { sales: SalesHistoryEntry[] }) {
                                     {sale.sale_items.length > 1 && ` e mais ${sale.sale_items.length - 1}...`}
                                 </TableCell>
                                 <TableCell>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(sale.total_amount)}</TableCell>
-                                {/* <TableCell className="text-right">
-                                    <Button variant="outline" size="icon" onClick={() => handleViewDetails(sale.id)}>
-                                        <Eye className="h-4 w-4" />
-                                    </Button>
-                                </TableCell> */}
+                                <TableCell className="text-right">
+                                    <SaleDetailsDialog sale={sale} />
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

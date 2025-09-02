@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { profileFormSchema, type ProfileFormData } from '@/lib/schemas';
 
+
 import { updateProfile } from '@/app/features/auth/actions';
 
 import { type SessionUser } from '@/types';
@@ -122,7 +123,7 @@ const ProfileEditForm = ({ user, onCancelClick }: { user: SessionUser, onCancelC
                             <FormItem><FormLabel>Nome da Empresa</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="cnpj" render={({ field }) => (
-                            <FormItem><FormLabel>CNPJ (apenas números)</FormLabel><FormControl><Input {...field} maxLength={14} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>CNPJ (apenas números)</FormLabel><FormControl><Input {...field}  maxLength={14} /></FormControl><FormMessage /></FormItem>
                         )} />
                     </div>
                 </div>
