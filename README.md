@@ -417,17 +417,6 @@ chore: tarefas de manutenção
 
 ## 👥 **Equipe de Desenvolvimento**
 
-<table>
-  <tr>
-    <td align="center">
-      <img src="https://github.com/marques-matheus.png" width="100px;" alt=""/>
-      <br />
-      <sub><b>Seu Nome</b></sub>
-      <br />
-      <sub>Full Stack Developer</sub>
-    </td>
-  </tr>
-</table>
 
 ## 📄 **Licença**
 
