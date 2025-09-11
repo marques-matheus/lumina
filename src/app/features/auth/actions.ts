@@ -78,8 +78,8 @@ export async function updateProfile(prevState: FormState, formData: FormData): P
 
   const companyName = formData.get('company_name') as string;
   const cnpj = formData.get('cnpj') as string;
-  const services = formData.get('services') as string;
-  const doesProvideService = formData.get('does_provide_service') === 'on';
+  const services = formData.get('service_types') as string;
+  const doesProvideService = formData.get('does_provide_service') === 'true';
   const street = formData.get('street') as string;
   const number = formData.get('number') as string;
   const complement = formData.get('complement') as string;
@@ -94,10 +94,9 @@ export async function updateProfile(prevState: FormState, formData: FormData): P
 
   let servicesArray: string[] = [];
 
-  if(doesProvideService) {
-    servicesArray = services.split(',').map(service => service.trim());
-  }
- 
+ if (doesProvideService && services) {
+  servicesArray = services.split(',').map(service => service.trim());
+}
 
   const { error: profileError } = await supabase
     .from('profiles')
