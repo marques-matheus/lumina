@@ -21,7 +21,7 @@ const SaleView = ({ sale }: { sale: SalesHistoryEntry }) => {
         }).format(value);
     };
 
-const user = useSession();
+    const user = useSession();
     return (
         <div className="space-y-4 text-sm">
             <div className="grid grid-cols-2 gap-x-8 gap-y-2">
@@ -102,31 +102,55 @@ export default function SaleDetailsDialog({ sale }: { sale: SalesHistoryEntry })
                                 body { 
                                     width: 80mm; 
                                     margin: 0; 
-                                    padding: 5mm;
+                                    padding: 2mm;
                                     font-family: 'Courier New', monospace;
-                                    font-size: 12px;
-                                    line-height: 1.2;
+                                    font-size: 11px;
+                                    line-height: 1.1;
+                                    color: #000 !important;
+                                    -webkit-print-color-adjust: exact;
+                                    print-color-adjust: exact;
+                                }
+                                * {
+                                    color: #000 !important;
+                                    font-weight: bold !important;
                                 }
                             }
                             body { 
                                 width: 80mm; 
                                 margin: 0; 
-                                padding: 10px;
+                                padding: 8px;
                                 font-family: 'Courier New', monospace;
-                                font-size: 12px;
-                                line-height: 1.4;
+                                font-size: 11px;
+                                line-height: 1.3;
+                                color: #000;
+                                background: white;
                             }
-                            .center { text-align: center; }
-                            .right { text-align: right; }
-                            .bold { font-weight: bold; }
+                            .center { 
+                                text-align: center; 
+                                font-weight: bold;
+                            }
+                            .right { 
+                                text-align: right; 
+                                font-weight: bold;
+                            }
+                            .bold { 
+                                font-weight: 900 !important; 
+                                color: #000 !important;
+                            }
                             .separator { 
-                                border-top: 1px dashed #000; 
-                                margin: 5px 0; 
+                                border-top: 2px dashed #000; 
+                                margin: 3px 0; 
+                                width: 100%;
                             }
                             .item-line {
                                 display: flex;
                                 justify-content: space-between;
-                                margin: 2px 0;
+                                margin: 1px 0;
+                                font-weight: bold;
+                            }
+                            strong {
+                                font-weight: 900 !important;
+                                color: #000 !important;
                             }
                         </style>
                     </head>

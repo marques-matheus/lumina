@@ -65,6 +65,17 @@ export default function AddSaleDialog({ products, clients }: { products: Product
     setCartItems(cartItems.filter(item => item.product.id !== productId));
   };
 
+  const handleCloseDialog = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      // Limpa o carrinho quando o modal é fechado
+      setCartItems([]);
+      setSelectedProduct(null);
+      setSelectedClient(null);
+      setQuantity(1);
+    }
+  };
+
   const totalAmount = useMemo(() => {
     return cartItems.reduce((total, item) => total + (item.product.sale_price * item.quantity), 0);
   }, [cartItems]);
@@ -87,7 +98,7 @@ export default function AddSaleDialog({ products, clients }: { products: Product
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleCloseDialog}>
       <DialogTrigger asChild>
         <Button className='w-auto'>Nova Venda</Button>
       </DialogTrigger>
