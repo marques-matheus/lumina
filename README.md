@@ -98,67 +98,7 @@ lumina/
 └── docs/                       # Documentação adicional
 ```
 
-## 🛠️ **Instalação e Configuração**
 
-### **Pré-requisitos**
-- Node.js 18+
-- Conta no [Supabase](https://supabase.com)
-- npm/yarn/pnpm
-
-### **1. Clone o repositório**
-```bash
-git clone https://github.com/marques-matheus/lumina.git
-cd lumina
-```
-
-### **2. Instale as dependências**
-```bash
-npm install
-# ou
-yarn install
-# ou
-pnpm install
-```
-
-### **3. Configure o Supabase**
-1. Crie um novo projeto no [Supabase](https://supabase.com)
-2. Vá para **Settings > API**
-3. Copie a **URL** e a **anon key**
-4. Vá para **Settings > Database** 
-5. Copie a **Connection String**
-
-### **4. Configure as variáveis de ambiente**
-Crie um arquivo `.env.local` na raiz do projeto:
-
-```env
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL="https://seu-projeto.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="sua-anon-key"
-SUPABASE_SERVICE_ROLE_KEY="sua-service-role-key"
-
-# NextAuth.js
-NEXTAUTH_SECRET="seu-secret-super-seguro"
-NEXTAUTH_URL="http://localhost:3000"
-
-# App
-NODE_ENV="development"
-```
-
-### **5. Configure o banco de dados**
-1. Acesse o **SQL Editor** no Supabase
-2. Execute os scripts SQL para criar as tabelas necessárias
-3. Configure as **Row Level Security (RLS)** policies
-
-### **6. Execute o projeto**
-```bash
-npm run dev
-# ou
-yarn dev
-# ou
-pnpm dev
-```
-
-Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 
 ## 📊 **Funcionalidades Implementadas**
 
@@ -211,23 +151,7 @@ Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 - [x] Notificações toast
 - [x] Navegação intuitiva
 
-## 🎯 **Como Usar**
 
-### **1. Primeiro Acesso**
-1. Acesse `/auth/cadastro` para criar sua conta
-2. Faça login em `/auth/login`
-3. Configure seu perfil em `/configuracoes`
-
-### **2. Configuração Inicial**
-1. **Produtos**: Cadastre seus produtos em `/produtos`
-2. **Clientes**: Adicione seus clientes em `/clientes`
-3. **Fornecedores**: Configure fornecedores via `/compras`
-
-### **3. Operações Diárias**
-1. **Vendas**: Registre vendas em `/vendas`
-2. **Compras**: Controle compras em `/compras`
-3. **Serviços**: Gerencie ordens em `/ordens-servico`
-4. **Relatórios**: Acompanhe métricas no Dashboard
 
 ## 🏗️ **Arquitetura e Padrões**
 
@@ -316,31 +240,6 @@ Revalidation ← Response ← Business Logic ← Query Results
 - **SSL/TLS**: Conexões criptografadas
 - **Policies**: Regras de acesso por usuário
 
-## 📦 **Build e Deploy**
-
-### **Desenvolvimento**
-```bash
-npm run dev          # Inicia servidor de desenvolvimento
-npm run build        # Gera build de produção
-npm run start        # Inicia servidor de produção
-npm run lint         # Executa linting
-```
-
-### **Deploy na Vercel (Recomendado)**
-1. Conecte seu repositório GitHub na Vercel
-2. Configure as variáveis de ambiente:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=sua-url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=sua-key
-   NEXTAUTH_SECRET=seu-secret
-   NEXTAUTH_URL=https://seu-dominio.vercel.app
-   ```
-3. Deploy automático a cada push na main
-
-### **Outras Plataformas**
-- **Netlify**: Suporte completo para Next.js
-- **Railway**: Deploy direto do GitHub
-- **AWS Amplify**: Integração com AWS
 
 ## 🔄 **Roadmap de Desenvolvimento**
 
@@ -368,45 +267,7 @@ npm run lint         # Executa linting
 - [ ] Chatbot de atendimento
 - [ ] Análise preditiva de estoque
 
-## 🤝 **Contribuição**
 
-### **Como Contribuir**
-1. **Fork** o repositório
-2. Crie uma **branch** feature (`git checkout -b feature/nova-funcionalidade`)
-3. **Commit** suas mudanças (`git commit -m 'feat: adiciona nova funcionalidade'`)
-4. **Push** para a branch (`git push origin feature/nova-funcionalidade`)
-5. Abra um **Pull Request**
-
-### **Padrões de Código**
-- **TypeScript**: Tipagem obrigatória
-- **ESLint**: Configuração rigorosa
-- **Conventional Commits**: Padrão de commits
-- **Component naming**: PascalCase para componentes
-- **File naming**: kebab-case para arquivos
-
-### **Estrutura de Commits**
-```
-feat: nova funcionalidade
-fix: correção de bug
-docs: atualização de documentação
-style: formatação de código
-refactor: refatoração sem mudança de funcionalidade
-perf: melhoria de performance
-test: adição de testes
-chore: tarefas de manutenção
-```
-
-## 📞 **Suporte e Comunidade**
-
-### **Reportar Issues**
-- **🐛 Bugs**: [GitHub Issues](https://github.com/marques-matheus/lumina/issues)
-- **💡 Features**: [Feature Requests](https://github.com/marques-matheus/lumina/issues/new?template=feature_request.md)
-- **❓ Dúvidas**: [Discussions](https://github.com/marques-matheus/lumina/discussions)
-
-### **Documentação**
-- **📖 Docs**: Pasta `/docs` do repositório
-- **🎥 Vídeos**: Tutoriais no YouTube (em breve)
-- **📝 Blog**: Artigos técnicos (em breve)
 
 ## 📈 **Status do Projeto**
 
@@ -421,41 +282,3 @@ chore: tarefas de manutenção
 ## 📄 **Licença**
 
 Este projeto está licenciado sob a **Licença MIT** - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-## 🙏 **Agradecimentos**
-
-Agradecimentos especiais às tecnologias e comunidades que tornaram este projeto possível:
-
-- **[Next.js](https://nextjs.org/)** - O melhor framework React
-- **[Supabase](https://supabase.com/)** - Backend as a Service incrível
-- **[shadcn/ui](https://ui.shadcn.com/)** - Componentes de UI elegantes
-- **[Tailwind CSS](https://tailwindcss.com/)** - Framework CSS utilitário
-- **[Vercel](https://vercel.com/)** - Plataforma de deploy otimizada
-- **[TypeScript](https://www.typescriptlang.org/)** - JavaScript com tipos
-
----
-
-<div align="center">
-  <p><strong>Desenvolvido com ❤️ para revolucionar a gestão empresarial</strong></p>
-  <p>✨ <strong>Transformando ideias em soluções digitais</strong> ✨</p>
-  
-  <br>
-  
-  <sub>Powered by</sub><br>
-  <a href="https://supabase.com" target="_blank" rel="noopener noreferrer">
-    <img src="https://supabase.com/brand-assets/supabase-logo-wordmark--light.svg" alt="Supabase" width="120" style="margin: 10px;">
-  </a>
-  <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer">
-    <img src="https://nextjs.org/static/favicon/favicon.ico" alt="Next.js" width="32" style="margin: 10px;">
-  </a>
-  
-  <br><br>
-  
-  <p>
-    <a href="#-sobre-o-projeto">🔝 Voltar ao topo</a>
-  </p>
-</div>
-
----
-
-**⭐ Se este projeto foi útil para você, considere dar uma estrela no repositório!**
