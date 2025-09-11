@@ -20,7 +20,7 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
         openModal(order);
     };
     const session = useSession();
-    const statuses = ["Aguardando Avaliação", "Em Reparo",  "Concluído", "Entregue", "Cancelado"];
+    const statuses = ["Aguardando Avaliação", "Em Reparo", "Concluído", "Entregue", "Cancelado"];
 
     if (!session?.does_provide_service) {
         return (
@@ -71,26 +71,32 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {serviceOrders.map((order) => (
-                            <TableRow key={order.id} className="responsive-table-row odd:bg-secondary even:bg-white in-dark:even:bg-zinc-700">
-                                <TableCell data-label="Cliente / O.S.:" className="responsive-table-cell">
-                                    <div className="font-medium">{order.clients?.name}</div>
-                                    <div className="text-sm text-muted-foreground">O.S. #{order.id}</div>
-                                </TableCell>
-                                <TableCell data-label="Equipamento:" className="responsive-table-cell">{`${order.equip_brand} ${order.equip_model}`}</TableCell>
-                                <TableCell data-label="Status:" className="responsive-table-cell">
-                                    <Badge variant={getBadgeColor(order.status)} className="w-fit">
-                                        {order.status}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell data-label="Valor:" className="responsive-table-cell">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.total)}</TableCell>
-                                <TableCell className="responsive-actions-cell text-right">
-                                    <Button variant="outline" size="sm" onClick={() => handleViewDetailsClick(order)}>
-                                        <Eye className="mr-2 h-4 w-4" /> Ver Detalhes
-                                    </Button>
-                                </TableCell>
+                        {serviceOrders.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Nenhuma ordem de serviço encontrada.</TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            serviceOrders.map((order) => (
+                                <TableRow key={order.id} className="responsive-table-row odd:bg-secondary even:bg-white in-dark:even:bg-zinc-700">
+                                    <TableCell data-label="Cliente / O.S.:" className="responsive-table-cell">
+                                        <div className="font-medium">{order.clients?.name}</div>
+                                        <div className="text-sm text-muted-foreground">O.S. #{order.id}</div>
+                                    </TableCell>
+                                    <TableCell data-label="Equipamento:" className="responsive-table-cell">{`${order.equip_brand} ${order.equip_model}`}</TableCell>
+                                    <TableCell data-label="Status:" className="responsive-table-cell">
+                                        <Badge variant={getBadgeColor(order.status)} className="w-fit">
+                                            {order.status}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell data-label="Valor:" className="responsive-table-cell">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.total)}</TableCell>
+                                    <TableCell className="responsive-actions-cell text-right">
+                                        <Button variant="outline" size="sm" onClick={() => handleViewDetailsClick(order)}>
+                                            <Eye className="mr-2 h-4 w-4" /> Ver Detalhes
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </CardContent>

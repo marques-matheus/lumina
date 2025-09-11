@@ -72,30 +72,36 @@ export default function ProductTable({ products, brands }: { products: Product[]
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id} className={`responsive-table-row  odd:bg-secondary even:bg-white in-dark:even:bg-zinc-700 ${!product.is_active ? 'text-muted-foreground' : ''}`}>
-                  <TableCell data-label="Nome:" className="responsive-table-cell font-medium">{product.name}</TableCell>
-                  <TableCell data-label="Marca:" className="responsive-table-cell">{product.brand}</TableCell>
-                  <TableCell data-label="Quantidade:" className="responsive-table-cell">{product.quantity}</TableCell>
-                  <TableCell data-label="Preço:" className="responsive-table-cell">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.sale_price)}</TableCell>
-                  <TableCell data-label="Disponível:" className="responsive-table-cell lg:text-center">{product.is_active && product.quantity > 0 ? 'Sim' : 'Não'}</TableCell>
-                  <TableCell className="responsive-actions-cell lg:text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0" disabled={!product.is_active}>
-                          <span className="sr-only">Abrir menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => handleEditClick(product)}>Editar</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDelete(product.id)} className="text-red-500">Inativar</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+              {products.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Nenhum produto encontrado.</TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                products.map((product) => (
+                  <TableRow key={product.id} className={`responsive-table-row  odd:bg-secondary even:bg-white in-dark:even:bg-zinc-700 ${!product.is_active ? 'text-muted-foreground' : ''}`}>
+                    <TableCell data-label="Nome:" className="responsive-table-cell font-medium">{product.name}</TableCell>
+                    <TableCell data-label="Marca:" className="responsive-table-cell">{product.brand}</TableCell>
+                    <TableCell data-label="Quantidade:" className="responsive-table-cell">{product.quantity}</TableCell>
+                    <TableCell data-label="Preço:" className="responsive-table-cell">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.sale_price)}</TableCell>
+                    <TableCell data-label="Disponível:" className="responsive-table-cell lg:text-center">{product.is_active && product.quantity > 0 ? 'Sim' : 'Não'}</TableCell>
+                    <TableCell className="responsive-actions-cell lg:text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0" disabled={!product.is_active}>
+                            <span className="sr-only">Abrir menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                          <DropdownMenuItem onClick={() => handleEditClick(product)}>Editar</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDelete(product.id)} className="text-red-500">Inativar</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

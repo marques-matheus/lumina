@@ -21,35 +21,41 @@ export default function PurchasesTable({ purchases }: { purchases: Purchase[] })
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {purchases.map((purchase) => (
-                            <TableRow key={purchase.id} className={`responsive-table-row odd:bg-secondary even:bg-white dark:even:bg-zinc-700`}>
-                                <TableCell>
-                                    {new Date(purchase.purchase_date).toLocaleDateString('pt-BR', {
-                                        year: 'numeric',
-                                        month: '2-digit',
-                                        day: '2-digit'
-                                    })}
-                                </TableCell>
-                                <TableCell>
-                                    {purchase.products?.name || 'Produto Desconhecido'} - {purchase.products?.brand || 'Marca Desconhecida'}
-                                </TableCell>
-                                <TableCell>{purchase.supplier || 'Fornecedor Desconhecido'}</TableCell>
-                                <TableCell>{purchase.quantity}</TableCell>
-                                <TableCell>
-                                    {purchase.cost_per_unit.toLocaleString('pt-BR', {
-                                        style: 'currency',
-                                        currency: 'BRL'
-                                    })}
-                                </TableCell>
-                                <TableCell>
-                                    {(purchase.quantity * purchase.cost_per_unit).toLocaleString('pt-BR', {
-                                        style: 'currency',
-                                        currency: 'BRL'
-                                    })}
-                                </TableCell>
-
+                        {purchases.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Nenhuma compra encontrada.</TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            purchases.map((purchase) => (
+                                <TableRow key={purchase.id} className={`responsive-table-row odd:bg-secondary even:bg-white dark:even:bg-zinc-700`}>
+                                    <TableCell>
+                                        {new Date(purchase.purchase_date).toLocaleDateString('pt-BR', {
+                                            year: 'numeric',
+                                            month: '2-digit',
+                                            day: '2-digit'
+                                        })}
+                                    </TableCell>
+                                    <TableCell>
+                                        {purchase.products?.name || 'Produto Desconhecido'} - {purchase.products?.brand || 'Marca Desconhecida'}
+                                    </TableCell>
+                                    <TableCell>{purchase.supplier || 'Fornecedor Desconhecido'}</TableCell>
+                                    <TableCell>{purchase.quantity}</TableCell>
+                                    <TableCell>
+                                        {purchase.cost_per_unit.toLocaleString('pt-BR', {
+                                            style: 'currency',
+                                            currency: 'BRL'
+                                        })}
+                                    </TableCell>
+                                    <TableCell>
+                                        {(purchase.quantity * purchase.cost_per_unit).toLocaleString('pt-BR', {
+                                            style: 'currency',
+                                            currency: 'BRL'
+                                        })}
+                                    </TableCell>
+
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </CardContent>
