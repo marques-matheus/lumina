@@ -13,9 +13,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { PencilIcon, PrinterIcon } from 'lucide-react';
+import { PencilIcon, PrinterIcon, ChevronDown } from 'lucide-react';
 import { SubmitButton } from '@/components/shared/submitButton';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import PrintableOrder from './PrintableOrder';
+import { useSession } from '@/providers/SessionProvider';
 
 // O tipo para o nosso formulário, usando os nomes corretos das colunas
 type ServiceOrderFormData = {
@@ -65,6 +67,7 @@ export default function ServiceOrderDetailsDialog() {
     const [editFormData, setEditFormData] = useState<ServiceOrderFormData | null>(null);
     const [editFormState, formAction] = useActionState(updateServiceOrder, { success: false, message: '' });
     const [isStatusUpdating, startStatusTransition] = useTransition();
+    const user = useSession();
 
     useEffect(() => {
         if (isEditing && selectedOrder) {
@@ -106,6 +109,216 @@ export default function ServiceOrderDetailsDialog() {
                 toast.error(error instanceof Error ? error.message : "Falha ao atualizar o status.");
             }
         });
+    };
+
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleString('pt-BR');
+    };
+
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(value);
+    };
+
+    const handlePrintA5 = () => {
+        window.print();
+    };
+
+    const handlePrintThermal = () => {
+        if (!selectedOrder) return;
+
+        const printContent = generateOrderReceiptContent();
+
+        const printWindow = window.open('', '_blank', 'width=300,height=600');
+        if (printWindow) {
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Ordem de Serviço #${selectedOrder.id}</title>
+                        <style>
+                            @media print {
+                                @page { 
+                                    size: 80mm auto; 
+                                    margin: 0; 
+                                }
+                                body { 
+                                    width: 80mm; 
+                                    margin: 0; 
+                                    padding: 2mm;
+                                    font-family: 'Courier New', monospace;
+                                    font-size: 11px;
+                                    line-height: 1.1;
+                                    color: #000 !important;
+                                    -webkit-print-color-adjust: exact;
+                                    print-color-adjust: exact;
+                                }
+                                * {
+                                    color: #000 !important;
+                                    font-weight: bold !important;
+                                }
+                            }
+                            body { 
+                                width: 80mm; 
+                                margin: 0; 
+                                padding: 8px;
+                                font-family: 'Courier New', monospace;
+                                font-size: 11px;
+                                line-height: 1.3;
+                                color: #000;
+                                background: white;
+                            }
+                            .center { 
+                                text-align: center; 
+                                font-weight: bold;
+                            }
+                            .right { 
+                                text-align: right; 
+                                font-weight: bold;
+                            }
+                            .bold { 
+                                font-weight: 900 !important; 
+                                color: #000 !important;
+                            }
+                            .separator { 
+                                border-top: 2px dashed #000; 
+                                margin: 3px 0; 
+                                width: 100%;
+                            }
+                            .item-line {
+                                display: flex;
+                                justify-content: space-between;
+                                margin: 1px 0;
+                                font-weight: bold;
+                            }
+                            strong {
+                                font-weight: 900 !important;
+                                color: #000 !important;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent}
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+
+            printWindow.onload = () => {
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 250);
+            };
+        }
+    };
+
+    const generateOrderReceiptContent = () => {
+        if (!selectedOrder) return '';
+
+        return `
+            <div class="center bold">
+                ${user?.company_name}
+            </div>
+            <div class="center">
+                Ordem de Serviço
+            </div>
+            <div class="center">
+                CNPJ: ${user?.cnpj}
+            </div>
+            <div class="center">
+                ${user?.street},${user?.number} - ${user?.city}
+            </div>
+            <div class="separator"></div>
+            
+            <div>
+                <strong>O.S. Nº:</strong> ${selectedOrder.id}
+            </div>
+            <div>
+                <strong>Data de Entrada:</strong> ${formatDate(selectedOrder.created_at)}
+            </div>
+            <div>
+                <strong>Status:</strong> ${selectedOrder.status}
+            </div>
+            ${selectedOrder.clients ? `
+            <div>
+                <strong>Cliente:</strong> ${selectedOrder.clients.name}
+            </div>
+            ${selectedOrder.clients.phone ? `
+            <div>
+                <strong>Telefone:</strong> ${selectedOrder.clients.phone}
+            </div>
+            ` : ''}
+            ` : ''}
+            
+            <div class="separator"></div>
+            
+            <div class="bold">DADOS DO EQUIPAMENTO:</div>
+            <div>
+                <strong>Tipo:</strong> ${selectedOrder.type}
+            </div>
+            <div>
+                <strong>Marca/Modelo:</strong> ${selectedOrder.equip_brand} ${selectedOrder.equip_model}
+            </div>
+            ${selectedOrder.serial_number ? `
+            <div>
+                <strong>Nº de Série:</strong> ${selectedOrder.serial_number}
+            </div>
+            ` : ''}
+            ${selectedOrder.items ? `
+            <div>
+                <strong>Itens Acompanhantes:</strong> ${selectedOrder.items}
+            </div>
+            ` : ''}
+            
+            <div class="separator"></div>
+            
+            <div class="bold">PROBLEMA RELATADO:</div>
+            <div style="margin-bottom: 8px; text-align: justify;">
+                ${selectedOrder.problem_description}
+            </div>
+            
+            <div class="separator"></div>
+            
+            <div class="item-line bold" style="font-size: 14px;">
+                <span>VALOR TOTAL:</span>
+                <span>${formatCurrency(selectedOrder.total)}</span>
+            </div>
+            
+            <div class="separator"></div>
+            
+            <div class="center">
+                <strong>CONDIÇÕES GERAIS</strong>
+            </div>
+            <div style="font-size: 10px; text-align: justify;">
+                - Equipamento será entregue mediante
+                apresentação desta ordem de serviço.
+            </div>
+            <div style="font-size: 10px; text-align: justify;">
+                - Não nos responsabilizamos por 
+                equipamentos não retirados em 90 dias.
+            </div>
+            <div style="font-size: 10px; text-align: justify;">
+                - Garantia de 90 dias para serviços
+                realizados (não cobre defeitos de fábrica).
+            </div>
+            
+            <div class="separator"></div>
+            
+            <div class="center">
+                ________________________________
+            </div>
+            <div class="center">
+                Assinatura do Cliente
+            </div>
+            
+            <div class="separator"></div>
+            
+            <div class="center">
+                Obrigado pela confiança!
+            </div>
+        `;
     };
 
     if (!isDialogOpen || !selectedOrder) return null;
@@ -155,7 +368,25 @@ export default function ServiceOrderDetailsDialog() {
                         ) : (
                             <>
                                 <DialogClose asChild><Button variant="secondary">Fechar</Button></DialogClose>
-                                <Button variant="outline" onClick={() => window.print()}><PrinterIcon className="mr-2 h-4 w-4" /> Imprimir</Button>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline">
+                                            <PrinterIcon className="mr-2 h-4 w-4" />
+                                            Imprimir
+                                            <ChevronDown className="ml-2 h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuItem onClick={handlePrintA5}>
+                                            <PrinterIcon className="mr-2 h-4 w-4" />
+                                            Imprimir A5
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={handlePrintThermal}>
+                                            <PrinterIcon className="mr-2 h-4 w-4" />
+                                            Impressora Térmica
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                                 <Button disabled={isStatusUpdating || selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} onClick={enterEditMode}><PencilIcon className="mr-2 h-4 w-4" /> Editar</Button>
                             </>
                         )}
