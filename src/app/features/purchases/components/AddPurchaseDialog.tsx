@@ -33,14 +33,40 @@ const INITIAL_FORM_DATA = {
     purchaseDate: getTodayDateString(),
 };
 
-export default function AddPurchaseDialog({ products }: { products: Product[] }) {
+interface AddPurchaseDialogProps {
+    products: Product[];
+    isOpen?: boolean;
+    setIsOpen?: (isOpen: boolean) => void;
+    initialProduct?: Product;
+}
+
+export default function AddPurchaseDialog({
+    isOpen: controlledIsOpen,
+    setIsOpen: controlledSetIsOpen,
+    products,
+    initialProduct
+}: AddPurchaseDialogProps) {
+    // Permite que o modal controle seu próprio estado ou seja controlado por props
+    const [internalIsOpen, setInternalIsOpen] = useState(false);
+    const isControlled = controlledIsOpen !== undefined && controlledSetIsOpen !== undefined;
+
+    const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
+    const setIsOpen = isControlled ? controlledSetIsOpen : setInternalIsOpen;
+
     const initialState = { success: false, message: '' };
     const [state, formAction] = useActionState(createPurchase, initialState);
 
-    const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState(INITIAL_FORM_DATA);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [popoverOpen, setPopoverOpen] = useState(false);
+
+    // Pre-seleciona o produto se um for passado via props
+    useEffect(() => {
+        if (initialProduct) {
+            setSelectedProduct(initialProduct);
+            setFormData(prevState => ({ ...prevState, productId: initialProduct.id.toString() }));
+        }
+    }, [initialProduct]);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -65,10 +91,12 @@ export default function AddPurchaseDialog({ products }: { products: Product[] })
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
-                <Button>Registrar Nova Compra</Button>
-            </DialogTrigger>
+        <Dialog open={isOpen} onOpenChange={(open) => { if (setIsOpen) { setIsOpen(open) }; if (!open) { setSelectedProduct(null); setFormData(INITIAL_FORM_DATA); } }}>
+            {!isControlled && (
+                <DialogTrigger asChild>
+                    <Button>Registrar Nova Compra</Button>
+                </DialogTrigger>
+            )}
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Registrar Compra de Produto</DialogTitle>
@@ -111,7 +139,7 @@ export default function AddPurchaseDialog({ products }: { products: Product[] })
                                 <Input
                                     id="cost_per_unit" name="cost_per_unit" type="number" step="0.01" required
                                     defaultValue={formData.costPerUnit} onChange={handleInputChange}
-                                    
+
                                 />
                             </div>
                         </div>

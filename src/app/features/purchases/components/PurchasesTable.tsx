@@ -1,13 +1,13 @@
 'use client'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { type Purchase } from "@/types/index"
+import { type Purchase, type Product } from "@/types/index"
+import AddPurchaseDialog from "./AddPurchaseDialog"
 
-export default function PurchasesTable({ purchases }: { purchases: Purchase[] }) {
+export default function PurchasesTable({ purchases, allProducts }: { purchases: Purchase[], allProducts: Product[] }) {
     return (
         <Card>
-            <CardHeader>
-            </CardHeader>
+            
             <CardContent>
                 <Table>
                     <TableHeader>
@@ -62,4 +62,3 @@ export default function PurchasesTable({ purchases }: { purchases: Purchase[] })
         </Card>
     )
 }
-

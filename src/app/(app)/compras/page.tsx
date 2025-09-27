@@ -49,7 +49,7 @@ export default async function PurchasesPage() {
                 <Heading title="Compras" subtitle="Gerencie suas compras com facilidade" />
                 <AddPurchaseDialog products={products || []} />
             </div>
-            <PurchasesTable purchases={purchases || []} />
+            <PurchasesTable purchases={purchases || []} allProducts={products || []} />
         </div>
     );
 }
