@@ -140,11 +140,11 @@ export default function ServiceOrderDetailsDialog() {
                         <style>
                             @media print {
                                 @page { 
-                                    size: 80mm auto; 
+                                    size: 68mm auto; 
                                     margin: 0; 
                                 }
                                 body { 
-                                    width: 80mm; 
+                                    width: 68mm; 
                                     margin: 0; 
                                     padding: 2mm;
                                     font-family: 'Courier New', monospace;
@@ -160,7 +160,7 @@ export default function ServiceOrderDetailsDialog() {
                                 }
                             }
                             body { 
-                                width: 80mm; 
+                                width: 68mm; 
                                 margin: 0; 
                                 padding: 8px;
                                 font-family: 'Courier New', monospace;
@@ -223,9 +223,6 @@ export default function ServiceOrderDetailsDialog() {
             </div>
             <div class="center">
                 Ordem de Serviço
-            </div>
-            <div class="center">
-                CNPJ: ${user?.cnpj}
             </div>
             <div class="center">
                 ${user?.street},${user?.number} - ${user?.city}

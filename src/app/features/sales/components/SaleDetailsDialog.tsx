@@ -96,11 +96,11 @@ export default function SaleDetailsDialog({ sale }: { sale: SalesHistoryEntry })
                         <style>
                             @media print {
                                 @page { 
-                                    size: 80mm auto; 
+                                    size: 68mm auto; 
                                     margin: 0; 
                                 }
                                 body { 
-                                    width: 80mm; 
+                                    width: 68mm; 
                                     margin: 0; 
                                     padding: 2mm;
                                     font-family: 'Courier New', monospace;
@@ -116,7 +116,7 @@ export default function SaleDetailsDialog({ sale }: { sale: SalesHistoryEntry })
                                 }
                             }
                             body { 
-                                width: 80mm; 
+                                width: 68mm; 
                                 margin: 0; 
                                 padding: 8px;
                                 font-family: 'Courier New', monospace;
@@ -177,9 +177,6 @@ export default function SaleDetailsDialog({ sale }: { sale: SalesHistoryEntry })
             </div>
             <div class="center">
                 Nota Não Fiscal
-            </div>
-            <div class="center">
-                CNPJ: ${user?.cnpj}
             </div>
             <div class="center">
                 ${user?.street},${user?.number} - ${user?.city}
@@ -300,3 +297,4 @@ export default function SaleDetailsDialog({ sale }: { sale: SalesHistoryEntry })
         </Dialog>
     );
 }
+
