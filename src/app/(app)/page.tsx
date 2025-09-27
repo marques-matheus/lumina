@@ -7,6 +7,9 @@ import { type Product } from '@/types';
 import { DollarSign, Package, Users, Wrench, ShoppingCart } from 'lucide-react';
 import Heading from '@/components/shared/Heading';
 import LowStockDialog from '../features/dashboard/components/LowStockDialog';
+import MonthlyRevenueChart from '../features/dashboard/components/MonthlyRevenueChart';
+import ServiceStatusChart from '../features/dashboard/components/ServiceStatusChart';
+import HorizontalBarChart from '../features/dashboard/components/HorizontalBarChart';
 
 export async function generateMetadata(): Promise<Metadata> {
     return {
@@ -45,14 +48,14 @@ export default async function MainPage() {
     // -- QUERIES MENSAIS --
     const monthlySalesPromise = supabase
         .from('sales')
-        .select('total_amount')
+        .select('total_amount, created_at, sale_items(quantity, products(name))')
         .eq('profile_id', user.id)
         .gte('created_at', firstDayOfMonth)
         .lt('created_at', firstDayOfNextMonth);
 
     const monthlyServicesPromise = supabase
         .from('service_orders')
-        .select('total')
+        .select('total, updated_at')
         .eq('profile_id', user.id)
         .in('status', ['Concluído', 'Entregue'])
         .gte('updated_at', firstDayOfMonth)
@@ -60,7 +63,7 @@ export default async function MainPage() {
 
     const monthlyPurchasesPromise = supabase
         .from('purchases')
-        .select('quantity, cost_per_unit')
+        .select('quantity, cost_per_unit, purchase_date')
         .eq('profile_id', user.id)
         .gte('purchase_date', firstDayOfMonth)
         .lt('purchase_date', firstDayOfNextMonth);
@@ -108,6 +111,11 @@ export default async function MainPage() {
         .eq('profile_id', user.id)
         .order('name', { ascending: true });
 
+    const serviceStatusPromise = supabase
+        .from('service_orders')
+        .select('status')
+        .eq('profile_id', user.id);
+
     // 2. Disparamos todas as buscas ao mesmo tempo
     const [
         { data: dailySales },
@@ -119,7 +127,8 @@ export default async function MainPage() {
         { count: completedServicesCount },
         { data: lowStockProducts },
         { count: newClientsCount },
-        { data: allProducts }
+        { data: allProducts },
+        { data: serviceStatus }
     ] = await Promise.all([
         dailySalesPromise,
         monthlySalesPromise,
@@ -130,7 +139,8 @@ export default async function MainPage() {
         completedServicesPromise,
         lowStockProductsPromise,
         newClientsPromise,
-        allProductsPromise
+        allProductsPromise,
+        serviceStatusPromise
     ]);
 
     // --- CÁLCULOS DIÁRIOS ---
@@ -157,79 +167,121 @@ export default async function MainPage() {
     const monthlySalesCount = monthlySales?.length || 0;
     const averageTicket = monthlySalesCount > 0 ? monthlySalesRevenue / monthlySalesCount : 0;
 
+    // --- PROCESSAMENTO DE DADOS PARA GRÁFICOS ---
+
+    // Gráfico de Faturamento Mensal
+    const monthlyChartData: { [key: string]: number } = {};
+    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    for (let i = 1; i <= daysInMonth; i++) {
+        const day = i.toString().padStart(2, '0');
+        monthlyChartData[day] = 0;
+    }
+
+    monthlySales?.forEach(sale => {
+        const day = new Date(sale.created_at).getDate().toString().padStart(2, '0');
+        if (monthlyChartData[day] !== undefined) {
+            monthlyChartData[day] += sale.total_amount;
+        }
+    });
+    monthlyServices?.forEach(service => {
+        const day = new Date(service.updated_at).getDate().toString().padStart(2, '0');
+        if (monthlyChartData[day] !== undefined) {
+            monthlyChartData[day] += service.total;
+        }
+    });
+
+    const sortedDays = Object.keys(monthlyChartData).sort();
+    const formattedMonthlyChartData = sortedDays.map(day => ({
+        name: day,
+        Faturamento: monthlyChartData[day],
+    }));
+
+    // Gráfico de Status de Serviços
+    const statusCounts = serviceStatus?.reduce((acc, order) => {
+        acc[order.status] = (acc[order.status] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>) || {};
+
+    const serviceStatusChartData = Object.keys(statusCounts).map(status => ({
+        name: status,
+        value: statusCounts[status],
+    }));
+
+    // Gráfico de Lucro Mensal
+    const monthlyProfitChartData: { [key: string]: { revenue: number, cost: number } } = {};
+    for (let i = 1; i <= daysInMonth; i++) {
+        const day = i.toString().padStart(2, '0');
+        monthlyProfitChartData[day] = { revenue: 0, cost: 0 };
+    }
+    monthlySales?.forEach(sale => {
+        const day = new Date(sale.created_at).getDate().toString().padStart(2, '0');
+        if (monthlyProfitChartData[day]) monthlyProfitChartData[day].revenue += sale.total_amount;
+    });
+    monthlyServices?.forEach(service => {
+        const day = new Date(service.updated_at).getDate().toString().padStart(2, '0');
+        if (monthlyProfitChartData[day]) monthlyProfitChartData[day].revenue += service.total;
+    });
+    monthlyPurchases?.forEach(purchase => {
+        const day = new Date(purchase.purchase_date).getDate().toString().padStart(2, '0');
+        if (monthlyProfitChartData[day]) monthlyProfitChartData[day].cost += purchase.quantity * purchase.cost_per_unit;
+    });
+    const sortedProfitDays = Object.keys(monthlyProfitChartData).sort();
+    const formattedMonthlyProfitChartData = sortedProfitDays.map(day => ({
+        name: day,
+        Lucro: monthlyProfitChartData[day].revenue - monthlyProfitChartData[day].cost,
+    }));
+
+    // Gráfico de Itens Vendidos Hoje
+    const soldItemsAggregated = dailySoldItems.reduce((acc, item) => {
+        acc[item.name] = (acc[item.name] || 0) + item.quantity;
+        return acc;
+    }, {} as Record<string, number>);
+
+    const soldItemsChartData = Object.entries(soldItemsAggregated)
+        .map(([name, value]) => ({ name, value }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 7); // Pega os 7 mais vendidos
+
+    // Gráfico de Itens Vendidos no Mês
+    const monthlySoldItems = monthlySales
+        ?.flatMap(sale => sale.sale_items)
+        .map(item => ({
+            // @ts-ignore
+            name: item.products.name,
+            quantity: item.quantity
+        })) || [];
+
+    const monthlySoldItemsAggregated = monthlySoldItems.reduce((acc, item) => {
+        acc[item.name] = (acc[item.name] || 0) + item.quantity;
+        return acc;
+    }, {} as Record<string, number>);
+
+    const monthlySoldItemsChartData = Object.entries(monthlySoldItemsAggregated).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 7);
+
     return (
         <div className="flex flex-col gap-6">
             <Heading title="Dashboard" subtitle="Painel de controle" />
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                <MonthlyRevenueChart data={formattedMonthlyChartData} />
+                <MonthlyRevenueChart data={formattedMonthlyProfitChartData} title="Lucro no Mês" barDataKey="Lucro" barFill="#3b82f6" />
+                <HorizontalBarChart title="Itens Mais Vendidos (Hoje)" description="Produtos mais populares do dia." data={soldItemsChartData} barDataKey="value" barFill="#34d399" className="col-span-1 lg:col-span-2" />
+                <HorizontalBarChart
+                    title="Itens Mais Vendidos (Mês)"
+                    description="Produtos mais populares do mês."
+                    data={monthlySoldItemsChartData}
+                    barDataKey="value"
+                    barFill="#8b5cf6" // violet-500
+                    className="col-span-1 lg:col-span-2"
+                />
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <DashboardCard
-                    title="Faturamento (Hoje)"
-                    value={dailyRevenue}
-                    type="currency"
-                    description="Total de vendas hoje"
-                    icon={<DollarSign className="h-8 w-8 text-muted-foreground" />}
-                />
-                <DashboardCard
-                    title="Lucro Bruto (Hoje)"
-                    value={dailyProfit}
-                    type="currency"
-                    description={`Custos de R$ ${dailyCosts.toFixed(2)}`}
-                    icon={<DollarSign className="h-8 w-8 text-muted-foreground" />}
-                />
-                <DashboardCard
-                    title="Faturamento (Mês)"
-                    value={totalRevenue}
-                    type="currency"
-                    description="Vendas de produtos e serviços"
-                    icon={<DollarSign className="h-8 w-8 text-muted-foreground" />}
-                />
-                <DashboardCard
-                    title="Lucro Bruto (Mês)"
-                    value={monthlyGrossProfit}
-                    type="currency"
-                    description={`Custos de R$ ${monthlyTotalCosts.toFixed(2)}`}
-                    icon={<DollarSign className="h-8 w-8 text-muted-foreground" />}
-                />
-                <DashboardCard
-                    title="Ticket Médio (Vendas)"
-                    value={averageTicket}
-                    type="currency"
-                    description={`${monthlySalesCount} venda(s) no mês`}
-                    icon={<ShoppingCart className="h-8 w-8 text-muted-foreground" />}
-                />
-                <DashboardCard
-                    title="Itens Vendidos (Hoje)"
-                    value={dailySoldItems.length}
-                    type="list"
-                    data={dailySoldItems}
-                    description="Produtos vendidos no dia"
-                    icon={<Package className="h-8 w-8 text-muted-foreground" />}
-                />
-                <DashboardCard
-                    title="Serviços Pendentes"
-                    value={pendingServicesCount || 0}
-                    type="number"
-                    description="Ordens que necessitam da sua atenção"
-                    icon={<Wrench className="h-8 w-8 text-muted-foreground" />}
-                />
-                <DashboardCard
-                    title="Serviços Concluídos (Mês)"
-                    value={completedServicesCount || 0}
-                    type="number"
-                    description="Ordens de serviço finalizadas"
-                    icon={<Wrench className="h-8 w-8 text-muted-foreground" />}
-                />
-                <DashboardCard
-                    title="Novos Clientes (Mês)"
-                    value={newClientsCount || 0}
-                    type="number"
-                    description="Novos clientes cadastrados"
-                    icon={<Users className="h-8 w-8 text-muted-foreground" />}
-                />
+
+                <ServiceStatusChart data={serviceStatusChartData} />
                 <DashboardCard
                     title="Alerta de Estoque Baixo"
                     value={lowStockProducts?.length || 0}
                     type="list"
-                    data={(lowStockProducts?.slice(0, 5) || []) as Partial<Product>[]}
+                    data={(lowStockProducts?.slice(0, 10) || []) as Partial<Product>[]}
                     description={`Itens com menos de ${LOW_STOCK_THRESHOLD} unidades`}
                     icon={<Package className="h-8 w-8 text-muted-foreground" />}
                     footer={<LowStockDialog
