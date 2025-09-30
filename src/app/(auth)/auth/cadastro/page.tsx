@@ -44,6 +44,12 @@ export default function SignupPage() {
                     </div>
                     <Input id="password" name="password" type="password" required />
                 </div>
+                <div className="grid gap-2">
+                    <div className="flex items-center">
+                        <Label htmlFor="confirm_password">Confirmar Senha</Label>
+                    </div>
+                    <Input id="confirm_password" name="confirm_password" type="password" required />
+                </div>
                 <SubmitButton text="Cadastrar" />
             </form>
             <div className="mt-1  text-center text-sm">
