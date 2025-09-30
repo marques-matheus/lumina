@@ -61,5 +61,85 @@ export const registerFormSchema = z.object({
   }
 });
 
+export const clientSchema = z.object({
+  name: z.string().min(3, { message: "O nome deve ter pelo menos 3 caracteres." }),
+  phone: z.string().min(8, { message: "O telefone deve ter pelo menos 8 digitos." }),
+});
+
+export const loginSchema = z.object({
+  email: z.string().email({ message: "Email inválido." }),
+  password: z.string().min(1, { message: "A senha é obrigatória." }),
+});
+
+export const productSchema = z.object({
+  name: z.string().min(3, { message: "O nome do produto deve ter pelo menos 3 caracteres." }),
+  quantity: z.coerce.number().int().min(0, { message: "A quantidade deve ser um número positivo." }),
+  description: z.string().min(3, { message: "A descrição deve ter pelo menos 3 caracteres." }),
+  sale_price: z.coerce.number().min(0, { message: "O preço de venda deve ser um número positivo." }),
+  brand: z.string().min(2, { message: "A marca deve ter pelo menos 2 caracteres." }),
+});
+
+export type ClientFormData = z.infer<typeof clientSchema>;
+export type LoginFormData = z.infer<typeof loginSchema>;
+export type ProductFormData = z.infer<typeof productSchema>;
+
+export const purchaseSchema = z.object({
+  product_id: z.coerce.number().int().positive({ message: "Selecione um produto." }),
+  quantity: z.coerce.number().int().min(1, { message: "A quantidade deve ser no mínimo 1." }),
+  cost_per_unit: z.coerce.number().min(0, { message: "O custo deve ser um número positivo." }),
+  purchase_date: z.coerce.date().refine((date) => !isNaN(date.getTime()), { message: "Data inválida." }),
+  supplier: z.string().optional(),
+});
+
+export type PurchaseFormData = z.infer<typeof purchaseSchema>;
+
+const cartItemSchema = z.object({
+  product: z.object({
+    id: z.number().int().positive(),
+    sale_price: z.number().min(0),
+  }),
+  quantity: z.number().int().min(1),
+});
+
+export const saleSchema = z.object({
+  cartItems: z.string().refine((val) => {
+    try {
+      const parsed = JSON.parse(val);
+      return z.array(cartItemSchema).nonempty().safeParse(parsed).success;
+    } catch {
+      return false;
+    }
+  }, { message: "Carrinho inválido." }),
+  totalAmount: z.coerce.number().min(0, { message: "O valor total deve ser um número positivo." }),
+  clientId: z.coerce.number().int().positive().optional().nullable(),
+});
+
+export type SaleFormData = z.infer<typeof saleSchema>;
+
+export const serviceOrderStatusSchema = z.enum([
+    "Aguardando Avaliação",
+    "Aguardando Aprovação",
+    "Aprovado",
+    "Em Andamento",
+    "Em Reparo",
+    "Aguardando Peças",
+    "Concluído",
+    "Entregue",
+    "Cancelado",
+]);
+
+export const serviceOrderSchema = z.object({
+    clientId: z.coerce.number().int().positive({ message: "Selecione um cliente." }),
+    equip_brand: z.string().min(2, { message: "A marca deve ter pelo menos 2 caracteres." }),
+    equip_model: z.string().min(2, { message: "O modelo deve ter pelo menos 2 caracteres." }),
+    serial_number: z.string().min(1, { message: "O número de série é obrigatório." }),
+    problem_description: z.string().min(10, { message: "A descrição do problema deve ter pelo menos 10 caracteres." }),
+    items: z.string().optional(),
+    type: z.string().min(3, { message: "O tipo de serviço é obrigatório." }),
+    total: z.coerce.number().min(0, { message: "O valor total deve ser um número positivo." }),
+});
+
+export type ServiceOrderFormData = z.infer<typeof serviceOrderSchema>;
+
 export type ProfileFormData = z.infer<typeof profileFormSchema>;
 export type RegisterFormData = z.infer<typeof registerFormSchema>;

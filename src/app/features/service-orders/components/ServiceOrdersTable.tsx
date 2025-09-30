@@ -20,7 +20,7 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
         openModal(order);
     };
     const session = useSession();
-    const statuses = ["Aguardando Avaliação", "Em Reparo", "Concluído", "Entregue", "Cancelado"];
+    const statuses = ["Aguardando Avaliação", "Em Andamento", "Concluído", "Entregue", "Cancelado"];
 
     if (!session?.does_provide_service) {
         return (
@@ -36,7 +36,7 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
         switch (status) {
             case "Aguardando Avaliação":
                 return "waiting";
-            case "Em Reparo":
+            case "Em Andamento":
                 return "inProgress";
             case "Concluído":
                 return "completed";

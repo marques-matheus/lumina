@@ -347,7 +347,7 @@ export default function ServiceOrderDetailsDialog() {
                                 <SelectTrigger><SelectValue /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado' || selectedOrder.status === 'Concluído'} value="Aguardando Avaliação">Aguardando Avaliação</SelectItem>
-                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado' || selectedOrder.status === 'Concluído'} value="Em Reparo">Em Reparo</SelectItem>
+                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado' || selectedOrder.status === 'Concluído'} value="Em Andamento">Em Andamento</SelectItem>
                                     <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Concluído">Concluído</SelectItem>
                                     <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Entregue">Entregue</SelectItem>
                                     <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Cancelado">Cancelado</SelectItem>

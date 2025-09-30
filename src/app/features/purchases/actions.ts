@@ -2,6 +2,7 @@
 import { type FormState } from "@/types";
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
+import { purchaseSchema } from "@/lib/schemas";
 
 export async function createPurchase(prevState: FormState, formData: FormData): Promise<FormState> {
 
@@ -12,26 +13,35 @@ const { data: { user } } = await supabase.auth.getUser();
 if (!user) {
     return { success: false, message: 'Não autorizado.' };
 }
-// --- CORREÇÃO NA EXTRAÇÃO DOS DADOS ---
-// 1. Lemos 'product_id', que é o que o nosso formulário envia.
-const productId = formData.get('product_id') as string; 
-const quantity = formData.get('quantity') as string;
-const costPerUnit = formData.get('cost_per_unit') as string;
-const purchaseDate = formData.get('purchase_date') as string;
-const supplier = formData.get('supplier') as string;
-if(!productId || !quantity || !costPerUnit || !purchaseDate) {
-    return { success: false, message: 'Produto, quantidade, custo e data são obrigatórios.' };
+
+const validatedFields = purchaseSchema.safeParse({
+    product_id: formData.get('product_id'),
+    quantity: formData.get('quantity'),
+    cost_per_unit: formData.get('cost_per_unit'),
+    purchase_date: formData.get('purchase_date'),
+    supplier: formData.get('supplier'),
+});
+
+if (!validatedFields.success) {
+    const errors = validatedFields.error.flatten().fieldErrors;
+    const firstError = Object.values(errors)[0]?.[0];
+    return {
+        success: false,
+        message: firstError || 'Dados inválidos.'
+    };
 }
-// --- CORREÇÃO NA CHAMADA RPC ---
-// 2. Passamos os parâmetros com os nomes e tipos exatos que a nossa função no BD espera.
+
+const { product_id, quantity, cost_per_unit, purchase_date, supplier } = validatedFields.data;
+
 const { error } = await supabase.rpc('create_new_purchase', {
     p_profile_id: user.id,
-    p_product_id: parseInt(productId, 10),
-    p_quantity: parseInt(quantity, 10),
-    p_cost_per_unit: parseFloat(costPerUnit),
+    p_product_id: product_id,
+    p_quantity: quantity,
+    p_cost_per_unit: cost_per_unit,
     p_supplier: supplier,
-    p_purchase_date: new Date(purchaseDate).toISOString()
+    p_purchase_date: purchase_date.toISOString()
 });
+
 if (error) {
     console.error("Erro na transação de compra:", error);
     return { success: false, message: 'Ocorreu um erro ao registrar a compra.' };

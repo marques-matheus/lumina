@@ -15,7 +15,7 @@ interface ServiceStatusChartProps {
 
 const COLORS = {
     'Aguardando Avaliação': '#f97316', // orange-500
-    'Em Reparo': '#3b82f6', // blue-500
+    'Em Andamento': '#3b82f6', // blue-500
     'Concluído': '#22c55e', // green-500
     'Entregue': '#14b8a6', // teal-500
     'Cancelado': '#ef4444', // red-500

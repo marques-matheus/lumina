@@ -3,84 +3,120 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
 import { FormState } from '@/types';
-
+import { productSchema } from '@/lib/schemas';
+import { z } from 'zod';
 
 export async function addProduct(prevState: FormState, formData: FormData): Promise<FormState> {
-  
- const name = formData.get('name') as string;
- const quantity = formData.get('quantity') as string;
- const description = formData.get('description') as string;
- const salePrice = formData.get('sale_price') as string;
- const brand = formData.get('brand') as string;
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { return { success: false, message: 'Não autorizado' }; }
 
-  const supabase = await createClient();
+    const validatedFields = productSchema.safeParse({
+        name: formData.get('name'),
+        quantity: formData.get('quantity'),
+        description: formData.get('description'),
+        sale_price: formData.get('sale_price'),
+        brand: formData.get('brand'),
+    });
 
- if(!name || !quantity || !salePrice || !description || !brand) {
-  return { success: false, message: 'Dados inválidos.' };
+    if (!validatedFields.success) {
+        const errors = validatedFields.error.flatten().fieldErrors;
+        const firstError = Object.values(errors)[0]?.[0];
+        return {
+            success: false,
+            message: firstError || 'Dados inválidos.'
+        };
+    }
+
+    const { name, quantity, description, sale_price, brand } = validatedFields.data;
+
+    const { error } = await supabase.from('products').insert([{
+        name,
+        quantity,
+        profile_id: user.id,
+        description,
+        brand,
+        sale_price,
+    }]);
+
+    if (error) {
+        return { success: false, message: `Erro ao adicionar produto: ${error.message}` };
+    }
+    revalidatePath('/produtos');
+    return { success: true, message: 'Produto adicionado com sucesso!' };
 }
 
-const { data: { user } } = await supabase.auth.getUser();
-if (!user) { return { success: false, message: 'Não autorizado' }; }
+export async function deleteProduct(productId: number) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+        throw new Error('Não autorizado');
+    }
 
- const { error } = await supabase.from('products').insert([{
-    name,
-    quantity: parseInt(quantity),
-    profile_id: user.id,
-    description,
-    brand,
-    sale_price: parseFloat(salePrice),
- }]);
+    const validatedId = z.number().int().positive().safeParse(productId);
+    if (!validatedId.success) {
+        throw new Error('ID do produto inválido');
+    }
 
- if (error) {
-   throw new Error(`Erro ao adicionar produto: ${error.message}`);
- }
- revalidatePath('/products');
- return { success: true, message: 'Produto adicionado com sucesso!' };
-}
+    const { error } = await supabase
+        .from('products')
+        .update({ is_active: false, quantity: 0 })
+        .match({ id: validatedId.data, profile_id: user.id });
 
-export async function deleteProduct(productId: number){
-  const supabase = await createClient();
-  const {error } = await supabase
-    .from('products')
-    .update({ is_active: false, quantity: 0 })
-    .match({ id: productId });
-  if (error) {
-    throw new Error(`Erro ao deletar produto: ${error.message}`);
-  }
-  revalidatePath('/products');
-  return { success: true, message: 'Produto deletado com sucesso!' };
+    if (error) {
+        throw new Error(`Erro ao deletar produto: ${error.message}`);
+    }
+    revalidatePath('/produtos');
+    return { success: true, message: 'Produto deletado com sucesso!' };
 }
 
 export async function updateProduct(prevState: FormState, formData: FormData): Promise<FormState> {
-  const supabase = await createClient();
-  const id = formData.get('id') as string;
-  const name = formData.get('name') as string;
-  const quantity = formData.get('quantity') as string;
-  const description = formData.get('description') as string;
-  const salePrice = formData.get('sale_price') as string;
-  const brand = formData.get('brand') as string;
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { return { success: false, message: 'Não autorizado' }; }
 
-  if(!name || !quantity || !salePrice || !id || !description || !brand) {
-    return { success: false, message: 'Dados inválidos.' };
-  }
+    const id = formData.get('id') as string;
+    const validatedId = z.coerce.number().int().positive().safeParse(id);
 
-  const { error } = await supabase
-    .from('products')
-    .update({
-      name,
-      quantity: parseInt(quantity),
-      description,
-      brand,
-      sale_price: parseFloat(salePrice),
-    })
-    .match({ id: parseInt(id, 10) });
+    if (!validatedId.success) {
+        return { success: false, message: 'ID do produto inválido.' };
+    }
+
+    const validatedFields = productSchema.safeParse({
+        name: formData.get('name'),
+        quantity: formData.get('quantity'),
+        description: formData.get('description'),
+        sale_price: formData.get('sale_price'),
+        brand: formData.get('brand'),
+    });
+
+    if (!validatedFields.success) {
+        const errors = validatedFields.error.flatten().fieldErrors;
+        const firstError = Object.values(errors)[0]?.[0];
+        return {
+            success: false,
+            message: firstError || 'Dados inválidos.'
+        };
+    }
+
+    const { name, quantity, description, sale_price, brand } = validatedFields.data;
+
+    const { error } = await supabase
+        .from('products')
+        .update({
+            name,
+            quantity,
+            description,
+            brand,
+            sale_price,
+        })
+        .match({ id: validatedId.data, profile_id: user.id });
 
     if (error) {
-      console.error('Erro ao atualizar produto:', error);
-      return { success: false, message: 'Não foi possível atualizar o produto.' };
+        console.error('Erro ao atualizar produto:', error);
+        return { success: false, message: 'Não foi possível atualizar o produto.' };
     }
-  
-    // 5. Revalidamos o caminho CORRETO e retornamos o sucesso
-    revalidatePath('/');
+
+    revalidatePath('/produtos');
     return { success: true, message: 'Produto atualizado com sucesso!' };
-  }
+}

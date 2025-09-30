@@ -79,7 +79,7 @@ export default async function MainPage() {
         .from('service_orders')
         .select('*', { count: 'exact', head: true })
         .eq('profile_id', user.id)
-        .in('status', ['Aguardando Avaliação', 'Em Reparo']);
+        .in('status', ['Aguardando Avaliação', 'Em Andamento']);
 
     const completedServicesPromise = supabase
         .from('service_orders')
