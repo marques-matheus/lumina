@@ -121,6 +121,7 @@
     /* Esconde tudo no corpo da página por padrão */
     body * {
       visibility: hidden;
+      color: #000 !important;
     }
 
     /* Mostra APENAS a nossa área imprimível e tudo que está dentro dela */
@@ -138,7 +139,7 @@
 
     /* Define o tamanho da página de impressão para A5 */
     @page {
-      size: A4 portrait; /* Tamanho A4 em modo retrato */
+      size: A5 portrait; /* Tamanho A5 em modo retrato */
       margin: 1.5cm; /* Define uma margem para a impressão */
     }
   }

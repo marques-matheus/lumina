@@ -1,42 +1,26 @@
 import { create } from 'zustand';
-import {type ServiceOrder} from '@/types';
+import { type ServiceOrder } from '@/types';
 
-
-interface ServiceOrderState {
+type ServiceOrderState = {
     isDialogOpen: boolean;
     isEditing: boolean;
     selectedOrder: ServiceOrder | null;
-    openModal: (order?: ServiceOrder) => void;
+    openModal: (order: ServiceOrder) => void;
     closeModal: () => void;
     enterEditMode: () => void;
     exitEditMode: () => void;
-    updateSelectedOrder: (order: ServiceOrder) => void
-}
+    updateSelectedOrder: (order: ServiceOrder) => void;
+};
 
-export const useServiceOrderStore = create<ServiceOrderState>((set)=>({
-    //estados iniciais
-
+export const useServiceOrderStore = create<ServiceOrderState>((set) => ({
     isDialogOpen: false,
     isEditing: false,
     selectedOrder: null,
-
-    //funções que modificam os estados
-
-    openModal: (order) => set(() => ({
-        isDialogOpen: true,
-        selectedOrder: order || null,
-        isEditing: false,
+    openModal: (order) => set({ isDialogOpen: true, selectedOrder: order, isEditing: false }),
+    closeModal: () => set({ isDialogOpen: false, selectedOrder: null, isEditing: false }),
+    enterEditMode: () => set({ isEditing: true }),
+    exitEditMode: () => set({ isEditing: false }),
+    updateSelectedOrder: (order) => set((state) => ({
+        selectedOrder: state.selectedOrder ? { ...state.selectedOrder, ...order } : null,
     })),
-    closeModal: () => set(() => ({
-        isDialogOpen: false,
-        selectedOrder: null,
-    })),
-    enterEditMode: () => set(() => ({
-        isEditing: true,
-    })),
-    exitEditMode: () => set(() => ({
-        isEditing: false,
-        selectedOrder: null,
-    })),
-    updateSelectedOrder: (order) => set({ selectedOrder: order }),
-}))
+}));

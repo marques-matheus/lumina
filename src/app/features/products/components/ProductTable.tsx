@@ -3,13 +3,12 @@
 import { useEffect, useState, useTransition } from 'react';
 import { useActionState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MoreHorizontal } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { deleteProduct, updateProduct } from '../actions';
 import { SubmitButton } from '@/components/shared/submitButton';
 import { Product } from '@/types';
@@ -68,36 +67,33 @@ export default function ProductTable({ products }: { products: Product[] }) {
                 <TableCell data-label="Quantidade:" className="responsive-table-cell">{product.quantity}</TableCell>
                 <TableCell data-label="Preço:" className="responsive-table-cell">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.sale_price)}</TableCell>
                 <TableCell data-label="Disponível:" className="responsive-table-cell lg:text-center">{product.is_active && product.quantity > 0 ? 'Sim' : 'Não'}</TableCell>
-                <TableCell className="responsive-actions-cell lg:text-right">
-                  <AlertDialog>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0" disabled={!product.is_active}>
-                          <span className="sr-only">Abrir menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
+                <TableCell className="responsive-actions-cell text-right">
+                    <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => setSelectedProduct(product)} disabled={!product.is_active}>
+                            <Pencil className="h-4 w-4" />
+                            <span className="sr-only">Editar</span>
                         </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => setSelectedProduct(product)}>Editar</DropdownMenuItem>
-                        <AlertDialogTrigger asChild>
-                          <DropdownMenuItem className="text-red-500" onSelect={(e) => e.preventDefault()}>Inativar</DropdownMenuItem>
-                        </AlertDialogTrigger>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Esta ação irá inativar o produto "{product.name}". Ele não aparecerá em vendas, mas seu histórico será mantido. A quantidade será zerada.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(product.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Confirmar</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon" disabled={!product.is_active}>
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                    <span className="sr-only">Inativar</span>
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Esta ação irá inativar o produto "{product.name}". Ele não aparecerá em vendas, mas seu histórico será mantido. A quantidade será zerada.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(product.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Confirmar</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
                 </TableCell>
               </TableRow>
             ))
@@ -106,38 +102,40 @@ export default function ProductTable({ products }: { products: Product[] }) {
       </Table>
 
       <Dialog open={!!selectedProduct} onOpenChange={(open) => !open && setSelectedProduct(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Editar Produto</DialogTitle>
-          </DialogHeader>
-          <form action={formAction} className="space-y-4">
-            <Input type="hidden" name="id" value={selectedProduct?.id} />
-            <div>
-              <Label htmlFor="name">Nome</Label>
-              <Input id="name" name="name" defaultValue={selectedProduct?.name} />
-            </div>
-            <div>
-              <Label htmlFor="description">Descrição</Label>
-              <Input id="description" name="description" defaultValue={selectedProduct?.description} />
-            </div>
-            <div>
-              <Label htmlFor="brand">Marca</Label>
-              <Input id="brand" name="brand" defaultValue={selectedProduct?.brand} />
-            </div>
-            <div>
-              <Label htmlFor="quantity">Quantidade</Label>
-              <Input id="quantity" name="quantity" type="number" defaultValue={selectedProduct?.quantity} readOnly />
-            </div>
-            <div>
-              <Label htmlFor="sale_price">Preço</Label>
-              <Input id="sale_price" name="sale_price" type="number" step="0.01" defaultValue={selectedProduct?.sale_price} />
-            </div>
-            <DialogFooter>
-                <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
-                <SubmitButton text="Salvar" />
-            </DialogFooter>
-          </form>
-        </DialogContent>
+        {selectedProduct && (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Editar Produto</DialogTitle>
+            </DialogHeader>
+            <form action={formAction} className="space-y-4">
+              <Input type="hidden" name="id" value={selectedProduct.id} />
+              <div>
+                <Label htmlFor="name">Nome</Label>
+                <Input id="name" name="name" defaultValue={selectedProduct.name} />
+              </div>
+              <div>
+                <Label htmlFor="description">Descrição</Label>
+                <Input id="description" name="description" defaultValue={selectedProduct.description} />
+              </div>
+              <div>
+                <Label htmlFor="brand">Marca</Label>
+                <Input id="brand" name="brand" defaultValue={selectedProduct.brand} />
+              </div>
+              <div>
+                <Label htmlFor="quantity">Quantidade</Label>
+                <Input id="quantity" name="quantity" type="number" defaultValue={selectedProduct.quantity} readOnly />
+              </div>
+              <div>
+                <Label htmlFor="sale_price">Preço</Label>
+                <Input id="sale_price" name="sale_price" type="number" step="0.01" defaultValue={selectedProduct.sale_price} />
+              </div>
+              <DialogFooter>
+                  <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
+                  <SubmitButton text="Salvar" />
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        )}
       </Dialog>
     </>
   );
