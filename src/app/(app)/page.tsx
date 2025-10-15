@@ -4,12 +4,14 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { DashboardCard } from '../features/dashboard/components/Card';
 import { type Product } from '@/types';
-import { DollarSign, Package, Users, Wrench, ShoppingCart } from 'lucide-react';
+import { DollarSign, Package, Users, Wrench, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import Heading from '@/components/shared/Heading';
 import LowStockDialog from '../features/dashboard/components/LowStockDialog';
 import MonthlyRevenueChart from '../features/dashboard/components/MonthlyRevenueChart';
 import ServiceStatusChart from '../features/dashboard/components/ServiceStatusChart';
 import HorizontalBarChart from '../features/dashboard/components/HorizontalBarChart';
+import Link from 'next/link';
+import { buttonVariants } from '@/components/ui/button';
 
 export async function generateMetadata(): Promise<Metadata> {
     return {
@@ -18,8 +20,14 @@ export async function generateMetadata(): Promise<Metadata> {
     };
 }
 
-export default async function MainPage() {
-    // Mantendo o seu padrão de criação de cliente
+interface MainPageProps {
+    searchParams: {
+        mes?: string;
+        ano?: string;
+    };
+}
+
+export default async function MainPage({ searchParams }: MainPageProps) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -27,13 +35,25 @@ export default async function MainPage() {
         redirect('/auth/login');
     }
 
-    // --- BUSCA DE DADOS OTIMIZADA COM Promise.all ---
-    // Datas para filtros diários e mensais
+    const params = await searchParams;
+    const mes = params.mes;
+    const ano = params.ano;
     const today = new Date();
-    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
-    const tomorrowStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString();
-    const firstDayOfNextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1).toISOString();
+    const currentYear = ano ? parseInt(ano) : today.getFullYear();
+    const currentMonth = mes ? parseInt(mes) - 1 : today.getMonth();
+    const currentDate = new Date(currentYear, currentMonth, 1);
+
+    const prevMonth = new Date(currentYear, currentMonth - 1, 1);
+    const nextMonth = new Date(currentYear, currentMonth + 1, 1);
+
+    const todayStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()).toISOString();
+    const tomorrowStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1).toISOString();
+    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString();
+    const firstDayOfNextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1).toISOString();
+
+    const monthName = currentDate.toLocaleString('pt-BR', { month: 'long' });
+    const year = currentDate.getFullYear();
+
 
     // 1. Preparamos todas as "perguntas" ao banco de dados
 
@@ -171,7 +191,7 @@ export default async function MainPage() {
 
     // Gráfico de Faturamento Mensal
     const monthlyChartData: { [key: string]: number } = {};
-    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
     for (let i = 1; i <= daysInMonth; i++) {
         const day = i.toString().padStart(2, '0');
         monthlyChartData[day] = 0;
@@ -260,7 +280,28 @@ export default async function MainPage() {
 
     return (
         <div className="flex flex-col gap-6">
-            <Heading title="Dashboard" subtitle="Painel de controle" />
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <Heading
+                    title="Dashboard"
+                    subtitle={`Exibindo dados de: ${monthName} de ${year}`}
+                />
+                <div className="flex items-center gap-2">
+                    <Link
+                        href={`?mes=${prevMonth.getMonth() + 1}&ano=${prevMonth.getFullYear()}`}
+                        className={buttonVariants({ variant: 'outline' })}
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                        Mês Anterior
+                    </Link>
+                    <Link
+                        href={`?mes=${nextMonth.getMonth() + 1}&ano=${nextMonth.getFullYear()}`}
+                        className={buttonVariants({ variant: 'outline' })}
+                    >
+                        Mês Seguinte
+                        <ChevronRight className="h-4 w-4" />
+                    </Link>
+                </div>
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
                 <MonthlyRevenueChart data={formattedMonthlyChartData} />
                 <MonthlyRevenueChart data={formattedMonthlyProfitChartData} title="Lucro no Mês" barDataKey="Lucro" barFill="#3b82f6" />
