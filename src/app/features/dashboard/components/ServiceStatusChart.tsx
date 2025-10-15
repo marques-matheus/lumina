@@ -1,65 +1,54 @@
 'use client';
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { Pie, PieChart } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 
 interface ChartData {
     name: string;
     value: number;
-    [key: string]: string | number;
+    fill: string;
+    label: string;
 }
 
 interface ServiceStatusChartProps {
     data: ChartData[];
+    chartConfig: ChartConfig;
     valueType?: 'currency' | 'number';
 }
 
-const COLORS = {
-    'Aguardando Avaliação': '#f97316',
-    'Em Andamento': '#3b82f6',
-    'Concluído': '#22c55e',
-    'Entregue': '#14b8a6',
-    'Cancelado': '#ef4444',
-};
-
-export default function ServiceStatusChart({ data, valueType = 'number' }: ServiceStatusChartProps) {
+export default function ServiceStatusChart({ data, chartConfig, valueType = 'number' }: ServiceStatusChartProps) {
     return (
-        <Card className="col-span-1 lg:col-span-2">
-            <CardHeader>
+        <Card className="col-span-1 lg:col-span-2 flex flex-col">
+            <CardHeader className="items-center pb-0">
                 <CardTitle>Status das Ordens de Serviço</CardTitle>
-                <CardDescription>Distribuição de todas as ordens de serviço ativas.</CardDescription>
+                <CardDescription>Distribuição do valor por status</CardDescription>
             </CardHeader>
-            <CardContent>
-                <ResponsiveContainer width="100%" height={350}>
+            <CardContent className="flex-1 pb-0">
+                <ChartContainer
+                    config={chartConfig}
+                    className="mx-auto aspect-square max-h-[300px]"
+                >
                     <PieChart>
+                        <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent
+                                formatter={(value) => valueType === 'currency' ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value as number) : `${value} O.S.`}
+                            />}
+                        />
                         <Pie
                             data={data}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            outerRadius={120}
-                            fill="#8884d8"
                             dataKey="value"
-                            label={(props) => {
-                                const { name, percent } = props as { name?: string; percent?: number };
-                                return name && percent !== undefined
-                                    ? `${name} (${(percent * 100).toFixed(0)}%)`
-                                    : name || '';
-                            }}
-                        >
-                            {data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[entry.name as keyof typeof COLORS] || '#8884d8'} />)}
-                        </Pie>
-                        <Tooltip
-                            formatter={(value: number) => {
-                                if (valueType === 'currency') {
-                                    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-                                }
-                                return `${value} O.S.`;
-                            }}
+                            nameKey="label"
+                            innerRadius={60}
+                            outerRadius={120}
                         />
-                        <Legend />
+                        <ChartLegend
+                            content={<ChartLegendContent nameKey="name" />}
+                            className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+                        />
                     </PieChart>
-                </ResponsiveContainer>
+                </ChartContainer>
             </CardContent>
         </Card>
     );

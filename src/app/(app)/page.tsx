@@ -4,14 +4,15 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { DashboardCard } from '../features/dashboard/components/Card';
 import { type Product } from '@/types';
-import { DollarSign, Package, Users, Wrench, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { DollarSign, Package, ChevronLeft, ChevronRight } from 'lucide-react';
 import Heading from '@/components/shared/Heading';
 import LowStockDialog from '../features/dashboard/components/LowStockDialog';
-import MonthlyRevenueChart from '../features/dashboard/components/MonthlyRevenueChart';
 import ServiceStatusChart from '../features/dashboard/components/ServiceStatusChart';
 import HorizontalBarChart from '../features/dashboard/components/HorizontalBarChart';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
+import { ChartConfig } from '@/components/ui/chart';
+import TimeSeriesLineChart from '../features/dashboard/components/TimeSeriesLineChart';
 
 export async function generateMetadata(): Promise<Metadata> {
     return {
@@ -21,11 +22,27 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 interface MainPageProps {
-    searchParams: {
+    searchParams: Promise<{
         mes?: string;
         ano?: string;
-    };
+    }>;
 }
+
+const serviceStatusConfig = {
+    aguardando: { label: 'Aguardando Avaliação', color: 'var(--chart-1)' },
+    andamento: { label: 'Em Andamento', color: 'var(--chart-2)' },
+    concluido: { label: 'Concluído', color: 'var(--chart-3)' },
+    entregue: { label: 'Entregue', color: 'var(--chart-4)' },
+    cancelado: { label: 'Cancelado', color: 'var(--chart-5)' },
+} satisfies ChartConfig;
+
+const statusMap: { [key: string]: keyof typeof serviceStatusConfig } = {
+    'Aguardando Avaliação': 'aguardando',
+    'Em Andamento': 'andamento',
+    'Concluído': 'concluido',
+    'Entregue': 'entregue',
+    'Cancelado': 'cancelado',
+};
 
 export default async function MainPage({ searchParams }: MainPageProps) {
     const supabase = await createClient();
@@ -228,10 +245,13 @@ export default async function MainPage({ searchParams }: MainPageProps) {
             monthlySalesChartData[day] += sale.total_amount;
         }
     });
-    const formattedMonthlySalesChartData = Object.keys(monthlySalesChartData).map(day => ({
-        name: day,
-        Vendas: monthlySalesChartData[day],
-    }));
+    const formattedMonthlySalesChartData = Array.from({ length: daysInMonth }, (_, i) => {
+        const day = (i + 1).toString().padStart(2, '0');
+        return {
+            name: day,
+            vendas: monthlySalesChartData[day],
+        };
+    });
 
     // Gráfico de Faturamento de Serviços
     const monthlyServicesChartData: { [key: string]: number } = {};
@@ -246,20 +266,26 @@ export default async function MainPage({ searchParams }: MainPageProps) {
             monthlyServicesChartData[day] += service.total;
         }
     });
-    const formattedMonthlyServicesChartData = Object.keys(monthlyServicesChartData).map(day => ({
-        name: day,
-        Serviços: monthlyServicesChartData[day],
-    }));
+    const formattedMonthlyServicesChartData = Array.from({ length: daysInMonth }, (_, i) => {
+        const day = (i + 1).toString().padStart(2, '0');
+        return {
+            name: day,
+            servicos: monthlyServicesChartData[day],
+        };
+    });
 
     // Gráfico de Status de Serviços
     const statusTotals = serviceStatus?.reduce((acc, order) => {
-        acc[order.status] = (acc[order.status] || 0) + order.total;
+        const statusKey = statusMap[order.status] || 'desconhecido';
+        acc[statusKey] = (acc[statusKey] || 0) + order.total;
         return acc;
     }, {} as Record<string, number>) || {};
 
-    const serviceStatusChartData = Object.keys(statusTotals).map(status => ({
-        name: status,
-        value: statusTotals[status],
+    const serviceStatusChartData = Object.keys(statusTotals).map(key => ({
+        name: key,
+        value: statusTotals[key],
+        label: serviceStatusConfig[key as keyof typeof serviceStatusConfig]?.label || key,
+        fill: `var(--color-${key})`,
     }));
 
     // Gráfico de Itens Vendidos Hoje
@@ -315,20 +341,22 @@ export default async function MainPage({ searchParams }: MainPageProps) {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <MonthlyRevenueChart
+                <TimeSeriesLineChart
                     title="Faturamento de Vendas"
                     description=""
                     data={formattedMonthlySalesChartData}
-                    barDataKey="Vendas"
-                    barFill="#34d399"
+                    lineDataKey="vendas"
+                    lineLabel="Vendas"
+                    lineColor="var(--chart-2)"
                     footer={<p className="text-sm text-muted-foreground">Faturamento total de vendas no mês: <strong className="text-primary">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(monthlySalesRevenue)}</strong></p>}
                 />
-                <MonthlyRevenueChart
+                <TimeSeriesLineChart
                     title="Faturamento de Serviços"
                     description=""
                     data={formattedMonthlyServicesChartData}
-                    barDataKey="Serviços"
-                    barFill="#60a5fa"
+                    lineDataKey="servicos"
+                    lineLabel="Serviços"
+                    lineColor="var(--chart-1)"
                     footer={<p className="text-sm text-muted-foreground">Faturamento total de serviços no mês: <strong className="text-primary">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(monthlyServicesRevenue)}</strong></p>}
                 />
             </div>
@@ -341,7 +369,7 @@ export default async function MainPage({ searchParams }: MainPageProps) {
                     icon={<DollarSign className="h-8 w-8 text-muted-foreground" />}
                     type="currency"
                 />
-                <ServiceStatusChart data={serviceStatusChartData} valueType="currency" />
+                <ServiceStatusChart data={serviceStatusChartData} chartConfig={serviceStatusConfig} valueType="currency" />
                 <DashboardCard
                     title="Alerta de Estoque Baixo"
                     value={lowStockProducts?.length || 0}
@@ -357,13 +385,13 @@ export default async function MainPage({ searchParams }: MainPageProps) {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-                <HorizontalBarChart title="Itens Mais Vendidos (Hoje)" description="Produtos mais populares do dia." data={soldItemsChartData} barDataKey="value" barFill="#34d399" className="col-span-1 lg:col-span-2" />
+                <HorizontalBarChart title="Itens Mais Vendidos (Hoje)" description="Produtos mais populares do dia." data={soldItemsChartData} barDataKey="value" barFill="var(--chart-2)" className="col-span-1 lg:col-span-2" />
                 <HorizontalBarChart
                     title="Itens Mais Vendidos (Mês)"
                     description="Produtos mais populares do mês."
                     data={monthlySoldItemsChartData}
                     barDataKey="value"
-                    barFill="#8b5cf6"
+                    barFill="var(--chart-1)"
                     className="col-span-1 lg:col-span-2"
                 />
             </div>
