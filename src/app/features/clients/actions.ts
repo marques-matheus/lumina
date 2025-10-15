@@ -71,3 +71,21 @@ export async function updateClient(prevState: FormState, formData: FormData): Pr
     revalidatePath('/clientes');
     return { success: true, message: 'Cliente atualizado com sucesso!' };
 }
+
+export async function deleteClient(clientId: number): Promise<FormState> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { return { success: false, message: 'Não autorizado' }; }
+
+    const { error } = await supabase
+        .from('clients')
+        .delete()
+        .match({ id: clientId, profile_id: user.id });
+
+    if (error) {
+        return { success: false, message: `Erro ao excluir cliente: ${error.message}` };
+    }
+
+    revalidatePath('/clientes');
+    return { success: true, message: 'Cliente excluído com sucesso!' };
+}

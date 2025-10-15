@@ -42,17 +42,17 @@ function PaginationControls({ hasNextPage, hasPrevPage, totalCount, pageSize, cu
 
 
 export async function generateMetadata(
-  { params, searchParams }: PageProps,
-  parent: ResolvingMetadata
+    { params, searchParams }: PageProps,
+    parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const resolvedSearchParams = await searchParams;
-  const searchTerm = (resolvedSearchParams?.search as string) || '';
-  return {
-    title: 'Lúmina - Produtos',
-    description: searchTerm
-      ? `Resultados para "${searchTerm}"`
-      : 'Gerencie seus produtos com facilidade',
-  };
+    const resolvedSearchParams = await searchParams;
+    const searchTerm = (resolvedSearchParams?.search as string) || '';
+    return {
+        title: 'Lúmina - Produtos',
+        description: searchTerm
+            ? `Resultados para "${searchTerm}"`
+            : 'Gerencie seus produtos com facilidade',
+    };
 }
 
 export default async function ProductsPage({ searchParams }: PageProps) {
@@ -72,7 +72,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     // Base query
     let query = supabase
         .from('products')
-        .select('id, name, description, brand, quantity, sale_price, is_active', { count: 'exact' })
+        .select('*', { count: 'exact' })
         .eq('profile_id', user?.id);
 
     // Apply filters
@@ -97,7 +97,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         .select('brand')
         .not('brand', 'is', null)
         .eq('profile_id', user?.id);
-        
+
     const uniqueBrands = ProductsForBrands
         ? Array.from(new Set(ProductsForBrands.map((product) => product.brand)))
         : [];
@@ -123,7 +123,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 </CardContent>
                 {totalCount > pageSize && (
                     <CardFooter>
-                        <PaginationControls 
+                        <PaginationControls
                             hasNextPage={hasNextPage}
                             hasPrevPage={hasPrevPage}
                             totalCount={totalCount}

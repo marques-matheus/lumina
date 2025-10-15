@@ -2,17 +2,18 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Eye } from 'lucide-react';
-import { type ServiceOrder } from '@/types';
+import { type ServiceOrder, type Client } from '@/types';
 import { useServiceOrderStore } from '@/stores/serviceOrderStore';
 import { CategoryFilter } from '@/components/shared/CategoryFilter';
 import SearchInput from '@/components/shared/SearchInput';
 import { useSession } from '@/providers/SessionProvider';
 import { Badge } from '@/components/ui/badge';
+import AddServiceOrderDialog from './AddServiceOrderForm';
 
 
-export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: ServiceOrder[] }) {
+export default function ServiceOrdersTable({ serviceOrders, clients }: { serviceOrders: ServiceOrder[], clients: Client[] }) {
 
     const { openModal } = useServiceOrderStore()
 
@@ -26,7 +27,9 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
         return (
             <Card>
                 <CardHeader>
-                    <CardTitle>Para acessar esta página, você precisa ser prestador de serviços</CardTitle>
+                    <div className="text-sm text-muted-foreground">
+                        Para acessar esta página, você precisa ser prestador de serviços
+                    </div>
                 </CardHeader>
             </Card>
         );
@@ -57,6 +60,7 @@ export default function ServiceOrdersTable({ serviceOrders }: { serviceOrders: S
                         <CategoryFilter title="Filtrar por Status" paramName="status" options={statuses} />
                         <SearchInput placeholder="Buscar por cliente..." />
                     </div>
+                    <AddServiceOrderDialog clients={clients} />
                 </div>
             </CardHeader>
             <CardContent>
