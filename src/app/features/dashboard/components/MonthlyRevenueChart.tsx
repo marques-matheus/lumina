@@ -1,7 +1,7 @@
 'use client';
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ReferenceLine, Cell } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 
 interface ChartData {
     name: string;
@@ -12,16 +12,17 @@ interface MonthlyRevenueChartProps {
     data: ChartData[];
     title?: string;
     description?: string;
-    barDataKey?: string;
+    barDataKey: string;
     barFill?: string;
+    footer?: React.ReactNode;
 }
 
-export default function MonthlyRevenueChart({ data, title = "Faturamento no Mês", description = "Faturamento de vendas e serviços dia a dia.", barDataKey = "Faturamento", barFill = "#14b8a6" }: MonthlyRevenueChartProps) {
+export default function MonthlyRevenueChart({ data, title = "Faturamento no Mês", description = "", barDataKey, barFill = "#14b8a6", footer }: MonthlyRevenueChartProps) {
     return (
-        <Card className="col-span-1 lg:col-span-2">
+        <Card className="col-span-1">
             <CardHeader>
                 <CardTitle>{title}</CardTitle>
-                <CardDescription>{description}</CardDescription>
+                {description && <CardDescription>{description}</CardDescription>}
             </CardHeader>
             <CardContent className="pl-2">
                 <ResponsiveContainer width="100%" height={350}>
@@ -50,6 +51,7 @@ export default function MonthlyRevenueChart({ data, title = "Faturamento no Mês
                     </BarChart>
                 </ResponsiveContainer>
             </CardContent>
+            {footer && <CardFooter>{footer}</CardFooter>}
         </Card>
     );
 }

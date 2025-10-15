@@ -73,13 +73,21 @@ export default async function MainPage({ searchParams }: MainPageProps) {
         .gte('created_at', firstDayOfMonth)
         .lt('created_at', firstDayOfNextMonth);
 
-    const monthlyServicesPromise = supabase
+    const completedServicesRevenuePromise = supabase
         .from('service_orders')
-        .select('total, updated_at')
+        .select('total, completed_at')
         .eq('profile_id', user.id)
-        .in('status', ['Concluído', 'Entregue'])
-        .gte('updated_at', firstDayOfMonth)
-        .lt('updated_at', firstDayOfNextMonth);
+        .eq('status', 'Concluído')
+        .gte('completed_at', firstDayOfMonth)
+        .lt('completed_at', firstDayOfNextMonth);
+
+    const deliveredServicesRevenuePromise = supabase
+        .from('service_orders')
+        .select('total, delivered_at')
+        .eq('profile_id', user.id)
+        .eq('status', 'Entregue')
+        .gte('delivered_at', firstDayOfMonth)
+        .lt('delivered_at', firstDayOfNextMonth);
 
     const monthlyPurchasesPromise = supabase
         .from('purchases')
@@ -101,13 +109,21 @@ export default async function MainPage({ searchParams }: MainPageProps) {
         .eq('profile_id', user.id)
         .in('status', ['Aguardando Avaliação', 'Em Andamento']);
 
-    const completedServicesPromise = supabase
+    const completedServicesCountPromise = supabase
         .from('service_orders')
         .select('*', { count: 'exact', head: true })
         .eq('profile_id', user.id)
-        .in('status', ['Concluído', 'Entregue'])
+        .eq('status', 'Concluído')
         .gte('completed_at', firstDayOfMonth)
         .lt('completed_at', firstDayOfNextMonth);
+
+    const deliveredServicesCountPromise = supabase
+        .from('service_orders')
+        .select('*', { count: 'exact', head: true })
+        .eq('profile_id', user.id)
+        .eq('status', 'Entregue')
+        .gte('delivered_at', firstDayOfMonth)
+        .lt('delivered_at', firstDayOfNextMonth);
 
     const LOW_STOCK_THRESHOLD = 5;
     const lowStockProductsPromise = supabase
@@ -133,18 +149,20 @@ export default async function MainPage({ searchParams }: MainPageProps) {
 
     const serviceStatusPromise = supabase
         .from('service_orders')
-        .select('status')
+        .select('status, total')
         .eq('profile_id', user.id);
 
     // 2. Disparamos todas as buscas ao mesmo tempo
     const [
         { data: dailySales },
         { data: monthlySales },
-        { data: monthlyServices },
+        { data: completedServicesRevenue },
+        { data: deliveredServicesRevenue },
         { data: monthlyPurchases },
         { data: dailyPurchases },
         { count: pendingServicesCount },
-        { count: completedServicesCount },
+        { count: completedCount },
+        { count: deliveredCount },
         { data: lowStockProducts },
         { count: newClientsCount },
         { data: allProducts },
@@ -152,11 +170,13 @@ export default async function MainPage({ searchParams }: MainPageProps) {
     ] = await Promise.all([
         dailySalesPromise,
         monthlySalesPromise,
-        monthlyServicesPromise,
+        completedServicesRevenuePromise,
+        deliveredServicesRevenuePromise,
         monthlyPurchasesPromise,
         dailyPurchasesPromise,
         pendingServicesPromise,
-        completedServicesPromise,
+        completedServicesCountPromise,
+        deliveredServicesCountPromise,
         lowStockProductsPromise,
         newClientsPromise,
         allProductsPromise,
@@ -176,79 +196,70 @@ export default async function MainPage({ searchParams }: MainPageProps) {
         })) || [];
 
 
-    // --- CÁLCULos MENSAIS ---
+    // --- CÁLCULOS MENSAIS ---
+    const completedServices = completedServicesRevenue?.map(s => ({ ...s, revenue_date: s.completed_at })) || [];
+    const deliveredServices = deliveredServicesRevenue?.map(s => ({ ...s, revenue_date: s.delivered_at })) || [];
+    const monthlyServices = [...completedServices, ...deliveredServices];
+
     const monthlySalesRevenue = monthlySales?.reduce((sum, sale) => sum + sale.total_amount, 0) || 0;
-    const monthlyServicesRevenue = monthlyServices?.reduce((sum, service) => sum + service.total, 0) || 0;
+    const monthlyServicesRevenue = monthlyServices.reduce((sum, service) => sum + service.total, 0);
     const totalRevenue = monthlySalesRevenue + monthlyServicesRevenue;
 
     const monthlyTotalCosts = monthlyPurchases?.reduce((sum, purchase) => sum + (purchase.quantity * purchase.cost_per_unit), 0) || 0;
     const monthlyGrossProfit = totalRevenue - monthlyTotalCosts;
 
     const monthlySalesCount = monthlySales?.length || 0;
+    const completedServicesCount = (completedCount || 0) + (deliveredCount || 0);
     const averageTicket = monthlySalesCount > 0 ? monthlySalesRevenue / monthlySalesCount : 0;
 
     // --- PROCESSAMENTO DE DADOS PARA GRÁFICOS ---
 
-    // Gráfico de Faturamento Mensal
-    const monthlyChartData: { [key: string]: number } = {};
     const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+
+    // Gráfico de Faturamento de Vendas
+    const monthlySalesChartData: { [key: string]: number } = {};
     for (let i = 1; i <= daysInMonth; i++) {
         const day = i.toString().padStart(2, '0');
-        monthlyChartData[day] = 0;
+        monthlySalesChartData[day] = 0;
     }
-
     monthlySales?.forEach(sale => {
-        const day = new Date(sale.created_at).getDate().toString().padStart(2, '0');
-        if (monthlyChartData[day] !== undefined) {
-            monthlyChartData[day] += sale.total_amount;
+        const day = new Date(sale.created_at).getUTCDate().toString().padStart(2, '0');
+        if (monthlySalesChartData[day] !== undefined) {
+            monthlySalesChartData[day] += sale.total_amount;
         }
     });
-    monthlyServices?.forEach(service => {
-        const day = new Date(service.updated_at).getDate().toString().padStart(2, '0');
-        if (monthlyChartData[day] !== undefined) {
-            monthlyChartData[day] += service.total;
-        }
-    });
-
-    const sortedDays = Object.keys(monthlyChartData).sort();
-    const formattedMonthlyChartData = sortedDays.map(day => ({
+    const formattedMonthlySalesChartData = Object.keys(monthlySalesChartData).map(day => ({
         name: day,
-        Faturamento: monthlyChartData[day],
+        Vendas: monthlySalesChartData[day],
+    }));
+
+    // Gráfico de Faturamento de Serviços
+    const monthlyServicesChartData: { [key: string]: number } = {};
+    for (let i = 1; i <= daysInMonth; i++) {
+        const day = i.toString().padStart(2, '0');
+        monthlyServicesChartData[day] = 0;
+    }
+    monthlyServices.forEach(service => {
+        // @ts-ignore
+        const day = new Date(service.revenue_date).getUTCDate().toString().padStart(2, '0');
+        if (monthlyServicesChartData[day] !== undefined) {
+            monthlyServicesChartData[day] += service.total;
+        }
+    });
+    const formattedMonthlyServicesChartData = Object.keys(monthlyServicesChartData).map(day => ({
+        name: day,
+        Serviços: monthlyServicesChartData[day],
     }));
 
     // Gráfico de Status de Serviços
-    const statusCounts = serviceStatus?.reduce((acc, order) => {
-        acc[order.status] = (acc[order.status] || 0) + 1;
+    const statusTotals = serviceStatus?.reduce((acc, order) => {
+        acc[order.status] = (acc[order.status] || 0) + order.total;
         return acc;
     }, {} as Record<string, number>) || {};
 
-    const serviceStatusChartData = Object.keys(statusCounts).map(status => ({
+    const serviceStatusChartData = Object.keys(statusTotals).map(status => ({
         name: status,
-        value: statusCounts[status],
-    }));
-
-    // Gráfico de Lucro Mensal
-    const monthlyProfitChartData: { [key: string]: { revenue: number, cost: number } } = {};
-    for (let i = 1; i <= daysInMonth; i++) {
-        const day = i.toString().padStart(2, '0');
-        monthlyProfitChartData[day] = { revenue: 0, cost: 0 };
-    }
-    monthlySales?.forEach(sale => {
-        const day = new Date(sale.created_at).getDate().toString().padStart(2, '0');
-        if (monthlyProfitChartData[day]) monthlyProfitChartData[day].revenue += sale.total_amount;
-    });
-    monthlyServices?.forEach(service => {
-        const day = new Date(service.updated_at).getDate().toString().padStart(2, '0');
-        if (monthlyProfitChartData[day]) monthlyProfitChartData[day].revenue += service.total;
-    });
-    monthlyPurchases?.forEach(purchase => {
-        const day = new Date(purchase.purchase_date).getDate().toString().padStart(2, '0');
-        if (monthlyProfitChartData[day]) monthlyProfitChartData[day].cost += purchase.quantity * purchase.cost_per_unit;
-    });
-    const sortedProfitDays = Object.keys(monthlyProfitChartData).sort();
-    const formattedMonthlyProfitChartData = sortedProfitDays.map(day => ({
-        name: day,
-        Lucro: monthlyProfitChartData[day].revenue - monthlyProfitChartData[day].cost,
+        value: statusTotals[status],
     }));
 
     // Gráfico de Itens Vendidos Hoje
@@ -302,22 +313,35 @@ export default async function MainPage({ searchParams }: MainPageProps) {
                     </Link>
                 </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-                <MonthlyRevenueChart data={formattedMonthlyChartData} />
-                <MonthlyRevenueChart data={formattedMonthlyProfitChartData} title="Lucro no Mês" barDataKey="Lucro" barFill="#3b82f6" />
-                <HorizontalBarChart title="Itens Mais Vendidos (Hoje)" description="Produtos mais populares do dia." data={soldItemsChartData} barDataKey="value" barFill="#34d399" className="col-span-1 lg:col-span-2" />
-                <HorizontalBarChart
-                    title="Itens Mais Vendidos (Mês)"
-                    description="Produtos mais populares do mês."
-                    data={monthlySoldItemsChartData}
-                    barDataKey="value"
-                    barFill="#8b5cf6" // violet-500
-                    className="col-span-1 lg:col-span-2"
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <MonthlyRevenueChart
+                    title="Faturamento de Vendas"
+                    description=""
+                    data={formattedMonthlySalesChartData}
+                    barDataKey="Vendas"
+                    barFill="#34d399"
+                    footer={<p className="text-sm text-muted-foreground">Faturamento total de vendas no mês: <strong className="text-primary">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(monthlySalesRevenue)}</strong></p>}
+                />
+                <MonthlyRevenueChart
+                    title="Faturamento de Serviços"
+                    description=""
+                    data={formattedMonthlyServicesChartData}
+                    barDataKey="Serviços"
+                    barFill="#60a5fa"
+                    footer={<p className="text-sm text-muted-foreground">Faturamento total de serviços no mês: <strong className="text-primary">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(monthlyServicesRevenue)}</strong></p>}
                 />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-                <ServiceStatusChart data={serviceStatusChartData} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <DashboardCard
+                    title="Lucro Bruto Total"
+                    value={monthlyGrossProfit}
+                    description="Vendas e Serviços - Compras"
+                    icon={<DollarSign className="h-8 w-8 text-muted-foreground" />}
+                    type="currency"
+                />
+                <ServiceStatusChart data={serviceStatusChartData} valueType="currency" />
                 <DashboardCard
                     title="Alerta de Estoque Baixo"
                     value={lowStockProducts?.length || 0}
@@ -329,6 +353,18 @@ export default async function MainPage({ searchParams }: MainPageProps) {
                         allProducts={lowStockProducts || []}
                         allCatalogProducts={allProducts || []}
                     />}
+                />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                <HorizontalBarChart title="Itens Mais Vendidos (Hoje)" description="Produtos mais populares do dia." data={soldItemsChartData} barDataKey="value" barFill="#34d399" className="col-span-1 lg:col-span-2" />
+                <HorizontalBarChart
+                    title="Itens Mais Vendidos (Mês)"
+                    description="Produtos mais populares do mês."
+                    data={monthlySoldItemsChartData}
+                    barDataKey="value"
+                    barFill="#8b5cf6"
+                    className="col-span-1 lg:col-span-2"
                 />
             </div>
         </div>

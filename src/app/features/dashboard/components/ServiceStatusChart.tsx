@@ -11,17 +11,18 @@ interface ChartData {
 
 interface ServiceStatusChartProps {
     data: ChartData[];
+    valueType?: 'currency' | 'number';
 }
 
 const COLORS = {
-    'Aguardando Avaliação': '#f97316', // orange-500
-    'Em Andamento': '#3b82f6', // blue-500
-    'Concluído': '#22c55e', // green-500
-    'Entregue': '#14b8a6', // teal-500
-    'Cancelado': '#ef4444', // red-500
+    'Aguardando Avaliação': '#f97316',
+    'Em Andamento': '#3b82f6',
+    'Concluído': '#22c55e',
+    'Entregue': '#14b8a6',
+    'Cancelado': '#ef4444',
 };
 
-export default function ServiceStatusChart({ data }: ServiceStatusChartProps) {
+export default function ServiceStatusChart({ data, valueType = 'number' }: ServiceStatusChartProps) {
     return (
         <Card className="col-span-1 lg:col-span-2">
             <CardHeader>
@@ -48,7 +49,14 @@ export default function ServiceStatusChart({ data }: ServiceStatusChartProps) {
                         >
                             {data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[entry.name as keyof typeof COLORS] || '#8884d8'} />)}
                         </Pie>
-                        <Tooltip formatter={(value: number) => `${value} O.S.`} />
+                        <Tooltip
+                            formatter={(value: number) => {
+                                if (valueType === 'currency') {
+                                    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+                                }
+                                return `${value} O.S.`;
+                            }}
+                        />
                         <Legend />
                     </PieChart>
                 </ResponsiveContainer>
