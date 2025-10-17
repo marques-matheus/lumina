@@ -32,32 +32,32 @@ type ServiceOrderFormData = {
 
 // Sub-componente para a visualização dos dados (mais limpo)
 const OrderView = ({ order }: { order: ServiceOrder }) => (
-    <div className="space-y-4 text-sm">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-2">
-            <div><p className="font-semibold text-muted-foreground">Cliente</p><p>{order.clients?.name}</p></div>
-            <div><p className="font-semibold text-muted-foreground">Equipamento</p><p>{`${order.equip_brand} ${order.equip_model}`}</p></div>
-            <div><p className="font-semibold text-muted-foreground">Tipo</p><p>{order.type}</p></div>
-            <div><p className="font-semibold text-muted-foreground">Itens Acompanhantes</p><p>{order.items || 'Nenhum'}</p></div>
-            <div><p className="font-semibold text-muted-foreground">Nº de Série</p><p>{order.serial_number || 'N/A'}</p></div>
-            <div><p className="font-semibold text-muted-foreground">Valor Total</p><p>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.total)}</p></div>
+    <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-x-8 sm:gap-y-2">
+            <div><p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Cliente</p><p className="text-sm">{order.clients?.name}</p></div>
+            <div><p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Equipamento</p><p className="text-sm">{`${order.equip_brand} ${order.equip_model}`}</p></div>
+            <div><p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Tipo</p><p className="text-sm">{order.type}</p></div>
+            <div><p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Itens Acompanhantes</p><p className="text-sm">{order.items || <span className="italic text-muted-foreground">Nenhum</span>}</p></div>
+            <div><p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Nº de Série</p><p className="text-sm">{order.serial_number || <span className="italic text-muted-foreground">N/A</span>}</p></div>
+            <div><p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Valor Total</p><p className="font-bold text-lg sm:text-xl">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.total)}</p></div>
         </div>
-        <div>
-            <p className="font-semibold text-muted-foreground">Problema Relatado</p>
-            <p className="text-sm p-2 rounded-md mt-1">{order.problem_description}</p>
+        <div className="border-t pt-3 sm:pt-4">
+            <p className="font-semibold text-muted-foreground text-xs uppercase mb-2">Problema Relatado</p>
+            <p className="text-sm p-3 bg-muted rounded-md">{order.problem_description}</p>
         </div>
     </div>
 );
 
 // Sub-componente para o formulário de edição
 const OrderEdit = ({ formData, onFormChange }: { formData: ServiceOrderFormData, onFormChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void }) => (
-    <div className="grid grid-cols-2 gap-4 py-4">
-        <div className="space-y-1"><Label htmlFor="type">Tipo</Label><Input id="type" name="type" value={formData.type} onChange={onFormChange} /></div>
-        <div className="space-y-1"><Label htmlFor="equip_brand">Marca</Label><Input id="equip_brand" name="equip_brand" value={formData.equip_brand} onChange={onFormChange} /></div>
-        <div className="space-y-1"><Label htmlFor="equip_model">Modelo</Label><Input id="equip_model" name="equip_model" value={formData.equip_model} onChange={onFormChange} /></div>
-        <div className="space-y-1"><Label htmlFor="serial_number">Nº de Série</Label><Input id="serial_number" name="serial_number" value={formData.serial_number} onChange={onFormChange} /></div>
-        <div className="col-span-2 space-y-1"><Label htmlFor="items">Itens Acompanhantes</Label><Input id="items" name="items" value={formData.items} onChange={onFormChange} /></div>
-        <div className="col-span-2 space-y-1"><Label htmlFor="problem_description">Problema Relatado</Label><Textarea id="problem_description" name="problem_description" value={formData.problem_description} onChange={onFormChange} /></div>
-        <div className="space-y-1"><Label htmlFor="total">Valor Total</Label><Input id="total" name="total" type="number" step="0.01" value={formData.total} onChange={onFormChange} /></div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 py-3 sm:py-4">
+        <div className="space-y-1"><Label htmlFor="type" className="text-xs sm:text-sm">Tipo</Label><Input id="type" name="type" value={formData.type} onChange={onFormChange} className="h-8 sm:h-9 text-xs sm:text-sm" /></div>
+        <div className="space-y-1"><Label htmlFor="equip_brand" className="text-xs sm:text-sm">Marca</Label><Input id="equip_brand" name="equip_brand" value={formData.equip_brand} onChange={onFormChange} className="h-8 sm:h-9 text-xs sm:text-sm" /></div>
+        <div className="space-y-1"><Label htmlFor="equip_model" className="text-xs sm:text-sm">Modelo</Label><Input id="equip_model" name="equip_model" value={formData.equip_model} onChange={onFormChange} className="h-8 sm:h-9 text-xs sm:text-sm" /></div>
+        <div className="space-y-1"><Label htmlFor="serial_number" className="text-xs sm:text-sm">Nº de Série</Label><Input id="serial_number" name="serial_number" value={formData.serial_number} onChange={onFormChange} className="h-8 sm:h-9 text-xs sm:text-sm" /></div>
+        <div className="col-span-1 sm:col-span-2 space-y-1"><Label htmlFor="items" className="text-xs sm:text-sm">Itens Acompanhantes</Label><Input id="items" name="items" value={formData.items} onChange={onFormChange} className="h-8 sm:h-9 text-xs sm:text-sm" /></div>
+        <div className="col-span-1 sm:col-span-2 space-y-1"><Label htmlFor="problem_description" className="text-xs sm:text-sm">Problema Relatado</Label><Textarea id="problem_description" name="problem_description" value={formData.problem_description} onChange={onFormChange} className="text-xs sm:text-sm min-h-20" /></div>
+        <div className="space-y-1"><Label htmlFor="total" className="text-xs sm:text-sm">Valor Total</Label><Input id="total" name="total" type="number" step="0.01" value={formData.total} onChange={onFormChange} className="h-8 sm:h-9 text-xs sm:text-sm" /></div>
     </div>
 );
 
@@ -326,9 +326,9 @@ export default function ServiceOrderDetailsDialog() {
                 <PrintableOrder order={selectedOrder} />
             </div>
             <Dialog open={isDialogOpen} onOpenChange={(open) => !open && closeModal()}>
-                <DialogContent className="sm:max-w-2xl">
+                <DialogContent className="w-screen h-screen max-w-full sm:w-auto sm:h-auto sm:max-w-2xl sm:max-h-[90vh] p-4 sm:p-6 overflow-y-auto m-0 sm:m-auto rounded-none sm:rounded-lg">
                     <DialogHeader>
-                        <DialogTitle>Detalhes da O.S. #{selectedOrder.id}</DialogTitle>
+                        <DialogTitle className="text-base sm:text-lg">Detalhes da O.S. #{selectedOrder.id}</DialogTitle>
                     </DialogHeader>
 
                     {isEditing ? (
@@ -341,50 +341,52 @@ export default function ServiceOrderDetailsDialog() {
                     )}
 
                     {!isEditing && (
-                        <div className="grid grid-cols-2 items-center gap-4 pt-4 border-t">
-                            <Label className="font-semibold">Alterar Status</Label>
+                        <div className="flex flex-col sm:grid sm:grid-cols-2 items-start sm:items-center gap-2 sm:gap-4 pt-3 sm:pt-4 border-t">
+                            <Label className="font-semibold text-xs sm:text-sm">Alterar Status</Label>
                             <Select value={selectedOrder.status} onValueChange={handleStatusChange} disabled={isStatusUpdating || selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'}>
-                                <SelectTrigger><SelectValue /></SelectTrigger>
+                                <SelectTrigger className="h-8 sm:h-9 text-xs sm:text-sm"><SelectValue /></SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado' || selectedOrder.status === 'Concluído'} value="Aguardando Avaliação">Aguardando Avaliação</SelectItem>
-                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado' || selectedOrder.status === 'Concluído'} value="Em Andamento">Em Andamento</SelectItem>
-                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Concluído">Concluído</SelectItem>
-                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Entregue">Entregue</SelectItem>
-                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Cancelado">Cancelado</SelectItem>
+                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado' || selectedOrder.status === 'Concluído'} value="Aguardando Avaliação" className="text-xs sm:text-sm">Aguardando Avaliação</SelectItem>
+                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado' || selectedOrder.status === 'Concluído'} value="Em Andamento" className="text-xs sm:text-sm">Em Andamento</SelectItem>
+                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Concluído" className="text-xs sm:text-sm">Concluído</SelectItem>
+                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Entregue" className="text-xs sm:text-sm">Entregue</SelectItem>
+                                    <SelectItem disabled={selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} value="Cancelado" className="text-xs sm:text-sm">Cancelado</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                     )}
 
-                    <DialogFooter>
+                    <DialogFooter className="flex-col sm:flex-row gap-2">
                         {isEditing ? (
                             <>
-                                <Button variant="secondary" onClick={exitEditMode}>Cancelar</Button>
+                                <Button variant="secondary" size="sm" onClick={exitEditMode} className="w-full sm:w-auto h-9 text-xs sm:text-sm">Cancelar</Button>
                                 <SubmitButton form="edit-form" text="Salvar Alterações" />
                             </>
                         ) : (
                             <>
-                                <DialogClose asChild><Button variant="secondary">Fechar</Button></DialogClose>
+                                <DialogClose asChild><Button variant="secondary" size="sm" className="w-full sm:w-auto h-9 text-xs sm:text-sm">Fechar</Button></DialogClose>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="outline">
-                                            <PrinterIcon className="mr-2 h-4 w-4" />
+                                        <Button variant="outline" size="sm" className="w-full sm:w-auto h-9 text-xs sm:text-sm">
+                                            <PrinterIcon className="mr-2 h-3.5 w-3.5" />
                                             Imprimir
-                                            <ChevronDown className="ml-2 h-4 w-4" />
+                                            <ChevronDown className="ml-2 h-3.5 w-3.5" />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
-                                        <DropdownMenuItem onClick={handlePrintA5}>
-                                            <PrinterIcon className="mr-2 h-4 w-4" />
+                                        <DropdownMenuItem onClick={handlePrintA5} className="text-xs sm:text-sm">
+                                            <PrinterIcon className="mr-2 h-3.5 w-3.5" />
                                             Imprimir A5
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={handlePrintThermal}>
-                                            <PrinterIcon className="mr-2 h-4 w-4" />
+                                        <DropdownMenuItem onClick={handlePrintThermal} className="text-xs sm:text-sm">
+                                            <PrinterIcon className="mr-2 h-3.5 w-3.5" />
                                             Impressora Térmica
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
-                                <Button disabled={isStatusUpdating || selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} onClick={enterEditMode}><PencilIcon className="mr-2 h-4 w-4" /> Editar</Button>
+                                <Button disabled={isStatusUpdating || selectedOrder.status === 'Entregue' || selectedOrder.status === 'Cancelado'} onClick={enterEditMode} size="sm" className="w-full sm:w-auto h-9 text-xs sm:text-sm">
+                                    <PencilIcon className="mr-2 h-3.5 w-3.5" /> Editar
+                                </Button>
                             </>
                         )}
                     </DialogFooter>

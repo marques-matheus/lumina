@@ -40,22 +40,22 @@ export default function AddClientDialog() {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button className='w-40 self-end'>
+                <Button size="sm" className='w-auto self-end'>
                     Novo Cliente
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="w-screen h-screen max-w-full sm:w-auto sm:h-auto sm:max-w-[500px] sm:max-h-[90vh] p-4 sm:p-6 overflow-y-auto m-0 sm:m-auto rounded-none sm:rounded-lg">
                 <DialogHeader>
-                    <DialogTitle>Adicionar Cliente</DialogTitle>
+                    <DialogTitle className="text-base sm:text-lg">Adicionar Cliente</DialogTitle>
                 </DialogHeader>
                 <form action={formAction}>
-                    <div className='grid gap-4 py-4'>
-                        <div className='grid grid-cols-2 items-center gap-4'>
-                            <Label htmlFor="name">Nome</Label>
+                    <div className='grid gap-3 sm:gap-4 py-3 sm:py-4'>
+                        <div className='flex flex-col gap-2'>
+                            <Label htmlFor="name" className="text-xs sm:text-sm">Nome</Label>
                             <Input
                                 id="name"
                                 name='name'
-                                className="col-span-1"
+                                className="h-8 sm:h-9 text-xs sm:text-sm"
                                 type='text'
                                 placeholder='Nome do Cliente'
                                 pattern="^[a-zA-ZÀ-ÿ\s]+$"
@@ -63,12 +63,12 @@ export default function AddClientDialog() {
                                 required
                             />
                         </div>
-                        <div className='grid grid-cols-2 items-center gap-4'>
-                            <Label htmlFor="phone">Telefone</Label>
+                        <div className='flex flex-col gap-2'>
+                            <Label htmlFor="phone" className="text-xs sm:text-sm">Telefone</Label>
                             <Input
                                 id="phone"
                                 name='phone'
-                                className="col-span-1"
+                                className="h-8 sm:h-9 text-xs sm:text-sm"
                                 type='tel'
                                 placeholder='99999-9999'
                                 maxLength={11}
@@ -76,9 +76,9 @@ export default function AddClientDialog() {
                             />
                         </div>
                     </div>
-                    <DialogFooter>
+                    <DialogFooter className="flex-col sm:flex-row gap-2">
                         <DialogClose asChild>
-                            <Button type="button" variant="secondary">
+                            <Button type="button" variant="secondary" size="sm" className="w-full sm:w-auto h-9 text-xs sm:text-sm">
                                 Cancelar
                             </Button>
                         </DialogClose>

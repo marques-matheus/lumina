@@ -23,47 +23,73 @@ const SaleView = ({ sale }: { sale: SalesHistoryEntry }) => {
 
     const user = useSession();
     return (
-        <div className="space-y-4 text-sm">
-            <div className="grid grid-cols-2 gap-x-8 gap-y-2">
+        <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-x-8 sm:gap-y-2">
                 <div>
-                    <p className="font-semibold text-muted-foreground">Data da Venda</p>
-                    <p>{formatDate(sale.created_at)}</p>
+                    <p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Data da Venda</p>
+                    <p className="text-sm">{formatDate(sale.created_at)}</p>
                 </div>
                 <div>
-                    <p className="font-semibold text-muted-foreground">Cliente</p>
-                    <p>{sale.clients?.name || 'Venda Avulsa'}</p>
+                    <p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Cliente</p>
+                    <p className="text-sm">{sale.clients?.name || <span className="italic text-muted-foreground">Venda Avulsa</span>}</p>
                 </div>
 
-                <div>
-                    <p className="font-semibold text-muted-foreground">Total</p>
-                    <p className="font-bold text-lg">{formatCurrency(sale.total_amount)}</p>
+                <div className="sm:col-span-2">
+                    <p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Total</p>
+                    <p className="font-bold text-lg sm:text-xl">{formatCurrency(sale.total_amount)}</p>
                 </div>
             </div>
 
-            <div className="border-t pt-4">
-                <p className="font-semibold text-muted-foreground mb-3">Itens da Venda</p>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Produto</TableHead>
-                            <TableHead className="text-center">Qtd</TableHead>
-                            <TableHead className="text-right">Preço Unit.</TableHead>
-                            <TableHead className="text-right">Subtotal</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
+            <div className="border-t pt-3 sm:pt-4">
+                <p className="font-semibold text-muted-foreground text-xs uppercase mb-3">Itens da Venda</p>
+                <div className="space-y-2 sm:space-y-0">
+                    {/* Mobile: Cards */}
+                    <div className="flex flex-col gap-2 sm:hidden">
                         {sale.sale_items.map((item, idx) => (
-                            <TableRow key={item.products?.name ? `${item.products.name}-${idx}` : idx}>
-                                <TableCell>{item.products?.name}</TableCell>
-                                <TableCell className="text-center">{item.quantity}</TableCell>
-                                <TableCell className="text-right">{formatCurrency(item.products?.sale_price || 0)}</TableCell>
-                                <TableCell className="text-right font-medium">
-                                    {formatCurrency(item.quantity * (item.products?.sale_price || 0))}
-                                </TableCell>
-                            </TableRow>
+                            <div key={item.products?.name ? `${item.products.name}-${idx}` : idx} className="border rounded-lg p-3 space-y-2">
+                                <div className="font-medium text-sm">{item.products?.name}</div>
+                                <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                        <span className="text-muted-foreground">Qtd:</span> {item.quantity}
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-muted-foreground">Unit:</span> {formatCurrency(item.products?.sale_price || 0)}
+                                    </div>
+                                </div>
+                                <div className="flex justify-between items-center pt-2 border-t">
+                                    <span className="text-xs font-semibold text-muted-foreground">Subtotal</span>
+                                    <span className="font-semibold text-sm">{formatCurrency(item.quantity * (item.products?.sale_price || 0))}</span>
+                                </div>
+                            </div>
                         ))}
-                    </TableBody>
-                </Table>
+                    </div>
+
+                    {/* Desktop: Table */}
+                    <div className="hidden sm:block rounded-md border">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Produto</TableHead>
+                                    <TableHead className="text-center">Qtd</TableHead>
+                                    <TableHead className="text-right">Preço Unit.</TableHead>
+                                    <TableHead className="text-right">Subtotal</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {sale.sale_items.map((item, idx) => (
+                                    <TableRow key={item.products?.name ? `${item.products.name}-${idx}` : idx}>
+                                        <TableCell className="font-medium">{item.products?.name}</TableCell>
+                                        <TableCell className="text-center">{item.quantity}</TableCell>
+                                        <TableCell className="text-right">{formatCurrency(item.products?.sale_price || 0)}</TableCell>
+                                        <TableCell className="text-right font-medium">
+                                            {formatCurrency(item.quantity * (item.products?.sale_price || 0))}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -273,23 +299,23 @@ export default function SaleDetailsDialog({ sale }: { sale: SalesHistoryEntry })
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
                     <Eye className="h-4 w-4" />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-2xl">
+            <DialogContent className="w-screen h-screen max-w-full sm:w-auto sm:h-auto sm:max-w-2xl sm:max-h-[90vh] p-4 sm:p-6 overflow-y-auto m-0 sm:m-auto rounded-none sm:rounded-lg">
                 <DialogHeader>
-                    <DialogTitle>Detalhes da Venda #{sale.id}</DialogTitle>
+                    <DialogTitle className="text-base sm:text-lg">Detalhes da Venda #{sale.id}</DialogTitle>
                 </DialogHeader>
 
                 <SaleView sale={sale} />
 
-                <DialogFooter>
+                <DialogFooter className="flex-col sm:flex-row gap-2">
                     <DialogClose asChild>
-                        <Button variant="secondary">Fechar</Button>
+                        <Button variant="secondary" size="sm" className="w-full sm:w-auto h-9 text-xs sm:text-sm">Fechar</Button>
                     </DialogClose>
-                    <Button variant="outline" onClick={handlePrint}>
-                        <Printer className="mr-2 h-4 w-4" />
+                    <Button variant="outline" size="sm" onClick={handlePrint} className="w-full sm:w-auto h-9 text-xs sm:text-sm">
+                        <Printer className="mr-2 h-3.5 w-3.5" />
                         Imprimir Nota
                     </Button>
                 </DialogFooter>

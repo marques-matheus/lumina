@@ -64,45 +64,60 @@ export default function ServiceOrdersTable({ serviceOrders, clients }: { service
                 </div>
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow className="responsive-table-header">
-                            <TableHead>Cliente / O.S.</TableHead>
-                            <TableHead>Equipamento</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Valor</TableHead>
-                            <TableHead className="text-right">Ações</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {serviceOrders.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Nenhuma ordem de serviço encontrada.</TableCell>
+                <div className="rounded-md border md:border-0">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="responsive-table-header">
+                                <TableHead>Cliente / O.S.</TableHead>
+                                <TableHead>Equipamento</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Valor</TableHead>
+                                <TableHead className="text-right">Ações</TableHead>
                             </TableRow>
-                        ) : (
-                            serviceOrders.map((order) => (
-                                <TableRow key={order.id} className="responsive-table-row odd:bg-secondary even:bg-white in-dark:even:bg-zinc-700">
-                                    <TableCell data-label="Cliente / O.S.:" className="responsive-table-cell">
-                                        <div className="font-medium">{order.clients?.name}</div>
-                                        <div className="text-sm text-muted-foreground">O.S. #{order.id}</div>
-                                    </TableCell>
-                                    <TableCell data-label="Equipamento:" className="responsive-table-cell">{`${order.equip_brand} ${order.equip_model}`}</TableCell>
-                                    <TableCell data-label="Status:" className="responsive-table-cell">
-                                        <Badge variant={getBadgeColor(order.status)} className="w-fit">
-                                            {order.status}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell data-label="Valor:" className="responsive-table-cell">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.total)}</TableCell>
-                                    <TableCell className="responsive-actions-cell text-right">
-                                        <Button variant="outline" size="sm" onClick={() => handleViewDetailsClick(order)}>
-                                            <Eye className="mr-2 h-4 w-4" /> Ver Detalhes
-                                        </Button>
+                        </TableHeader>
+                        <TableBody>
+                            {serviceOrders.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <p className="text-sm">Nenhuma ordem de serviço encontrada.</p>
+                                            <p className="text-xs">Crie uma nova O.S. para começar.</p>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
+                            ) : (
+                                serviceOrders.map((order) => (
+                                    <TableRow key={order.id} className="responsive-table-row md:odd:bg-secondary md:even:bg-white md:dark:even:bg-zinc-700 hover:bg-muted/50 transition-colors">
+                                        <TableCell data-label="Cliente / O.S." className="responsive-table-cell">
+                                            <div className="flex flex-col gap-0.5">
+                                                <span className="font-medium">{order.clients?.name}</span>
+                                                <span className="text-xs text-muted-foreground">O.S. #{order.id}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell data-label="Equipamento" className="responsive-table-cell">
+                                            <span className="text-sm">{`${order.equip_brand} ${order.equip_model}`}</span>
+                                        </TableCell>
+                                        <TableCell data-label="Status" className="responsive-table-cell">
+                                            <Badge variant={getBadgeColor(order.status)} className="w-fit text-xs">
+                                                {order.status}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell data-label="Valor" className="responsive-table-cell md:text-right font-medium">
+                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.total)}
+                                        </TableCell>
+                                        <TableCell className="responsive-actions-cell text-right">
+                                            <Button variant="outline" size="sm" onClick={() => handleViewDetailsClick(order)} className="h-8 text-xs">
+                                                <Eye className="mr-1.5 h-3.5 w-3.5" />
+                                                <span className="hidden sm:inline">Ver Detalhes</span>
+                                                <span className="sm:hidden">Ver</span>
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
             </CardContent>
         </Card>
     );
