@@ -66,6 +66,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';
     const brandFilter = (resolvedSearchParams?.brand as string) || '';
+    const availabilityFilter = (resolvedSearchParams?.availability as string) || '';
     const page = parseInt((resolvedSearchParams?.page as string) || '1', 10);
     const pageSize = 15; // Items per page set to 15
 
@@ -81,6 +82,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     }
     if (brandFilter) {
         query = query.eq('brand', brandFilter);
+    }
+    if (availabilityFilter === 'Disponível') {
+        query = query.eq('is_active', true);
+    } else if (availabilityFilter === 'Indisponível') {
+        query = query.eq('is_active', false);
     }
 
     // Apply pagination
@@ -111,10 +117,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         <div className="flex flex-col gap-6">
             <Heading title="Produtos" subtitle="Gerencie seus produtos com facilidade" />
             <Card>
-                <CardHeader className="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className='flex flex-col md:flex-row items-center gap-4'>
+                <CardHeader className="flex flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
+                    <div className='flex flex-col items-stretch gap-3 md:flex-row md:items-center md:gap-4'>
                         <SearchInput placeholder="Buscar produto por nome..." />
                         <CategoryFilter title="Filtrar por Marca" paramName="brand" options={uniqueBrands} />
+                        <CategoryFilter title="Disponibilidade" paramName="availability" options={['Disponível', 'Indisponível']} />
                     </div>
                     <AddProductForm />
                 </CardHeader>

@@ -40,7 +40,7 @@ export default function AddClientDialog() {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button size="sm" className='w-auto self-end'>
+                <Button size="sm" className='w-full md:w-auto md:self-end'>
                     Novo Cliente
                 </Button>
             </DialogTrigger>

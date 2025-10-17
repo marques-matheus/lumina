@@ -52,7 +52,7 @@ export default function SalesTable({ sales }: { sales: SalesHistoryEntry[] }) {
                                 <TableCell className="responsive-table-cell md:text-right font-medium" data-label="Total">
                                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(sale.total_amount)}
                                 </TableCell>
-                                <TableCell className="responsive-actions-cell text-right">
+                                <TableCell className="responsive-actions-cell md:text-right">
                                     <SaleDetailsDialog sale={sale} />
                                 </TableCell>
                             </TableRow>

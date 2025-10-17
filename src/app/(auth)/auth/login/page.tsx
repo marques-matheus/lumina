@@ -1,11 +1,13 @@
 'use client'
 import { Input } from "@/components/ui/input";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { login } from "@/app/features/auth/actions";
 import { toast } from "sonner";
 import { SubmitButton } from "@/components/shared/submitButton";
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 
 export default function LoginPage() {
@@ -14,6 +16,7 @@ export default function LoginPage() {
         message: "",
     };
     const [state, formAction] = useActionState(login, initialState);
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         if (state.success) {
@@ -41,7 +44,31 @@ export default function LoginPage() {
                     <div className="flex items-center">
                         <Label htmlFor="password">Senha</Label>
                     </div>
-                    <Input id="password" name="password" type="password" required />
+                    <div className="relative">
+                        <Input
+                            id="password"
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            required
+                            className="pr-10"
+                        />
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? (
+                                <EyeOff className="h-4 w-4 text-muted-foreground" />
+                            ) : (
+                                <Eye className="h-4 w-4 text-muted-foreground" />
+                            )}
+                            <span className="sr-only">
+                                {showPassword ? "Ocultar senha" : "Mostrar senha"}
+                            </span>
+                        </Button>
+                    </div>
                 </div>
                 <SubmitButton text="Entrar" />
             </form>

@@ -28,7 +28,7 @@ export default function AddSaleDialog({ products, clients }: { products: Product
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState<number | ''>('');
   const [productSearchOpen, setProductSearchOpen] = useState(false);
   const [clientSearchOpen, setClientSearchOpen] = useState(false);
   const initialState = { success: false, message: '' };
@@ -37,12 +37,14 @@ export default function AddSaleDialog({ products, clients }: { products: Product
 
 
   const handleAddToCart = () => {
-    if (!selectedProduct || quantity <= 0) {
+    const qty = typeof quantity === 'number' ? quantity : 0;
+
+    if (!selectedProduct || qty <= 0) {
       toast.error('Selecione um produto e uma quantidade válida.');
       return;
     }
 
-    if (selectedProduct.quantity < quantity) {
+    if (selectedProduct.quantity < qty) {
       toast.error('Quantidade insuficiente em estoque.');
       return;
     }
@@ -51,14 +53,14 @@ export default function AddSaleDialog({ products, clients }: { products: Product
     if (existingItem) {
       setCartItems(cartItems.map(item =>
         item.product.id === selectedProduct.id
-          ? { ...item, quantity: item.quantity + quantity }
+          ? { ...item, quantity: item.quantity + qty }
           : item
       ));
     } else {
-      setCartItems([...cartItems, { product: selectedProduct, quantity }]);
+      setCartItems([...cartItems, { product: selectedProduct, quantity: qty }]);
     }
     setSelectedProduct(null);
-    setQuantity(1);
+    setQuantity('');
   };
 
   const handleRemoveFromCart = (productId: number) => {
@@ -72,7 +74,7 @@ export default function AddSaleDialog({ products, clients }: { products: Product
       setCartItems([]);
       setSelectedProduct(null);
       setSelectedClient(null);
-      setQuantity(1);
+      setQuantity('');
     }
   };
 
@@ -93,6 +95,12 @@ export default function AddSaleDialog({ products, clients }: { products: Product
     startTransition(() => {
       formAction(formData);
     });
+
+    // Limpar todos os estados
+    setCartItems([]);
+    setSelectedProduct(null);
+    setSelectedClient(null);
+    setQuantity('');
     setIsOpen(false);
     toast.success('Venda finalizada com sucesso!');
   };
@@ -100,7 +108,7 @@ export default function AddSaleDialog({ products, clients }: { products: Product
   return (
     <Dialog open={isOpen} onOpenChange={handleCloseDialog}>
       <DialogTrigger asChild>
-        <Button size="sm" className='w-auto'>Nova Venda</Button>
+        <Button size="sm" className='w-full md:w-auto md:self-end'>Nova Venda</Button>
       </DialogTrigger>
       <DialogContent className="w-screen h-screen max-w-full sm:w-auto sm:h-auto sm:max-w-2xl sm:max-h-[90vh] p-4 sm:p-6 overflow-y-auto m-0 sm:m-auto rounded-none sm:rounded-lg">
         <DialogHeader>
@@ -183,8 +191,20 @@ export default function AddSaleDialog({ products, clients }: { products: Product
               <Input
                 id='quantity'
                 type='number'
+                min="1"
+                placeholder="Qtd."
                 value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '') {
+                    setQuantity('');
+                  } else {
+                    const numValue = parseInt(value);
+                    if (!isNaN(numValue) && numValue > 0) {
+                      setQuantity(numValue);
+                    }
+                  }
+                }}
                 className="w-full h-8 sm:h-9 text-xs sm:text-sm"
               />
             </div>

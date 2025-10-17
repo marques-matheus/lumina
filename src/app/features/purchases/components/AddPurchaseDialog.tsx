@@ -94,7 +94,7 @@ export default function AddPurchaseDialog({
         <Dialog open={isOpen} onOpenChange={(open) => { if (setIsOpen) { setIsOpen(open) }; if (!open) { setSelectedProduct(null); setFormData(INITIAL_FORM_DATA); } }}>
             {!isControlled && (
                 <DialogTrigger asChild>
-                    <Button size="sm">Nova Compra</Button>
+                    <Button size="sm" className='w-full md:w-auto md:self-end'>Nova Compra</Button>
                 </DialogTrigger>
             )}
             <DialogContent className="w-screen h-screen max-w-full sm:w-auto sm:h-auto sm:max-w-md sm:max-h-[90vh] p-4 sm:p-6 overflow-y-auto m-0 sm:m-auto rounded-none sm:rounded-lg">

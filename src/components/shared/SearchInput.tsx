@@ -28,14 +28,14 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
     }
 
     return (
-        <form onSubmit={handleSearch} className="flex items-center" >
+        <form onSubmit={handleSearch} className="flex items-center w-full" >
             <Input
-                className="rounded-r-none md:w-auto"
+                className="rounded-r-none flex-1"
                 name="search"
                 placeholder={placeholder}
                 defaultValue={searchParams.get('search')?.toString() || ''}
             />
-            <Button className="rounded-l-none" type="submit"><Search className="h-4 w-4" /></Button>
+            <Button className="rounded-l-none flex-shrink-0" type="submit"><Search className="h-4 w-4" /></Button>
         </form>
     )
 

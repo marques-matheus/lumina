@@ -10,9 +10,9 @@ import { cn } from '@/lib/utils';
 
 
 type Props = {
-  title: string;          
-  paramName: string;      
-  options: string[];
+    title: string;
+    paramName: string;
+    options: string[];
 };
 
 export function CategoryFilter({ title, paramName, options }: Props) {
@@ -37,7 +37,7 @@ export function CategoryFilter({ title, paramName, options }: Props) {
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button variant="outline" className="w-auto justify-between">
+                <Button variant="outline" className="w-full md:w-auto justify-between">
                     {selectedValue ? selectedValue : title}
                     <ChevronsUpDown className="ml-2 h-4 w-4" />
                 </Button>
@@ -48,7 +48,7 @@ export function CategoryFilter({ title, paramName, options }: Props) {
                     <CommandEmpty>Nenhum resultado.</CommandEmpty>
                     <CommandGroup heading={title}>
                         <CommandItem onSelect={() => handleSelect('')}>
-                            <Check className={cn("mr-2 h-4 w-4", selectedValue === '' ? "opacity-100" : "opacity-0")}/>
+                            <Check className={cn("mr-2 h-4 w-4", selectedValue === '' ? "opacity-100" : "opacity-0")} />
                             Todos
                         </CommandItem>
                         {options.map((option) => (
@@ -57,7 +57,7 @@ export function CategoryFilter({ title, paramName, options }: Props) {
                                 value={option}
                                 onSelect={() => handleSelect(option)}
                             >
-                                <Check className={cn("mr-2 h-4 w-4", selectedValue === option ? "opacity-100" : "opacity-0")}/>
+                                <Check className={cn("mr-2 h-4 w-4", selectedValue === option ? "opacity-100" : "opacity-0")} />
                                 {option}
                             </CommandItem>
                         ))}

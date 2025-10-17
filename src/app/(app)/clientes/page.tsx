@@ -93,8 +93,8 @@ export default async function ClientsPage({ searchParams }: PageProps) {
     <div className="flex flex-col gap-6">
       <Heading title="Clientes" subtitle="Gerencie seus clientes e adicione novos registros" />
       <Card>
-        <CardHeader className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className='flex flex-col md:flex-row items-center gap-4'>
+        <CardHeader className="flex flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
+          <div className='flex flex-col items-stretch gap-3 md:flex-row md:items-center md:gap-4'>
             <SearchInput placeholder="Buscar cliente por nome ou telefone..." />
           </div>
           <AddClientDialog />

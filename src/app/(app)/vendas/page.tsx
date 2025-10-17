@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CategoryFilter } from '@/components/shared/CategoryFilter';
+import { DateFilter } from '@/components/shared/DateFilter';
 
 export async function generateMetadata(): Promise<Metadata> {
     return {
@@ -57,6 +58,8 @@ export default async function SalesPage({ searchParams }: PageProps) {
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';
     const clientFilter = (resolvedSearchParams?.client as string) || '';
+    const startDate = (resolvedSearchParams?.startDate as string) || '';
+    const endDate = (resolvedSearchParams?.endDate as string) || '';
     const page = parseInt((resolvedSearchParams?.page as string) || '1', 10);
     const pageSize = 15;
 
@@ -84,6 +87,13 @@ export default async function SalesPage({ searchParams }: PageProps) {
     if (clientFilter) {
         salesQuery = salesQuery.eq('clients.name', clientFilter);
     }
+    if (startDate) {
+        salesQuery = salesQuery.gte('created_at', `${startDate}T00:00:00`);
+    }
+    if (endDate) {
+        // Add one day to include the end date
+        salesQuery = salesQuery.lt('created_at', `${endDate}T23:59:59`);
+    }
 
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
@@ -110,10 +120,11 @@ export default async function SalesPage({ searchParams }: PageProps) {
         <div className="flex flex-col gap-6">
             <Heading title="Vendas" subtitle="Gerencie suas vendas, adicione novos registros e visualize o histórico de transações." />
             <Card>
-                <CardHeader className="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className='flex flex-col md:flex-row items-center gap-4'>
-                        <SearchInput placeholder="Buscar venda por cliente..." />
+                <CardHeader className="flex flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
+                    <div className='flex flex-col items-stretch gap-3 md:flex-row md:items-center md:gap-4'>
+                        {/* <SearchInput placeholder="Buscar venda por cliente..." /> */}
                         <CategoryFilter title="Filtrar por Cliente" paramName="client" options={uniqueClients} />
+                        <DateFilter title="Período" />
                     </div>
                     <AddSaleDialog products={products || []} clients={clients || []} />
                 </CardHeader>

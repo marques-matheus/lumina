@@ -40,7 +40,7 @@ export default function AddServiceOrderDialog({ clients }: { clients: Client[] }
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button size="sm" className='self-end'>Novo Serviço</Button>
+                <Button size="sm" className='w-full md:w-auto md:self-end'>Novo Serviço</Button>
             </DialogTrigger>
             <DialogContent className="w-screen h-screen max-w-full sm:w-auto sm:h-auto sm:max-w-2xl sm:max-h-[90vh] p-4 sm:p-6 overflow-y-auto m-0 sm:m-auto rounded-none sm:rounded-lg">
                 <DialogHeader>

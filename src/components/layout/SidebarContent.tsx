@@ -5,7 +5,11 @@ import Image from 'next/image';
 import { useSession } from '@/providers/SessionProvider';
 import NavLink from '../ui/navLink';
 
-export default function SidebarContent() {
+type SidebarContentProps = {
+    onNavigate?: () => void;
+};
+
+export default function SidebarContent({ onNavigate }: SidebarContentProps) {
     const user = useSession();
     return (
         <>
@@ -14,7 +18,7 @@ export default function SidebarContent() {
                     <Image src="/logo.png" alt="Logo" width={90} height={90} />
                     <h1 className='text-2xl my-2 font-bold'>Lúmina</h1>
                 </div>
-                <nav className="flex flex-col mt-10 space-y-4 dark:bg-zinc-800">
+                <nav className="flex flex-col mt-10 space-y-4 dark:bg-zinc-800 mb-20 md:mb-0" onClick={onNavigate}>
                     <NavLink href="/" text="Painel" />
                     <NavLink text="produtos" />
                     <NavLink text="clientes" />
@@ -28,7 +32,7 @@ export default function SidebarContent() {
                     <NavLink href="/configuracoes/perfil" text="configurações" />
                 </nav>
             </div>
-            <button onClick={logout} className=" text-sm font-bold bottom-5 left-5 absolute text-gray-700 dark:text-gray-300 cursor-pointer hover:text-gray-900 dark:hover:text-gray-90">
+            <button onClick={logout} className="text-sm font-bold bottom-5 left-5 absolute text-gray-700 dark:text-gray-300 cursor-pointer hover:text-gray-900 dark:hover:text-gray-90">
                 Sair
                 <LogOut className="inline ml-1 h-4 w-4" />
             </button>

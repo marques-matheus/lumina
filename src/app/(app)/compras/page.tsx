@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CategoryFilter } from '@/components/shared/CategoryFilter';
+import { DateFilter } from '@/components/shared/DateFilter';
 
 export async function generateMetadata(
     { params, searchParams }: PageProps,
@@ -62,6 +63,8 @@ export default async function PurchasesPage({ searchParams }: PageProps) {
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';
     const supplierFilter = (resolvedSearchParams?.supplier as string) || '';
+    const startDate = (resolvedSearchParams?.startDate as string) || '';
+    const endDate = (resolvedSearchParams?.endDate as string) || '';
     const page = parseInt((resolvedSearchParams?.page as string) || '1', 10);
     const pageSize = 15;
 
@@ -76,6 +79,15 @@ export default async function PurchasesPage({ searchParams }: PageProps) {
     }
     if (supplierFilter) {
         purchasesQuery = purchasesQuery.eq('supplier', supplierFilter);
+    }
+    if (startDate) {
+        purchasesQuery = purchasesQuery.gte('purchase_date', startDate);
+    }
+    if (endDate) {
+        // Add one day to include the end date
+        const endDateTime = new Date(endDate);
+        endDateTime.setDate(endDateTime.getDate() + 1);
+        purchasesQuery = purchasesQuery.lt('purchase_date', endDateTime.toISOString().split('T')[0]);
     }
 
     const from = (page - 1) * pageSize;
@@ -114,10 +126,11 @@ export default async function PurchasesPage({ searchParams }: PageProps) {
         <div className="flex flex-col gap-6">
             <Heading title="Compras" subtitle="Gerencie suas compras com facilidade" />
             <Card>
-                <CardHeader className="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className='flex flex-col md:flex-row items-center gap-4'>
-                        <SearchInput placeholder="Buscar compra por fornecedor..." />
+                <CardHeader className="flex flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
+                    <div className='flex flex-col items-stretch gap-3 md:flex-row md:items-center md:gap-4'>
+                        {/* <SearchInput placeholder="Buscar compra por fornecedor..." /> */}
                         <CategoryFilter title="Filtrar por Fornecedor" paramName="supplier" options={uniqueSuppliers} />
+                        <DateFilter title="Período" />
                     </div>
                     <AddPurchaseDialog products={products || []} />
                 </CardHeader>

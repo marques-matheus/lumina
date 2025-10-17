@@ -299,8 +299,9 @@ export default function SaleDetailsDialog({ sale }: { sale: SalesHistoryEntry })
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                    <Eye className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="h-8 text-xs w-full md:w-auto">
+                    <Eye className="mr-1.5 h-3.5 w-3.5" />
+                    Ver Detalhes
                 </Button>
             </DialogTrigger>
             <DialogContent className="w-screen h-screen max-w-full sm:w-auto sm:h-auto sm:max-w-2xl sm:max-h-[90vh] p-4 sm:p-6 overflow-y-auto m-0 sm:m-auto rounded-none sm:rounded-lg">
