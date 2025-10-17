@@ -37,6 +37,7 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
         description,
         brand,
         sale_price,
+        is_active: quantity > 0, // Se quantidade for 0, is_active é false
     }]);
 
     if (error) {
@@ -109,6 +110,7 @@ export async function updateProduct(prevState: FormState, formData: FormData): P
             description,
             brand,
             sale_price,
+            is_active: quantity > 0, // Se quantidade for 0, is_active é false
         })
         .match({ id: validatedId.data, profile_id: user.id });
 

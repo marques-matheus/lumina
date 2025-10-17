@@ -66,7 +66,6 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     const resolvedSearchParams = await searchParams;
     const searchTerm = (resolvedSearchParams?.search as string) || '';
     const brandFilter = (resolvedSearchParams?.brand as string) || '';
-    const availabilityFilter = (resolvedSearchParams?.availability as string) || '';
     const page = parseInt((resolvedSearchParams?.page as string) || '1', 10);
     const pageSize = 15; // Items per page set to 15
 
@@ -83,16 +82,14 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     if (brandFilter) {
         query = query.eq('brand', brandFilter);
     }
-    if (availabilityFilter === 'Disponível') {
-        query = query.eq('is_active', true);
-    } else if (availabilityFilter === 'Indisponível') {
-        query = query.eq('is_active', false);
-    }
+
+    // Apply ordering - ordem alfabética por nome
+    query = query.order('name', { ascending: true });
 
     // Apply pagination
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
-    query = query.range(from, to).order('is_active', { ascending: false }).order('id', { ascending: true });
+    query = query.range(from, to);
 
     // Fetch paginated data and count
     const { data: products, count } = await query;
@@ -121,7 +118,6 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                     <div className='flex flex-col items-stretch gap-3 md:flex-row md:items-center md:gap-4'>
                         <SearchInput placeholder="Buscar produto por nome..." />
                         <CategoryFilter title="Filtrar por Marca" paramName="brand" options={uniqueBrands} />
-                        <CategoryFilter title="Disponibilidade" paramName="availability" options={['Disponível', 'Indisponível']} />
                     </div>
                     <AddProductForm />
                 </CardHeader>

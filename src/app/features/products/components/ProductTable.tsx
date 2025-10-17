@@ -68,8 +68,17 @@ export default function ProductTable({ products }: { products: Product[] }) {
               </TableRow>
             ) : (
               products.map((product) => (
-                <TableRow key={product.id} className={`responsive-table-row md:odd:bg-secondary md:even:bg-white md:dark:even:bg-zinc-700 hover:bg-muted/50 transition-colors ${!product.is_active ? 'opacity-60' : ''}`}>
-                  <TableCell data-label="Nome" className="responsive-table-cell font-medium">{product.name}</TableCell>
+                <TableRow
+                  key={product.id}
+                  className={`responsive-table-row transition-colors ${!product.is_active
+                    ? 'bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-950/30'
+                    : 'md:odd:bg-secondary md:even:bg-white md:dark:even:bg-zinc-700 hover:bg-muted/50'
+                    }`}
+                >
+                  <TableCell data-label="Nome" className={`responsive-table-cell font-medium ${!product.is_active ? 'text-red-700 dark:text-red-400' : ''}`}>
+                    {product.name}
+                    {!product.is_active && <span className="ml-2 text-xs text-red-600 dark:text-red-400">(Indisponível)</span>}
+                  </TableCell>
                   <TableCell data-label="Marca" className="responsive-table-cell">{product.brand || '-'}</TableCell>
                   <TableCell data-label="Quantidade" className="responsive-table-cell md:text-center">
                     <span className={product.quantity < 5 && product.quantity > 0 ? 'text-orange-500 font-medium' : product.quantity === 0 ? 'text-red-500 font-medium' : ''}>

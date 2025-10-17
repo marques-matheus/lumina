@@ -74,7 +74,7 @@ export function DateFilter({ title = "Filtrar por Data" }: Props) {
                         <Input
                             id="startDate"
                             type="date"
-                            defaultValue={startDate}
+                            defaultValue={startDate || ''}
                             className="h-9 text-xs"
                         />
                     </div>
@@ -83,7 +83,7 @@ export function DateFilter({ title = "Filtrar por Data" }: Props) {
                         <Input
                             id="endDate"
                             type="date"
-                            defaultValue={endDate}
+                            defaultValue={endDate || ''}
                             className="h-9 text-xs"
                         />
                     </div>

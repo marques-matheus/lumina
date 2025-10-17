@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useTransition } from 'react';
+import { useState, useMemo, useTransition, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useActionState } from 'react';
@@ -34,6 +34,21 @@ export default function AddSaleDialog({ products, clients }: { products: Product
   const initialState = { success: false, message: '' };
   const [isPending, startTransition] = useTransition();
   const [state, formAction] = useActionState(createSale, initialState);
+
+  // Monitora o resultado da venda
+  useEffect(() => {
+    if (state.success) {
+      toast.success(state.message);
+      // Limpar todos os estados após sucesso
+      setCartItems([]);
+      setSelectedProduct(null);
+      setSelectedClient(null);
+      setQuantity('');
+      setIsOpen(false);
+    } else if (state.message) {
+      toast.error(state.message);
+    }
+  }, [state]);
 
 
   const handleAddToCart = () => {
@@ -91,18 +106,15 @@ export default function AddSaleDialog({ products, clients }: { products: Product
     const formData = new FormData();
     formData.append('cartItems', JSON.stringify(cartItems));
     formData.append('totalAmount', totalAmount.toString());
-    formData.append('clientId', selectedClient?.id?.toString() || '');
+    // Se não há cliente selecionado, não envia o campo (será undefined/null)
+    if (selectedClient?.id) {
+      formData.append('clientId', selectedClient.id.toString());
+    }
+
     startTransition(() => {
       formAction(formData);
     });
-
-    // Limpar todos os estados
-    setCartItems([]);
-    setSelectedProduct(null);
-    setSelectedClient(null);
-    setQuantity('');
-    setIsOpen(false);
-    toast.success('Venda finalizada com sucesso!');
+    // A limpeza dos estados acontece no useEffect quando state.success for true
   };
 
   return (
@@ -139,10 +151,17 @@ export default function AddSaleDialog({ products, clients }: { products: Product
                           setSelectedProduct(product);
                           setProductSearchOpen(false);
                         }}
-                        className="text-xs sm:text-sm"
+                        className={cn(
+                          "text-xs sm:text-sm",
+                          !product.is_active && "bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 opacity-75"
+                        )}
+                        disabled={!product.is_active}
                       >
                         <Check className={cn("mr-2 h-3 w-3 sm:h-4 sm:w-4", selectedProduct?.id === product.id ? "opacity-100" : "opacity-0")} />
-                        <span className="truncate">{product.name}</span>
+                        <span className="truncate">
+                          {product.name}
+                          {!product.is_active && <span className="ml-1 text-[10px]">(Indisponível)</span>}
+                        </span>
                       </CommandItem>
                     ))}
                   </CommandGroup>
