@@ -344,12 +344,10 @@ export default function SaleDetailsDialog({ sale, products = [], clients = [] }:
                 <SaleView sale={sale} />
 
                 <DialogFooter className="flex-col sm:flex-row gap-2">
-                    {products.length > 0 && clients.length > 0 && (
-                        <CancelSaleDialog
-                            saleId={sale.id}
-                            onSuccess={() => setIsOpen(false)}
-                        />
-                    )}
+                    <CancelSaleDialog
+                        saleId={sale.id}
+                        onSuccess={() => setIsOpen(false)}
+                    />
                     <Button variant="outline" size="sm" onClick={handlePrint} className="w-full sm:w-auto h-9 text-xs sm:text-sm">
                         <Printer className="mr-2 h-3.5 w-3.5" />
                         Imprimir Nota
