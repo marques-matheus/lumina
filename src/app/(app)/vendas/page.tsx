@@ -129,7 +129,7 @@ export default async function SalesPage({ searchParams }: PageProps) {
                     <AddSaleDialog products={products || []} clients={clients || []} />
                 </CardHeader>
                 <CardContent>
-                    <SalesTable sales={salesHistory || []} />
+                    <SalesTable sales={salesHistory || []} products={products || []} clients={clients || []} />
                 </CardContent>
                 <CardFooter>
                     <PaginationControls

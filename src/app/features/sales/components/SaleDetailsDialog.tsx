@@ -5,8 +5,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Eye, Printer } from 'lucide-react';
-import { type SalesHistoryEntry } from '@/types';
+import { type SalesHistoryEntry, type Client, type Product } from '@/types';
 import { useSession } from '@/providers/SessionProvider';
+import CancelSaleDialog from './CancelSaleDialog';
+
 
 // Sub-componente para a visualização dos dados
 const SaleView = ({ sale }: { sale: SalesHistoryEntry }) => {
@@ -95,7 +97,13 @@ const SaleView = ({ sale }: { sale: SalesHistoryEntry }) => {
     );
 };
 
-export default function SaleDetailsDialog({ sale }: { sale: SalesHistoryEntry }) {
+type SaleDetailsDialogProps = {
+    sale: SalesHistoryEntry;
+    products?: Product[];
+    clients?: Client[];
+};
+
+export default function SaleDetailsDialog({ sale, products = [], clients = [] }: SaleDetailsDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
     const user = useSession();
 
@@ -312,13 +320,19 @@ export default function SaleDetailsDialog({ sale }: { sale: SalesHistoryEntry })
                 <SaleView sale={sale} />
 
                 <DialogFooter className="flex-col sm:flex-row gap-2">
-                    <DialogClose asChild>
-                        <Button variant="secondary" size="sm" className="w-full sm:w-auto h-9 text-xs sm:text-sm">Fechar</Button>
-                    </DialogClose>
+                    {products.length > 0 && clients.length > 0 && (
+                        <CancelSaleDialog
+                            saleId={sale.id}
+                            onSuccess={() => setIsOpen(false)}
+                        />
+                    )}
                     <Button variant="outline" size="sm" onClick={handlePrint} className="w-full sm:w-auto h-9 text-xs sm:text-sm">
                         <Printer className="mr-2 h-3.5 w-3.5" />
                         Imprimir Nota
                     </Button>
+                    <DialogClose asChild>
+                        <Button variant="secondary" size="sm" className="w-full sm:w-auto h-9 text-xs sm:text-sm">Fechar</Button>
+                    </DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

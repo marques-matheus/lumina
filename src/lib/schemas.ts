@@ -141,5 +141,13 @@ export const serviceOrderSchema = z.object({
 
 export type ServiceOrderFormData = z.infer<typeof serviceOrderSchema>;
 
+// Schema para cancelamento de venda com senha
+export const cancelSaleSchema = z.object({
+  saleId: z.coerce.number().int().positive({ message: "ID da venda inválido." }),
+  password: z.string().min(1, { message: "A senha é obrigatória para cancelar a venda." }),
+});
+
+export type CancelSaleFormData = z.infer<typeof cancelSaleSchema>;
+
 export type ProfileFormData = z.infer<typeof profileFormSchema>;
 export type RegisterFormData = z.infer<typeof registerFormSchema>;

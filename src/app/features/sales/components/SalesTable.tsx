@@ -1,9 +1,15 @@
 "use client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { type SalesHistoryEntry } from "@/types";
+import { type SalesHistoryEntry, type Product, type Client } from "@/types";
 import SaleDetailsDialog from "./SaleDetailsDialog";
 
-export default function SalesTable({ sales }: { sales: SalesHistoryEntry[] }) {
+type SalesTableProps = {
+    sales: SalesHistoryEntry[];
+    products?: Product[];
+    clients?: Client[];
+};
+
+export default function SalesTable({ sales, products = [], clients = [] }: SalesTableProps) {
     return (
         <div className="rounded-md border md:border-0">
             <Table>
@@ -53,7 +59,7 @@ export default function SalesTable({ sales }: { sales: SalesHistoryEntry[] }) {
                                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(sale.total_amount)}
                                 </TableCell>
                                 <TableCell className="responsive-actions-cell md:text-right">
-                                    <SaleDetailsDialog sale={sale} />
+                                    <SaleDetailsDialog sale={sale} products={products} clients={clients} />
                                 </TableCell>
                             </TableRow>
                         ))
