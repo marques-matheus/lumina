@@ -36,6 +36,19 @@ const SaleView = ({ sale }: { sale: SalesHistoryEntry }) => {
                     <p className="text-sm">{sale.clients?.name || <span className="italic text-muted-foreground">Venda Avulsa</span>}</p>
                 </div>
 
+                {sale.discount_amount && sale.discount_amount > 0 && (
+                    <>
+                        <div>
+                            <p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Subtotal</p>
+                            <p className="text-sm">{formatCurrency(sale.total_amount + sale.discount_amount)}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Desconto</p>
+                            <p className="text-sm text-green-600 dark:text-green-400">- {formatCurrency(sale.discount_amount)}</p>
+                        </div>
+                    </>
+                )}
+
                 <div className="sm:col-span-2">
                     <p className="font-semibold text-muted-foreground text-xs uppercase mb-1">Total</p>
                     <p className="font-bold text-lg sm:text-xl">{formatCurrency(sale.total_amount)}</p>

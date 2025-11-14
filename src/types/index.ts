@@ -91,6 +91,7 @@ export type SalesHistoryEntry = {
   id: number;
   created_at: string;
   total_amount: number;
+  discount_amount?: number;
   clients: {
     name: string;
   } | null;

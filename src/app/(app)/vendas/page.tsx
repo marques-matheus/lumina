@@ -78,7 +78,7 @@ export default async function SalesPage({ searchParams }: PageProps) {
     // Query de vendas com count e joins necessários para a tabela
     let salesQuery = supabase
         .from('sales')
-        .select('id, created_at, total_amount, client_id, clients:clients(name), sale_items(quantity, products:products(*))', { count: 'exact' })
+        .select('id, created_at, total_amount, discount_amount, client_id, clients:clients(name), sale_items(quantity, products:products(*))', { count: 'exact' })
         .eq('profile_id', user.id);
 
     if (searchTerm) {

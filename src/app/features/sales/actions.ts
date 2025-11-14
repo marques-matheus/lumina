@@ -14,6 +14,7 @@ export async function createSale(prevState: FormState, formData: FormData): Prom
   const validatedFields = saleSchema.safeParse({
     cartItems: formData.get('cartItems'),
     totalAmount: formData.get('totalAmount'),
+    discountAmount: formData.get('discountAmount'),
     clientId: formData.get('clientId'),
   });
 
@@ -26,7 +27,7 @@ export async function createSale(prevState: FormState, formData: FormData): Prom
     };
   }
 
-  const { totalAmount, clientId } = validatedFields.data;
+  const { totalAmount, discountAmount, clientId } = validatedFields.data;
   // The cartItems are validated as a string, now we can safely parse it.
   const cartItems = JSON.parse(validatedFields.data.cartItems);
 
@@ -41,6 +42,7 @@ export async function createSale(prevState: FormState, formData: FormData): Prom
       p_profile_id: user.id,
       p_client_id: clientId,
       p_total_amount: totalAmount,
+      p_discount_amount: discountAmount,
       p_cart_items: itemsForDb
   });
 

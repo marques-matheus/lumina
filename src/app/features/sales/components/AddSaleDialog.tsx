@@ -29,6 +29,8 @@ export default function AddSaleDialog({ products, clients }: { products: Product
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [quantity, setQuantity] = useState<number | ''>('');
+  const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
+  const [discountValue, setDiscountValue] = useState<number | ''>('');
   const [productSearchOpen, setProductSearchOpen] = useState(false);
   const [clientSearchOpen, setClientSearchOpen] = useState(false);
   const initialState = { success: false, message: '' };
@@ -44,6 +46,7 @@ export default function AddSaleDialog({ products, clients }: { products: Product
       setSelectedProduct(null);
       setSelectedClient(null);
       setQuantity('');
+      setDiscountValue('');
       setIsOpen(false);
     } else if (state.message) {
       toast.error(state.message);
@@ -90,12 +93,27 @@ export default function AddSaleDialog({ products, clients }: { products: Product
       setSelectedProduct(null);
       setSelectedClient(null);
       setQuantity('');
+      setDiscountValue('');
     }
   };
 
-  const totalAmount = useMemo(() => {
+  const subtotal = useMemo(() => {
     return cartItems.reduce((total, item) => total + (item.product.sale_price * item.quantity), 0);
   }, [cartItems]);
+
+  const discountAmount = useMemo(() => {
+    const discount = typeof discountValue === 'number' ? discountValue : 0;
+    if (discount <= 0) return 0;
+
+    if (discountType === 'percentage') {
+      return (subtotal * discount) / 100;
+    }
+    return discount;
+  }, [subtotal, discountValue, discountType]);
+
+  const totalAmount = useMemo(() => {
+    return Math.max(0, subtotal - discountAmount);
+  }, [subtotal, discountAmount]);
 
   const handleFinalizeSale = () => {
     if (cartItems.length === 0) {
@@ -106,6 +124,7 @@ export default function AddSaleDialog({ products, clients }: { products: Product
     const formData = new FormData();
     formData.append('cartItems', JSON.stringify(cartItems));
     formData.append('totalAmount', totalAmount.toString());
+    formData.append('discountAmount', discountAmount.toString());
     // Se não há cliente selecionado, não envia o campo (será undefined/null)
     if (selectedClient?.id) {
       formData.append('clientId', selectedClient.id.toString());
@@ -274,12 +293,83 @@ export default function AddSaleDialog({ products, clients }: { products: Product
           )}
         </div>
 
+        {/* Desconto */}
+        {cartItems.length > 0 && (
+          <div className="space-y-3 pt-3 border-t">
+            <h3 className="text-sm sm:text-base font-medium">Desconto</h3>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex gap-2 flex-1">
+                <Button
+                  type="button"
+                  variant={discountType === 'percentage' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setDiscountType('percentage')}
+                  className="flex-1 h-8 sm:h-9 text-xs sm:text-sm"
+                >
+                  %
+                </Button>
+                <Button
+                  type="button"
+                  variant={discountType === 'fixed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setDiscountType('fixed')}
+                  className="flex-1 h-8 sm:h-9 text-xs sm:text-sm"
+                >
+                  R$
+                </Button>
+              </div>
+              <div className="flex-1">
+                <Input
+                  type="number"
+                  min="0"
+                  max={discountType === 'percentage' ? 100 : subtotal}
+                  step={discountType === 'percentage' ? 1 : 0.01}
+                  placeholder={discountType === 'percentage' ? '0%' : 'R$ 0,00'}
+                  value={discountValue}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === '') {
+                      setDiscountValue('');
+                    } else {
+                      const numValue = parseFloat(value);
+                      if (!isNaN(numValue) && numValue >= 0) {
+                        if (discountType === 'percentage' && numValue <= 100) {
+                          setDiscountValue(numValue);
+                        } else if (discountType === 'fixed' && numValue <= subtotal) {
+                          setDiscountValue(numValue);
+                        }
+                      }
+                    }
+                  }}
+                  className="h-8 sm:h-9 text-xs sm:text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Total */}
-        <div className="flex justify-between sm:justify-end items-center gap-3 sm:gap-4 pt-3 sm:pt-4 border-t">
-          <span className="text-sm sm:text-base font-semibold">Total:</span>
-          <span className="text-base sm:text-lg font-bold">
-            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalAmount)}
-          </span>
+        <div className="space-y-2 pt-3 sm:pt-4 border-t">
+          {cartItems.length > 0 && (
+            <>
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Subtotal:</span>
+                <span>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}</span>
+              </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
+                  <span>Desconto ({discountType === 'percentage' ? `${discountValue}%` : 'Valor fixo'}):</span>
+                  <span>- {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(discountAmount)}</span>
+                </div>
+              )}
+            </>
+          )}
+          <div className="flex justify-between items-center">
+            <span className="text-sm sm:text-base font-semibold">Total:</span>
+            <span className="text-base sm:text-lg font-bold">
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalAmount)}
+            </span>
+          </div>
         </div>
 
         {/* Footer com botões */}

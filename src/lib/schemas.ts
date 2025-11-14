@@ -111,6 +111,7 @@ export const saleSchema = z.object({
     }
   }, { message: "Carrinho inválido." }),
   totalAmount: z.coerce.number().min(0, { message: "O valor total deve ser um número positivo." }),
+  discountAmount: z.coerce.number().min(0).optional().default(0),
   clientId: z.coerce.number().int().positive().optional().nullable(),
 });
 
