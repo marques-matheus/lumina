@@ -262,6 +262,17 @@ export default function SaleDetailsDialog({ sale, products = [], clients = [] }:
             
             <div class="separator"></div>
             
+            ${sale.discount_amount && sale.discount_amount > 0 ? `
+                <div class="item-line">
+                    <span>Subtotal:</span>
+                    <span>${formatCurrency(sale.total_amount + sale.discount_amount)}</span>
+                </div>
+                <div class="item-line">
+                    <span>Desconto:</span>
+                    <span>- ${formatCurrency(sale.discount_amount)}</span>
+                </div>
+            ` : ''}
+            
             <div class="item-line bold" style="font-size: 14px;">
                 <span>TOTAL GERAL:</span>
                 <span>${formatCurrency(sale.total_amount)}</span>
