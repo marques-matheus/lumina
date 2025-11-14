@@ -151,5 +151,23 @@ export const cancelSaleSchema = z.object({
 
 export type CancelSaleFormData = z.infer<typeof cancelSaleSchema>;
 
+export const resetPasswordSchema = z.object({
+  password: z.string()
+    .min(8, { message: "A senha deve ter pelo menos 8 caracteres." })
+    .regex(/[A-Za-z]/, { message: "A senha deve conter pelo menos uma letra." })
+    .regex(/[^A-Za-z0-9]/, { message: "A senha deve conter pelo menos um símbolo." }),
+  confirm_password: z.string(),
+}).superRefine((data, ctx) => {
+  if (data.password !== data.confirm_password) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "As senhas não coincidem.",
+      path: ["confirm_password"],
+    });
+  }
+});
+
+export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+
 export type ProfileFormData = z.infer<typeof profileFormSchema>;
 export type RegisterFormData = z.infer<typeof registerFormSchema>;

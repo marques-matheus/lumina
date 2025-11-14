@@ -35,7 +35,7 @@ export default function SidebarContent({ onNavigate }: SidebarContentProps) {
             <div className="p-5 border-t border-gray-200 dark:border-zinc-700">
                 <button
                     onClick={logout}
-                    className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors w-full"
+                    className="flex cursor-pointer items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors w-full"
                 >
                     <LogOut className="h-4 w-4" />
                     Sair

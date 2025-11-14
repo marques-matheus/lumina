@@ -3,7 +3,7 @@ import { type FormState } from "@/types";
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
-import { loginSchema, registerFormSchema, profileFormSchema } from '@/lib/schemas';
+import { loginSchema, registerFormSchema, profileFormSchema, resetPasswordSchema } from '@/lib/schemas';
 
 export async function login(prevState: FormState, formData: FormData): Promise<FormState> {
     const supabase = await createClient();
@@ -74,6 +74,60 @@ export async function signup(prevState: FormState, formData: FormData): Promise<
 export async function logout() {
     const supabase = await createClient();
     await supabase.auth.signOut();
+    redirect('/auth/login');
+}
+
+export async function requestPasswordReset(prevState: FormState, formData: FormData): Promise<FormState> {
+    const supabase = await createClient();
+
+    const email = formData.get('email') as string;
+
+    if (!email || !email.includes('@')) {
+        return { success: false, message: 'Email inválido.' };
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/redefinir-senha`,
+    });
+
+    if (error) {
+        console.error('Erro ao enviar email de recuperação:', error);
+        return { success: false, message: 'Erro ao enviar email. Tente novamente.' };
+    }
+
+    return { 
+        success: true, 
+        message: 'Email de recuperação enviado! Verifique sua caixa de entrada.' 
+    };
+}
+
+export async function resetPassword(prevState: FormState, formData: FormData): Promise<FormState> {
+    const supabase = await createClient();
+
+    const validatedFields = resetPasswordSchema.safeParse({
+        password: formData.get('password'),
+        confirm_password: formData.get('confirm_password')
+    });
+
+    if (!validatedFields.success) {
+        const errors = validatedFields.error.flatten().fieldErrors;
+        return {
+            success: false,
+            message: errors.password?.[0] || errors.confirm_password?.[0] || 'Dados inválidos.'
+        };
+    }
+
+    const { password } = validatedFields.data;
+
+    const { error } = await supabase.auth.updateUser({
+        password: password
+    });
+
+    if (error) {
+        console.error('Erro ao redefinir senha:', error);
+        return { success: false, message: 'Erro ao redefinir senha. O link pode ter expirado.' };
+    }
+
     redirect('/auth/login');
 }
 

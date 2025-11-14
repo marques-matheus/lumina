@@ -41,8 +41,11 @@ export default function LoginPage() {
                     />
                 </div>
                 <div className="grid gap-2">
-                    <div className="flex items-center">
+                    <div className="flex items-center justify-between">
                         <Label htmlFor="password">Senha</Label>
+                        <Link href="/auth/esqueci-senha" className="text-xs text-muted-foreground hover:text-primary underline">
+                            Esqueci a senha
+                        </Link>
                     </div>
                     <div className="relative">
                         <Input
