@@ -384,7 +384,7 @@ export default async function MainPage({ searchParams }: MainPageProps) {
                 />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            {/* <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
                 <HorizontalBarChart title="Itens Mais Vendidos (Hoje)" description="Produtos mais populares do dia." data={soldItemsChartData} barDataKey="value" barFill="var(--chart-2)" className="col-span-1 lg:col-span-2" />
                 <HorizontalBarChart
                     title="Itens Mais Vendidos (Mês)"
@@ -394,7 +394,7 @@ export default async function MainPage({ searchParams }: MainPageProps) {
                     barFill="var(--chart-1)"
                     className="col-span-1 lg:col-span-2"
                 />
-            </div>
+            </div> */}
         </div>
     );
 }

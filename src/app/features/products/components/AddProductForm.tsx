@@ -35,7 +35,7 @@ export default function AddProductDialog() {
       <DialogTrigger asChild>
         <Button size="sm" className='w-full md:w-auto md:self-end'>Novo Produto</Button>
       </DialogTrigger>
-      <DialogContent className="w-screen h-screen max-w-full sm:w-auto sm:h-auto sm:max-w-[500px] sm:max-h-[90vh] p-4 sm:p-6 overflow-y-auto m-0 sm:m-auto rounded-none sm:rounded-lg">
+      <DialogContent className="w-screen h-screen max-w-full md:h-auto md:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg">Novo Produto</DialogTitle>
         </DialogHeader>

@@ -1,12 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -54,7 +48,7 @@ export default function LowStockDialog({ allProducts, allCatalogProducts }: LowS
                     <DialogHeader>
                         <DialogTitle>Produtos com Estoque Baixo</DialogTitle>
                     </DialogHeader>
-                    <div className="max-h-[60vh] overflow-y-auto">
+                    <div className="max-h-[60vh] w-auto overflow-y-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
