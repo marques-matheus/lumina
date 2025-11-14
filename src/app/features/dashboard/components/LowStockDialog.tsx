@@ -44,11 +44,11 @@ export default function LowStockDialog({ allProducts, allCatalogProducts }: LowS
                         Ver mais
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-lg">
+                <DialogContent className="sm:max-w-lg md:max-w-2xl lg:max-w-3xl">
                     <DialogHeader>
                         <DialogTitle>Produtos com Estoque Baixo</DialogTitle>
                     </DialogHeader>
-                    <div className="max-h-[60vh] w-auto overflow-y-auto">
+                    <div className="max-h-[60vh]  overflow-y-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
