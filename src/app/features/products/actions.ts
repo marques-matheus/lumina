@@ -17,6 +17,7 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
         description: formData.get('description'),
         sale_price: formData.get('sale_price'),
         brand: formData.get('brand'),
+        specifications: formData.get('specifications'),
     });
 
     if (!validatedFields.success) {
@@ -28,7 +29,15 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
         };
     }
 
-    const { name, quantity, description, sale_price, brand } = validatedFields.data;
+    const { name, quantity, description, sale_price, brand, specifications } = validatedFields.data;
+
+    // Parse specifications JSON
+    let specsJson = {};
+    try {
+        specsJson = JSON.parse(specifications);
+    } catch (e) {
+        specsJson = {};
+    }
 
     const { error } = await supabase.from('products').insert([{
         name,
@@ -37,6 +46,7 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
         description,
         brand,
         sale_price,
+        specifications: specsJson,
         is_active: quantity > 0, // Se quantidade for 0, is_active é false
     }]);
 
@@ -89,6 +99,7 @@ export async function updateProduct(prevState: FormState, formData: FormData): P
         description: formData.get('description'),
         sale_price: formData.get('sale_price'),
         brand: formData.get('brand'),
+        specifications: formData.get('specifications'),
     });
 
     if (!validatedFields.success) {
@@ -100,7 +111,15 @@ export async function updateProduct(prevState: FormState, formData: FormData): P
         };
     }
 
-    const { name, quantity, description, sale_price, brand } = validatedFields.data;
+    const { name, quantity, description, sale_price, brand, specifications } = validatedFields.data;
+
+    // Parse specifications JSON
+    let specsJson = {};
+    try {
+        specsJson = JSON.parse(specifications);
+    } catch (e) {
+        specsJson = {};
+    }
 
     const { error } = await supabase
         .from('products')
@@ -110,6 +129,7 @@ export async function updateProduct(prevState: FormState, formData: FormData): P
             description,
             brand,
             sale_price,
+            specifications: specsJson,
             is_active: quantity > 0, // Se quantidade for 0, is_active é false
         })
         .match({ id: validatedId.data, profile_id: user.id });

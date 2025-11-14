@@ -15,6 +15,7 @@ export type Product = {
   cost_price?: number;
   sale_price: number;
   is_active: boolean;
+  specifications?: Record<string, string>;
 };
 
 

@@ -74,9 +74,10 @@ export const loginSchema = z.object({
 export const productSchema = z.object({
   name: z.string().min(3, { message: "O nome do produto deve ter pelo menos 3 caracteres." }),
   quantity: z.coerce.number().int().min(0, { message: "A quantidade deve ser um número positivo." }),
-  description: z.string().min(3, { message: "A descrição deve ter pelo menos 3 caracteres." }),
+  description: z.string().optional(),
   sale_price: z.coerce.number().min(0, { message: "O preço de venda deve ser um número positivo." }),
   brand: z.string().min(2, { message: "A marca deve ter pelo menos 2 caracteres." }),
+  specifications: z.string().optional().default('{}'),
 });
 
 export type ClientFormData = z.infer<typeof clientSchema>;

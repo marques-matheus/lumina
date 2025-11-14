@@ -9,7 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Plus, X } from 'lucide-react';
 import { deleteProduct, updateProduct } from '../actions';
 import { SubmitButton } from '@/components/shared/submitButton';
 import { Product } from '@/types';
@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 export default function ProductTable({ products }: { products: Product[] }) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isDeletePending, startDeleteTransition] = useTransition();
+  const [specifications, setSpecifications] = useState<Array<{ key: string; value: string }>>([]);
 
   const initialState = { success: false, message: '' };
   const [editState, formAction] = useActionState(updateProduct, initialState);
@@ -25,11 +26,50 @@ export default function ProductTable({ products }: { products: Product[] }) {
   useEffect(() => {
     if (editState.success) {
       toast.success(editState.message);
-      setSelectedProduct(null); // Close dialog on success
+      setSelectedProduct(null);
+      setSpecifications([]);
     } else if (editState.message) {
       toast.error(editState.message);
     }
   }, [editState]);
+
+  useEffect(() => {
+    if (selectedProduct?.specifications) {
+      const specs = Object.entries(selectedProduct.specifications).map(([key, value]) => ({
+        key,
+        value
+      }));
+      setSpecifications(specs);
+    } else {
+      setSpecifications([]);
+    }
+  }, [selectedProduct]);
+
+  const addSpecification = () => {
+    setSpecifications([...specifications, { key: '', value: '' }]);
+  };
+
+  const removeSpecification = (index: number) => {
+    setSpecifications(specifications.filter((_, i) => i !== index));
+  };
+
+  const updateSpecification = (index: number, field: 'key' | 'value', value: string) => {
+    const updated = [...specifications];
+    updated[index][field] = value;
+    setSpecifications(updated);
+  };
+
+  const handleSubmit = (formData: FormData) => {
+    const specsObject = specifications.reduce((acc, spec) => {
+      if (spec.key.trim() && spec.value.trim()) {
+        acc[spec.key.trim()] = spec.value.trim();
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    formData.set('specifications', JSON.stringify(specsObject));
+    formAction(formData);
+  };
 
   const handleDelete = (productId: number) => {
     startDeleteTransition(async () => {
@@ -134,30 +174,85 @@ export default function ProductTable({ products }: { products: Product[] }) {
           <DialogHeader>
             <DialogTitle className="text-base sm:text-lg">Editar Produto</DialogTitle>
           </DialogHeader>
-          <form action={formAction} className="space-y-3 sm:space-y-4">
-            <Input type="hidden" name="id" value={selectedProduct?.id} />
+          <form action={handleSubmit} className="space-y-3 sm:space-y-4 max-h-[calc(100vh-150px)] overflow-y-auto pr-2">
+            <Input type="hidden" name="id" value={selectedProduct?.id || ''} />
             <div className="flex flex-col gap-2">
               <Label htmlFor="name" className="text-xs sm:text-sm">Nome</Label>
-              <Input id="name" name="name" defaultValue={selectedProduct?.name} className="h-8 sm:h-9 text-xs sm:text-sm" />
+              <Input id="name" name="name" defaultValue={selectedProduct?.name || ''} className="h-8 sm:h-9 text-xs sm:text-sm" />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="description" className="text-xs sm:text-sm">Descrição</Label>
-              <Input id="description" name="description" defaultValue={selectedProduct?.description} className="h-8 sm:h-9 text-xs sm:text-sm" />
+              <Input id="description" name="description" defaultValue={selectedProduct?.description || ''} className="h-8 sm:h-9 text-xs sm:text-sm" />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="brand" className="text-xs sm:text-sm">Marca</Label>
-              <Input id="brand" name="brand" defaultValue={selectedProduct?.brand} className="h-8 sm:h-9 text-xs sm:text-sm" />
+              <Input id="brand" name="brand" defaultValue={selectedProduct?.brand || ''} className="h-8 sm:h-9 text-xs sm:text-sm" />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="quantity" className="text-xs sm:text-sm">Quantidade (Somente Leitura)</Label>
-              <Input id="quantity" name="quantity" type="number" defaultValue={selectedProduct?.quantity} readOnly className="h-8 sm:h-9 text-xs sm:text-sm bg-muted" />
+              <Input id="quantity" name="quantity" type="number" defaultValue={selectedProduct?.quantity || 0} readOnly className="h-8 sm:h-9 text-xs sm:text-sm bg-muted" />
               <p className="text-xs text-muted-foreground">Use a página de Compras para adicionar estoque</p>
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="sale_price" className="text-xs sm:text-sm">Preço de Venda</Label>
-              <Input id="sale_price" name="sale_price" type="number" step="0.01" defaultValue={selectedProduct?.sale_price} className="h-8 sm:h-9 text-xs sm:text-sm" />
+              <Input id="sale_price" name="sale_price" type="number" step="0.01" defaultValue={selectedProduct?.sale_price || 0} className="h-8 sm:h-9 text-xs sm:text-sm" />
             </div>
-            <DialogFooter className="flex-col sm:flex-row gap-2">
+
+            {/* Especificações Técnicas */}
+            <div className="flex flex-col gap-2 border-t pt-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs sm:text-sm font-semibold">Especificações Técnicas</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addSpecification}
+                  className="h-7 text-xs"
+                >
+                  <Plus className="h-3 w-3 mr-1" />
+                  Adicionar
+                </Button>
+              </div>
+
+              {specifications.length > 0 && (
+                <div className="space-y-2">
+                  {specifications.map((spec, index) => (
+                    <div key={index} className="flex gap-2 items-start">
+                      <div className="flex-1 grid grid-cols-2 gap-2">
+                        <Input
+                          placeholder="Ex: Processador"
+                          value={spec.key || ''}
+                          onChange={(e) => updateSpecification(index, 'key', e.target.value)}
+                          className="h-8 text-xs"
+                        />
+                        <Input
+                          placeholder="Ex: Intel i7"
+                          value={spec.value || ''}
+                          onChange={(e) => updateSpecification(index, 'value', e.target.value)}
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeSpecification(index)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {specifications.length === 0 && (
+                <p className="text-xs text-muted-foreground">
+                  Adicione detalhes como processador, memória RAM, modelo, etc.
+                </p>
+              )}
+            </div>
+            <DialogFooter className="flex-col sm:flex-row gap-2 border-t pt-3">
               <DialogClose asChild><Button type="button" variant="secondary" size="sm" className="w-full sm:w-auto h-9 text-xs sm:text-sm">Cancelar</Button></DialogClose>
               <SubmitButton text="Salvar" />
             </DialogFooter>

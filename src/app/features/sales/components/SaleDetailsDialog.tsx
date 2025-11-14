@@ -243,11 +243,22 @@ export default function SaleDetailsDialog({ sale, products = [], clients = [] }:
             <div class="separator"></div>
             
             <div class="bold">ITENS VENDIDOS:</div>
-            ${sale.sale_items.map(item => `
+            ${sale.sale_items.map(item => {
+            const hasSpecs = item.products?.specifications && Object.keys(item.products.specifications).length > 0;
+            const specs = item.products?.specifications || {};
+            return `
                 <div style="margin-bottom: 8px;">
                     <div><strong>${item.products?.name}</strong></div>
                  
                     ${item.products?.brand ? `<div>Marca: ${item.products.brand}</div>` : ''}
+                    
+                    ${hasSpecs ? `
+                    <div style="font-size: 10px; margin: 2px 0; padding-left: 4px;">
+                        ${Object.entries(specs).map(([key, value]) =>
+                `<div>• ${key}: ${value}</div>`
+            ).join('')}
+                    </div>
+                    ` : ''}
                    
                     <div class="item-line">
                         <span>Qtd: ${item.quantity}</span>
@@ -258,7 +269,8 @@ export default function SaleDetailsDialog({ sale, products = [], clients = [] }:
                         <span><strong>${formatCurrency(item.quantity * (item.products?.sale_price ?? 0))}</strong></span>
                     </div>
                 </div>
-            `).join('')}
+                `;
+        }).join('')}
             
             <div class="separator"></div>
             
